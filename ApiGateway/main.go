@@ -2,9 +2,9 @@ package main
 
 import (
 	"apigateway/config"
-	client "apigateway/grpc_clients"
-	"apigateway/handlers"
-	"apigateway/routes"
+	client2 "apigateway/internal/grpc_clients"
+	handlers2 "apigateway/internal/handlers"
+	"apigateway/internal/routes"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -18,8 +18,8 @@ func main() {
 	}
 
 	grpcClients := InitializeGrpcClients(cfg)
-	handlers.InitIeltsClient(grpcClients.IeltsClient)
-	handlers.InitUserClient(grpcClients.UserClient)
+	handlers2.InitIeltsClient(grpcClients.IeltsClient)
+	handlers2.InitUserClient(grpcClients.UserClient)
 
 	routes.SetUpRoutes(router)
 
@@ -31,17 +31,17 @@ func main() {
 }
 
 type GrpcClients struct {
-	IeltsClient *client.IeltsClient
-	UserClient  *client.UserClient
+	IeltsClient *client2.IeltsClient
+	UserClient  *client2.UserClient
 }
 
 func InitializeGrpcClients(cfg *config.Config) *GrpcClients {
-	ieltsClient, err := client.NewIeltsClient(cfg.Grpc.IeltsService.Address)
+	ieltsClient, err := client2.NewIeltsClient(cfg.Grpc.IeltsService.Address)
 	if err != nil {
 		log.Fatalf("Failed to create IELTS client: %v", err)
 	}
 
-	userClient, err := client.NewUserClient(cfg.Grpc.UserService.Address)
+	userClient, err := client2.NewUserClient(cfg.Grpc.UserService.Address)
 	if err != nil {
 		log.Fatalf("Failed to create User client: %v", err)
 	}

@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"apigateway/handlers"
+	"apigateway/internal/handlers"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

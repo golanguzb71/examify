@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	client "apigateway/grpc_clients"
+	"apigateway/internal/grpc_clients"
 	"apigateway/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"

@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"apigateway/handlers"
-	"apigateway/middleware"
+	"apigateway/internal/handlers"
+	"apigateway/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
