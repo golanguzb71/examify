@@ -2,7 +2,9 @@ package handlers
 
 import (
 	client "apigateway/grpc_clients"
+	"apigateway/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var ieltsClient *client.IeltsClient
@@ -24,11 +26,12 @@ func InitIeltsClient(client *client.IeltsClient) {
 // @Router /api/ielts/book/create/{name} [post]
 func CreateIeltsBook(ctx *gin.Context) {
 	bookName := ctx.Param("name")
-	book, err := ieltsClient.CreateBook(bookName)
+	resp, err := ieltsClient.CreateBook(bookName)
 	if err != nil {
-
+		utils.RespondError(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
+	utils.RespondSuccess(ctx, resp.Status, resp.Message, nil)
 }
 
 func DeleteIeltsBook(ctx *gin.Context) {

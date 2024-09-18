@@ -1,27 +1,41 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"gopkg.in/yaml.v3"
+	"os"
+)
+
+type ServerConfig struct {
+	Port string `yaml:"port"`
+}
+
+type GrpcConfig struct {
+	IeltsService struct {
+		Address string `yaml:"address"`
+	} `yaml:"ieltsService"`
+	UserService struct {
+		Address string `yaml:"address"`
+	} `yaml:"userService"`
+}
 
 type Config struct {
-	Server struct {
-		Port string
-	}
-	Services struct {
-		AuthService  string
-		UserService  string
-		IeltsService string
-	}
+	Server ServerConfig `yaml:"server"`
+	Grpc   GrpcConfig   `yaml:"grpc"`
 }
 
 func LoadConfig() (*Config, error) {
+	file, err := os.Open("config/config.yaml")
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
 
-	viper.SetConfigFile("config/config.yaml")
-	if err := viper.ReadInConfig(); err != nil {
+	var config Config
+	decoder := yaml.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
 		return nil, err
 	}
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, err
-	}
-	return &cfg, nil
+
+	return &config, nil
 }
