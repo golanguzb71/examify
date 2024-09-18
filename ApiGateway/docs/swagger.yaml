@@ -1,0 +1,36 @@
+info:
+  contact: {}
+paths:
+  /api/ielts/book/create/{name}:
+    post:
+      consumes:
+      - application/json
+      description: Create a new book for IELTS
+      parameters:
+      - description: Name of the book
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new IELTS book
+      tags:
+      - IELTS
+swagger: "2.0"

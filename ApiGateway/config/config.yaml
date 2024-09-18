@@ -1,0 +1,7 @@
+server:
+  port: "8080"
+
+services:
+  authService: "auth-service:50051"
+  userService: "user-service:50052"
+  ieltsService: "ielts-service:50053"
