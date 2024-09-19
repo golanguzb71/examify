@@ -11,10 +11,11 @@ service UserService {
 message CreateUserRequest {
   string name = 1;
   string surname = 2;
-  string  phoneNumber = 3;
+  string phoneNumber = 3;
+  string role = 4;
 }
 
 message CreateUserResponse {
-  string status = 1;
+  int32 status = 1;
   string message = 2;
 }

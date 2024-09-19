@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ielts-service/internal/server"
+	"user-service/internal/server"
 )
 
 func main() {

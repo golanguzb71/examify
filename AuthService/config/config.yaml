@@ -1,0 +1,17 @@
+server:
+  port:
+
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: password
+  dbname: user_database
+  sslmode: disable
+
+redis:
+  host: localhost
+  port: 6379
+
+telegram:
+  bot_token: "7629206943:AAGN_dK0E4ZrpqIbwRefKqPvbGAvLcggCak"

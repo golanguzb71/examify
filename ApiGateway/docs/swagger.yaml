@@ -1,15 +1,69 @@
+definitions:
+  utils.ErrorResponse:
+    properties:
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  utils.SuccessResponse:
+    properties:
+      message:
+        type: string
+      object: {}
+      statusCode:
+        type: integer
+    type: object
 info:
   contact: {}
 paths:
-  /api/ielts/book/create/{name}:
+  /api/ielts/answer/create:
     post:
       consumes:
       - application/json
-      description: Create a new book for IELTS
+      description: Create a new answer for an IELTS book
       parameters:
-      - description: Name of the book
+      - description: ID of the book
         in: path
-        name: name
+        name: book_id
+        required: true
+        type: string
+      - description: Answer content
+        in: body
+        name: answer
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new answer
+      tags:
+      - IELTS
+  /api/ielts/answer/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an answer by its ID
+      parameters:
+      - description: ID of the answer
+        in: path
+        name: id
         required: true
         type: string
       produces:
@@ -30,7 +84,91 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      summary: Delete an answer
+      tags:
+      - IELTS
+  /api/ielts/book/create/{name}:
+    post:
+      consumes:
+      - application/json
+      description: Create a new book for IELTS
+      parameters:
+      - description: Name of the book
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
       summary: Create a new IELTS book
+      tags:
+      - IELTS
+  /api/ielts/book/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an IELTS book by its ID
+      parameters:
+      - description: ID of the book
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete an IELTS book
+      tags:
+      - IELTS
+  /api/ielts/books:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all IELTS books
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all IELTS books
       tags:
       - IELTS
 swagger: "2.0"

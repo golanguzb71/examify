@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ielts;
+
+option go_package = "./proto/pb";
+
+service IeltsService {
+  rpc CreateBook (CreateBookRequest) returns (CreateBookResponse);
+}
+
+message CreateBookRequest {
+  string name = 1;
+}
+
+message CreateBookResponse {
+  int32 status = 1;
+  string message = 2;
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"apigateway/config"
+	_ "apigateway/docs"
 	client2 "apigateway/internal/grpc_clients"
 	handlers2 "apigateway/internal/handlers"
 	"apigateway/internal/routes"

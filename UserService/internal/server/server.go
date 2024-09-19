@@ -1,12 +1,12 @@
 package server
 
 import (
-	"ielts-service/config"
-	"ielts-service/internal/repository"
-	"ielts-service/internal/service"
-	"ielts-service/proto/pb"
 	"log"
 	"net"
+	"user-service/config"
+	"user-service/internal/repository"
+	"user-service/internal/service"
+	"user-service/proto/pb"
 
 	"google.golang.org/grpc"
 )
@@ -23,8 +23,8 @@ func RunServer() {
 	}
 	defer db.Close()
 
-	repo := repository.NewPostgresBookRepository(db)
-	ieltsService := service.NewIeltsService(repo)
+	repo := repository.NewPostgresUserRepository(db)
+	userService := service.NewUserService(repo)
 
 	lis, err := net.Listen("tcp", ":"+cfg.Server.Port)
 	if err != nil {
@@ -32,7 +32,7 @@ func RunServer() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterIeltsServiceServer(grpcServer, ieltsService)
+	pb.RegisterUserServiceServer(grpcServer, userService)
 
 	log.Printf("Server listening on port %s", cfg.Server.Port)
 	if err := grpcServer.Serve(lis); err != nil {

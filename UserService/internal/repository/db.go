@@ -3,9 +3,9 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"ielts-service/config"
 	"log"
 	"time"
+	"user-service/config"
 
 	_ "github.com/lib/pq"
 )
