@@ -1,22 +1,43 @@
 definitions:
-  utils.ErrorResponse:
+  utils.AbsResponse:
     properties:
       message:
         type: string
-      statusCode:
-        type: integer
-    type: object
-  utils.SuccessResponse:
-    properties:
-      message:
-        type: string
-      object: {}
       statusCode:
         type: integer
     type: object
 info:
   contact: {}
 paths:
+  /api/auth/login/{code}:
+    post:
+      consumes:
+      - application/json
+      description: Validate the authorization code and log in the user
+      parameters:
+      - description: Authorization Code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "400":
+          description: Invalid code or login failed
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      summary: User login via authorization code
+      tags:
+      - Auth
   /api/ielts/answer/create:
     post:
       consumes:
@@ -104,15 +125,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.SuccessResponse'
+            $ref: '#/definitions/utils.AbsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/utils.AbsResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/utils.AbsResponse'
       summary: Create a new IELTS book
       tags:
       - IELTS

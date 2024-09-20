@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "./proto/pb";
+
+service AuthService{
+  rpc ValidateCode(ValidateRequest) returns (ValidateResponse);
+}
+
+
+message ValidateRequest{
+  string code = 1;
+}
+
+message ValidateResponse{
+  int32 statusCode = 1;
+  string message = 2;
+}

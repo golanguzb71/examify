@@ -4,7 +4,6 @@ import (
 	"apigateway/proto/pb"
 	"context"
 	"google.golang.org/grpc"
-	"log"
 	"time"
 )
 
@@ -29,8 +28,7 @@ func (c *IeltsClient) CreateBook(name string) (*pb.CreateBookResponse, error) {
 	req := &pb.CreateBookRequest{Name: name}
 	resp, err := c.client.CreateBook(ctx, req)
 	if err != nil {
-		log.Printf("Error when calling CreateBook %v", err)
-		return nil, err
+		return resp, err
 	}
 	return resp, nil
 }

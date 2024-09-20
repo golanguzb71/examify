@@ -1,16 +1,9 @@
 package handlers
 
 import (
-	"apigateway/internal/grpc_clients"
 	"apigateway/utils"
 	"github.com/gin-gonic/gin"
 )
-
-var ieltsClient *client.IeltsClient
-
-func InitIeltsClient(client *client.IeltsClient) {
-	ieltsClient = client
-}
 
 // CreateIeltsBook creates a new IELTS book
 // @Summary Create a new IELTS book
@@ -19,9 +12,9 @@ func InitIeltsClient(client *client.IeltsClient) {
 // @Accept json
 // @Produce json
 // @Param name path string true "Name of the book"
-// @Success 200 {object} utils.SuccessResponse
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {object} utils.AbsResponse
+// @Failure 400 {object} utils.AbsResponse
+// @Failure 500 {object} utils.AbsResponse
 // @Router /api/ielts/book/create/{name} [post]
 func CreateIeltsBook(ctx *gin.Context) {
 	bookName := ctx.Param("name")
@@ -30,7 +23,7 @@ func CreateIeltsBook(ctx *gin.Context) {
 		utils.RespondError(ctx, resp.Status, resp.Message)
 		return
 	}
-	utils.RespondSuccess(ctx, resp.Status, resp.Message, nil)
+	utils.RespondSuccess(ctx, resp.Status, resp.Message)
 }
 
 // DeleteIeltsBook deletes an IELTS book by its ID

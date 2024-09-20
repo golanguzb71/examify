@@ -6,3 +6,5 @@ grpc:
     address: "localhost:50051"
   userService:
     address: "localhost:50052"
+  authService:
+    address: "localhost:50053"

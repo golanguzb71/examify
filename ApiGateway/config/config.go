@@ -16,6 +16,9 @@ type GrpcConfig struct {
 	UserService struct {
 		Address string `yaml:"address"`
 	} `yaml:"userService"`
+	AuthService struct {
+		Address string `yaml:"address"`
+	} `yaml:"authService"`
 }
 
 type Config struct {

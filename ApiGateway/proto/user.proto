@@ -18,3 +18,4 @@ message CreateUserResponse {
   string status = 1;
   string message = 2;
 }
+
