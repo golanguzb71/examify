@@ -6,7 +6,7 @@ import (
 )
 
 // Login godoc
-// @Summary User login via authorization code
+// @Summary ALL
 // @Description Validate the authorization code and log in the user
 // @Tags auth
 // @Accept  json

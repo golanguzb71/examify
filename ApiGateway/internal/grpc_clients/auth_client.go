@@ -31,3 +31,7 @@ func (c *AuthClient) ValidateCode(code string) (*pb.ValidateResponse, error) {
 	}
 	return resp, nil
 }
+
+func (c *AuthClient) ValidateToken(token, requiredRoles string) {
+
+}

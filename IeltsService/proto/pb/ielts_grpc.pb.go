@@ -19,14 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IeltsService_CreateBook_FullMethodName = "/ielts.IeltsService/CreateBook"
+	IeltsService_CreateBook_FullMethodName   = "/ielts.IeltsService/CreateBook"
+	IeltsService_DeleteBook_FullMethodName   = "/ielts.IeltsService/DeleteBook"
+	IeltsService_GetAllBook_FullMethodName   = "/ielts.IeltsService/GetAllBook"
+	IeltsService_CreateAnswer_FullMethodName = "/ielts.IeltsService/CreateAnswer"
+	IeltsService_DeleteAnswer_FullMethodName = "/ielts.IeltsService/DeleteAnswer"
+	IeltsService_GetAnswer_FullMethodName    = "/ielts.IeltsService/GetAnswer"
 )
 
 // IeltsServiceClient is the client API for IeltsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IeltsServiceClient interface {
-	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*CreateBookResponse, error)
+	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	GetAllBook(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBookResponse, error)
+	CreateAnswer(ctx context.Context, in *CreateAnswerRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	DeleteAnswer(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error)
 }
 
 type ieltsServiceClient struct {
@@ -37,10 +47,60 @@ func NewIeltsServiceClient(cc grpc.ClientConnInterface) IeltsServiceClient {
 	return &ieltsServiceClient{cc}
 }
 
-func (c *ieltsServiceClient) CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*CreateBookResponse, error) {
+func (c *ieltsServiceClient) CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateBookResponse)
+	out := new(AbsResponse)
 	err := c.cc.Invoke(ctx, IeltsService_CreateBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_DeleteBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) GetAllBook(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBookResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllBookResponse)
+	err := c.cc.Invoke(ctx, IeltsService_GetAllBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) CreateAnswer(ctx context.Context, in *CreateAnswerRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_CreateAnswer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) DeleteAnswer(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_DeleteAnswer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAnswerResponse)
+	err := c.cc.Invoke(ctx, IeltsService_GetAnswer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +111,12 @@ func (c *ieltsServiceClient) CreateBook(ctx context.Context, in *CreateBookReque
 // All implementations must embed UnimplementedIeltsServiceServer
 // for forward compatibility.
 type IeltsServiceServer interface {
-	CreateBook(context.Context, *CreateBookRequest) (*CreateBookResponse, error)
+	CreateBook(context.Context, *CreateBookRequest) (*AbsResponse, error)
+	DeleteBook(context.Context, *DeleteBookRequest) (*AbsResponse, error)
+	GetAllBook(context.Context, *Empty) (*GetAllBookResponse, error)
+	CreateAnswer(context.Context, *CreateAnswerRequest) (*AbsResponse, error)
+	DeleteAnswer(context.Context, *DeleteBookRequest) (*AbsResponse, error)
+	GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error)
 	mustEmbedUnimplementedIeltsServiceServer()
 }
 
@@ -62,8 +127,23 @@ type IeltsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedIeltsServiceServer struct{}
 
-func (UnimplementedIeltsServiceServer) CreateBook(context.Context, *CreateBookRequest) (*CreateBookResponse, error) {
+func (UnimplementedIeltsServiceServer) CreateBook(context.Context, *CreateBookRequest) (*AbsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBook not implemented")
+}
+func (UnimplementedIeltsServiceServer) DeleteBook(context.Context, *DeleteBookRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBook not implemented")
+}
+func (UnimplementedIeltsServiceServer) GetAllBook(context.Context, *Empty) (*GetAllBookResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllBook not implemented")
+}
+func (UnimplementedIeltsServiceServer) CreateAnswer(context.Context, *CreateAnswerRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAnswer not implemented")
+}
+func (UnimplementedIeltsServiceServer) DeleteAnswer(context.Context, *DeleteBookRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAnswer not implemented")
+}
+func (UnimplementedIeltsServiceServer) GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAnswer not implemented")
 }
 func (UnimplementedIeltsServiceServer) mustEmbedUnimplementedIeltsServiceServer() {}
 func (UnimplementedIeltsServiceServer) testEmbeddedByValue()                      {}
@@ -104,6 +184,96 @@ func _IeltsService_CreateBook_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IeltsService_DeleteBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).DeleteBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_DeleteBook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).DeleteBook(ctx, req.(*DeleteBookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_GetAllBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).GetAllBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_GetAllBook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).GetAllBook(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_CreateAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAnswerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).CreateAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_CreateAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).CreateAnswer(ctx, req.(*CreateAnswerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_DeleteAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).DeleteAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_DeleteAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).DeleteAnswer(ctx, req.(*DeleteBookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_GetAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAnswerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).GetAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_GetAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).GetAnswer(ctx, req.(*GetAnswerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IeltsService_ServiceDesc is the grpc.ServiceDesc for IeltsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +284,26 @@ var IeltsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBook",
 			Handler:    _IeltsService_CreateBook_Handler,
+		},
+		{
+			MethodName: "DeleteBook",
+			Handler:    _IeltsService_DeleteBook_Handler,
+		},
+		{
+			MethodName: "GetAllBook",
+			Handler:    _IeltsService_GetAllBook_Handler,
+		},
+		{
+			MethodName: "CreateAnswer",
+			Handler:    _IeltsService_CreateAnswer_Handler,
+		},
+		{
+			MethodName: "DeleteAnswer",
+			Handler:    _IeltsService_DeleteAnswer_Handler,
+		},
+		{
+			MethodName: "GetAnswer",
+			Handler:    _IeltsService_GetAnswer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

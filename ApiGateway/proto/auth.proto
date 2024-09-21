@@ -3,17 +3,31 @@ syntax = "proto3";
 package auth;
 
 option go_package = "./proto/pb";
+import "proto/user.proto";
 
 service AuthService{
-  rpc ValidateCode(ValidateRequest) returns (ValidateResponse);
+  rpc ValidateCode(ValidateCodeRequest) returns (ValidateCodeResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
 }
 
 
-message ValidateRequest{
+message ValidateCodeRequest{
   string code = 1;
 }
 
-message ValidateResponse{
+message ValidateCodeResponse{
   int32 statusCode = 1;
   string message = 2;
 }
+
+message ValidateTokenRequest{
+  string token = 1;
+  repeated string requiredRoles = 2;
+}
+
+message ValidateTokenResponse {
+  bool isValid = 1;
+  user.User user = 2;
+}
+
+

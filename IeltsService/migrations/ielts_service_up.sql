@@ -9,7 +9,8 @@ create table if not exists answer
     id             serial primary key,
     book_id        int references book (id),
     section_type   varchar check ( section_type in ('READING', 'LISTENING')),
-    section_answer TEXT[] NOT NULL
+    section_answer TEXT[] NOT NULL,
+    UNIQUE (book_id, section_type)
 );
 
 create table if not exists exam

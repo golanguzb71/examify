@@ -27,7 +27,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "User login via authorization code",
+                "summary": "ALL",
                 "parameters": [
                     {
                         "type": "string",
@@ -71,7 +71,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-answer"
                 ],
-                "summary": "Create a new answer for a book",
+                "summary": "ROLE_ADMIN",
                 "parameters": [
                     {
                         "type": "string",
@@ -124,7 +124,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-answer"
                 ],
-                "summary": "Delete an answer",
+                "summary": "ROLE_ADMIN",
                 "parameters": [
                     {
                         "type": "string",
@@ -168,7 +168,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-answer"
                 ],
-                "summary": "Get answer by book ID",
+                "summary": "ROLE_ADMIN",
                 "parameters": [
                     {
                         "type": "string",
@@ -206,7 +206,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-book"
                 ],
-                "summary": "Get all IELTS books",
+                "summary": "ROLE_ADMIN",
                 "responses": {
                     "200": {
                         "description": "List of books",
@@ -235,7 +235,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-book"
                 ],
-                "summary": "Create a new IELTS book",
+                "summary": "ROLE_ADMIN",
                 "parameters": [
                     {
                         "type": "string",
@@ -279,7 +279,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-book"
                 ],
-                "summary": "Delete an IELTS book",
+                "summary": "ROLE_ADMIN",
                 "parameters": [
                     {
                         "type": "string",

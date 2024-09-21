@@ -4,6 +4,11 @@
     <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
       <methods>
         <method importPath="apigateway/internal/grpc_clients" receiver="*IeltsClient" name="CreateBook" />
+        <method importPath="apigateway/internal/grpc_clients" receiver="*AuthClient" name="ValidateCode" />
+        <method importPath="apigateway/internal/grpc_clients" receiver="*IeltsClient" name="DeleteBook" />
+        <method importPath="apigateway/internal/grpc_clients" receiver="*IeltsClient" name="CreateAnswer" />
+        <method importPath="apigateway/proto/pb" receiver="IeltsServiceClient" name="DeleteAnswer" />
+        <method importPath="apigateway/internal/grpc_clients" receiver="*IeltsClient" name="DeleteAnswer" />
       </methods>
     </inspection_tool>
   </profile>

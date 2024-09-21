@@ -66,7 +66,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      summary: User login via authorization code
+      summary: ALL
       tags:
       - auth
   /api/ielts/answer/{id}:
@@ -91,7 +91,7 @@ paths:
           description: Error while gRPC connection
           schema:
             type: string
-      summary: Get answer by book ID
+      summary: ROLE_ADMIN
       tags:
       - ielts-answer
   /api/ielts/answer/create/{bookId}:
@@ -126,7 +126,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      summary: Create a new answer for a book
+      summary: ROLE_ADMIN
       tags:
       - ielts-answer
   /api/ielts/answer/delete/{id}:
@@ -155,7 +155,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      summary: Delete an answer
+      summary: ROLE_ADMIN
       tags:
       - ielts-answer
   /api/ielts/book/books:
@@ -174,7 +174,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      summary: Get all IELTS books
+      summary: ROLE_ADMIN
       tags:
       - ielts-book
   /api/ielts/book/create/{name}:
@@ -203,7 +203,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      summary: Create a new IELTS book
+      summary: ROLE_ADMIN
       tags:
       - ielts-book
   /api/ielts/book/delete/{id}:
@@ -232,7 +232,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      summary: Delete an IELTS book
+      summary: ROLE_ADMIN
       tags:
       - ielts-book
 swagger: "2.0"

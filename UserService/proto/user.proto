@@ -4,18 +4,51 @@ package user;
 
 option go_package = "./proto/pb";
 
+
 service UserService {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  rpc CreateUser (CreateUserRequest) returns (AbsResponse);
+  rpc GetUserByChatIdOrPhone(GetUserByChatIdOrPhoneRequest) returns (User);
+  rpc GetAllUsers(PageRequest) returns(GetAllUserResponse);
+  rpc UpdateInformation(UpdateInformationRequest) returns (AbsResponse);
 }
 
 message CreateUserRequest {
-  string name = 1;
+  string name = 1 ;
   string surname = 2;
-  string phoneNumber = 3;
-  string role = 4;
+  string chatId = 3;
+  string phoneNumber = 4;
 }
 
-message CreateUserResponse {
+
+message GetUserByChatIdOrPhoneRequest{
+  optional string chatId = 1;
+  optional string phoneNumber = 2;
+}
+
+message GetAllUserResponse{
+  repeated User users = 1;
+  int32 totalPages = 2;
+}
+
+message UpdateInformationRequest {
+  User currentUser = 1;
+  User editUser = 2;
+}
+
+message User{
+  int64 id = 1;
+  string name = 2;
+  string surname = 3;
+  string phoneNumber = 4;
+  string role = 5;
+  string chatId = 6;
+}
+
+message PageRequest{
+  int32 page = 1;
+  int32 size = 2;
+}
+message AbsResponse {
   int32 status = 1;
   string message = 2;
 }

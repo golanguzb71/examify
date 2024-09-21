@@ -8,7 +8,7 @@ import (
 )
 
 // CreateIeltsBook creates a new IELTS book
-// @Summary Create a new IELTS book
+// @Summary ROLE_ADMIN
 // @Description Create a new book for IELTS exam preparation
 // @Tags ielts-book
 // @Accept  json
@@ -29,7 +29,7 @@ func CreateIeltsBook(ctx *gin.Context) {
 }
 
 // DeleteIeltsBook deletes an IELTS book by its ID
-// @Summary Delete an IELTS book
+// @Summary ROLE_ADMIN
 // @Description Delete an IELTS book by its ID
 // @Tags ielts-book
 // @Accept  json
@@ -51,7 +51,7 @@ func DeleteIeltsBook(ctx *gin.Context) {
 }
 
 // GetAllBook retrieves all IELTS books
-// @Summary Get all IELTS books
+// @Summary ROLE_ADMIN
 // @Description Retrieve a list of all IELTS books
 // @Tags ielts-book
 // @Accept  json
@@ -69,7 +69,7 @@ func GetAllBook(ctx *gin.Context) {
 }
 
 // CreateAnswer creates a new answer for an IELTS book
-// @Summary Create a new answer for a book
+// @Summary ROLE_ADMIN
 // @Description Create a new answer for a specified IELTS book
 // @Tags ielts-answer
 // @Accept  json
@@ -97,7 +97,7 @@ func CreateAnswer(ctx *gin.Context) {
 }
 
 // DeleteAnswer deletes an answer by its ID
-// @Summary Delete an answer
+// @Summary ROLE_ADMIN
 // @Description Delete an answer by its ID
 // @Tags ielts-answer
 // @Accept  json
@@ -120,7 +120,7 @@ func DeleteAnswer(ctx *gin.Context) {
 
 // GetAnswerByBookId retrieves an answer by book ID.
 //
-// @Summary Get answer by book ID
+// @Summary ROLE_ADMIN
 // @Description Retrieve the answer associated with a specific book ID via gRPC.
 // @Tags ielts-answer
 // @Accept json

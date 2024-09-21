@@ -67,17 +67,16 @@ func (x *CreateBookRequest) GetName() string {
 	return ""
 }
 
-type CreateBookResponse struct {
+type DeleteBookRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status  int32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	BookId string `protobuf:"bytes,1,opt,name=bookId,proto3" json:"bookId,omitempty"`
 }
 
-func (x *CreateBookResponse) Reset() {
-	*x = CreateBookResponse{}
+func (x *DeleteBookRequest) Reset() {
+	*x = DeleteBookRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_ielts_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -85,13 +84,13 @@ func (x *CreateBookResponse) Reset() {
 	}
 }
 
-func (x *CreateBookResponse) String() string {
+func (x *DeleteBookRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateBookResponse) ProtoMessage() {}
+func (*DeleteBookRequest) ProtoMessage() {}
 
-func (x *CreateBookResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteBookRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_ielts_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -103,23 +102,439 @@ func (x *CreateBookResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateBookResponse.ProtoReflect.Descriptor instead.
-func (*CreateBookResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteBookRequest.ProtoReflect.Descriptor instead.
+func (*DeleteBookRequest) Descriptor() ([]byte, []int) {
 	return file_proto_ielts_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateBookResponse) GetStatus() int32 {
+func (x *DeleteBookRequest) GetBookId() string {
+	if x != nil {
+		return x.BookId
+	}
+	return ""
+}
+
+type GetAllBookResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Books []*Book `protobuf:"bytes,1,rep,name=books,proto3" json:"books,omitempty"`
+}
+
+func (x *GetAllBookResponse) Reset() {
+	*x = GetAllBookResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllBookResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllBookResponse) ProtoMessage() {}
+
+func (x *GetAllBookResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllBookResponse.ProtoReflect.Descriptor instead.
+func (*GetAllBookResponse) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetAllBookResponse) GetBooks() []*Book {
+	if x != nil {
+		return x.Books
+	}
+	return nil
+}
+
+type CreateAnswerRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BookId      string   `protobuf:"bytes,1,opt,name=bookId,proto3" json:"bookId,omitempty"`
+	SectionType string   `protobuf:"bytes,2,opt,name=sectionType,proto3" json:"sectionType,omitempty"`
+	Answers     []string `protobuf:"bytes,3,rep,name=answers,proto3" json:"answers,omitempty"`
+}
+
+func (x *CreateAnswerRequest) Reset() {
+	*x = CreateAnswerRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateAnswerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAnswerRequest) ProtoMessage() {}
+
+func (x *CreateAnswerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAnswerRequest.ProtoReflect.Descriptor instead.
+func (*CreateAnswerRequest) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateAnswerRequest) GetBookId() string {
+	if x != nil {
+		return x.BookId
+	}
+	return ""
+}
+
+func (x *CreateAnswerRequest) GetSectionType() string {
+	if x != nil {
+		return x.SectionType
+	}
+	return ""
+}
+
+func (x *CreateAnswerRequest) GetAnswers() []string {
+	if x != nil {
+		return x.Answers
+	}
+	return nil
+}
+
+type GetAnswerRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BookId string `protobuf:"bytes,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
+}
+
+func (x *GetAnswerRequest) Reset() {
+	*x = GetAnswerRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAnswerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAnswerRequest) ProtoMessage() {}
+
+func (x *GetAnswerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAnswerRequest.ProtoReflect.Descriptor instead.
+func (*GetAnswerRequest) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetAnswerRequest) GetBookId() string {
+	if x != nil {
+		return x.BookId
+	}
+	return ""
+}
+
+type GetAnswerResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Answers []*Answer `protobuf:"bytes,1,rep,name=answers,proto3" json:"answers,omitempty"`
+}
+
+func (x *GetAnswerResponse) Reset() {
+	*x = GetAnswerResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAnswerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAnswerResponse) ProtoMessage() {}
+
+func (x *GetAnswerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAnswerResponse.ProtoReflect.Descriptor instead.
+func (*GetAnswerResponse) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetAnswerResponse) GetAnswers() []*Answer {
+	if x != nil {
+		return x.Answers
+	}
+	return nil
+}
+
+type AbsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status  int32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (x *AbsResponse) Reset() {
+	*x = AbsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AbsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AbsResponse) ProtoMessage() {}
+
+func (x *AbsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AbsResponse.ProtoReflect.Descriptor instead.
+func (*AbsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AbsResponse) GetStatus() int32 {
 	if x != nil {
 		return x.Status
 	}
 	return 0
 }
 
-func (x *CreateBookResponse) GetMessage() string {
+func (x *AbsResponse) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
+}
+
+type Answer struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id            int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BookId        int32    `protobuf:"varint,2,opt,name=bookId,proto3" json:"bookId,omitempty"`
+	SectionType   string   `protobuf:"bytes,3,opt,name=sectionType,proto3" json:"sectionType,omitempty"`
+	SectionAnswer []string `protobuf:"bytes,4,rep,name=sectionAnswer,proto3" json:"sectionAnswer,omitempty"`
+}
+
+func (x *Answer) Reset() {
+	*x = Answer{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Answer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Answer) ProtoMessage() {}
+
+func (x *Answer) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Answer.ProtoReflect.Descriptor instead.
+func (*Answer) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Answer) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Answer) GetBookId() int32 {
+	if x != nil {
+		return x.BookId
+	}
+	return 0
+}
+
+func (x *Answer) GetSectionType() string {
+	if x != nil {
+		return x.SectionType
+	}
+	return ""
+}
+
+func (x *Answer) GetSectionAnswer() []string {
+	if x != nil {
+		return x.SectionAnswer
+	}
+	return nil
+}
+
+type Book struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+}
+
+func (x *Book) Reset() {
+	*x = Book{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Book) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Book) ProtoMessage() {}
+
+func (x *Book) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Book.ProtoReflect.Descriptor instead.
+func (*Book) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Book) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Book) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+type Empty struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Empty) Reset() {
+	*x = Empty{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_ielts_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Empty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Empty) ProtoMessage() {}
+
+func (x *Empty) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_ielts_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
+	return file_proto_ielts_proto_rawDescGZIP(), []int{9}
 }
 
 var File_proto_ielts_proto protoreflect.FileDescriptor
@@ -129,18 +544,67 @@ var file_proto_ielts_proto_rawDesc = []byte{
 	0x6f, 0x74, 0x6f, 0x12, 0x05, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x22, 0x27, 0x0a, 0x11, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
 	0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e,
-	0x61, 0x6d, 0x65, 0x22, 0x46, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6f, 0x6f,
-	0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x51, 0x0a, 0x0c, 0x49,
-	0x65, 0x6c, 0x74, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x41, 0x0a, 0x0a, 0x43,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x12, 0x18, 0x2e, 0x69, 0x65, 0x6c, 0x74,
-	0x73, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x43, 0x72, 0x65, 0x61,
-	0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x0c,
-	0x5a, 0x0a, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6d, 0x65, 0x22, 0x2b, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6f, 0x6f,
+	0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x62, 0x6f, 0x6f, 0x6b,
+	0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x62, 0x6f, 0x6f, 0x6b, 0x49, 0x64,
+	0x22, 0x37, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x05, 0x62, 0x6f, 0x6f, 0x6b, 0x73, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x42, 0x6f,
+	0x6f, 0x6b, 0x52, 0x05, 0x62, 0x6f, 0x6f, 0x6b, 0x73, 0x22, 0x69, 0x0a, 0x13, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x16, 0x0a, 0x06, 0x62, 0x6f, 0x6f, 0x6b, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x62, 0x6f, 0x6f, 0x6b, 0x49, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x73, 0x65, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x73,
+	0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x6e,
+	0x73, 0x77, 0x65, 0x72, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x61, 0x6e, 0x73,
+	0x77, 0x65, 0x72, 0x73, 0x22, 0x2b, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x41, 0x6e, 0x73, 0x77, 0x65,
+	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x62, 0x6f, 0x6f, 0x6b,
+	0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x62, 0x6f, 0x6f, 0x6b, 0x49,
+	0x64, 0x22, 0x3c, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x07, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e,
+	0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x52, 0x07, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x73, 0x22,
+	0x3f, 0x0a, 0x0b, 0x41, 0x62, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06,
+	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x22, 0x78, 0x0a, 0x06, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x62, 0x6f,
+	0x6f, 0x6b, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x62, 0x6f, 0x6f, 0x6b,
+	0x49, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x73, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70,
+	0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x73, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x54, 0x79, 0x70, 0x65, 0x12, 0x24, 0x0a, 0x0d, 0x73, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x41,
+	0x6e, 0x73, 0x77, 0x65, 0x72, 0x18, 0x04, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0d, 0x73, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x22, 0x2c, 0x0a, 0x04, 0x42, 0x6f,
+	0x6f, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02,
+	0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x22, 0x07, 0x0a, 0x05, 0x45, 0x6d, 0x70, 0x74,
+	0x79, 0x32, 0xfb, 0x02, 0x0a, 0x0c, 0x49, 0x65, 0x6c, 0x74, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x12, 0x3a, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b,
+	0x12, 0x18, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42,
+	0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x69, 0x65, 0x6c,
+	0x74, 0x73, 0x2e, 0x41, 0x62, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3a,
+	0x0a, 0x0a, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x12, 0x18, 0x2e, 0x69,
+	0x65, 0x6c, 0x74, 0x73, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6f, 0x6f, 0x6b, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x41,
+	0x62, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x35, 0x0a, 0x0a, 0x47, 0x65,
+	0x74, 0x41, 0x6c, 0x6c, 0x42, 0x6f, 0x6f, 0x6b, 0x12, 0x0c, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73,
+	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x19, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x47,
+	0x65, 0x74, 0x41, 0x6c, 0x6c, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x3e, 0x0a, 0x0c, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x6e, 0x73, 0x77, 0x65,
+	0x72, 0x12, 0x1a, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e,
+	0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x41, 0x62, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x3c, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x6e, 0x73, 0x77, 0x65,
+	0x72, 0x12, 0x18, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x69, 0x65,
+	0x6c, 0x74, 0x73, 0x2e, 0x41, 0x62, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x3e, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x12, 0x17, 0x2e, 0x69,
+	0x65, 0x6c, 0x74, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x69, 0x65, 0x6c, 0x74, 0x73, 0x2e, 0x47, 0x65,
+	0x74, 0x41, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42,
+	0x0c, 0x5a, 0x0a, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -155,19 +619,39 @@ func file_proto_ielts_proto_rawDescGZIP() []byte {
 	return file_proto_ielts_proto_rawDescData
 }
 
-var file_proto_ielts_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_ielts_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_ielts_proto_goTypes = []any{
-	(*CreateBookRequest)(nil),  // 0: ielts.CreateBookRequest
-	(*CreateBookResponse)(nil), // 1: ielts.CreateBookResponse
+	(*CreateBookRequest)(nil),   // 0: ielts.CreateBookRequest
+	(*DeleteBookRequest)(nil),   // 1: ielts.DeleteBookRequest
+	(*GetAllBookResponse)(nil),  // 2: ielts.GetAllBookResponse
+	(*CreateAnswerRequest)(nil), // 3: ielts.CreateAnswerRequest
+	(*GetAnswerRequest)(nil),    // 4: ielts.GetAnswerRequest
+	(*GetAnswerResponse)(nil),   // 5: ielts.GetAnswerResponse
+	(*AbsResponse)(nil),         // 6: ielts.AbsResponse
+	(*Answer)(nil),              // 7: ielts.Answer
+	(*Book)(nil),                // 8: ielts.Book
+	(*Empty)(nil),               // 9: ielts.Empty
 }
 var file_proto_ielts_proto_depIdxs = []int32{
-	0, // 0: ielts.IeltsService.CreateBook:input_type -> ielts.CreateBookRequest
-	1, // 1: ielts.IeltsService.CreateBook:output_type -> ielts.CreateBookResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	8, // 0: ielts.GetAllBookResponse.books:type_name -> ielts.Book
+	7, // 1: ielts.GetAnswerResponse.answers:type_name -> ielts.Answer
+	0, // 2: ielts.IeltsService.CreateBook:input_type -> ielts.CreateBookRequest
+	1, // 3: ielts.IeltsService.DeleteBook:input_type -> ielts.DeleteBookRequest
+	9, // 4: ielts.IeltsService.GetAllBook:input_type -> ielts.Empty
+	3, // 5: ielts.IeltsService.CreateAnswer:input_type -> ielts.CreateAnswerRequest
+	1, // 6: ielts.IeltsService.DeleteAnswer:input_type -> ielts.DeleteBookRequest
+	4, // 7: ielts.IeltsService.GetAnswer:input_type -> ielts.GetAnswerRequest
+	6, // 8: ielts.IeltsService.CreateBook:output_type -> ielts.AbsResponse
+	6, // 9: ielts.IeltsService.DeleteBook:output_type -> ielts.AbsResponse
+	2, // 10: ielts.IeltsService.GetAllBook:output_type -> ielts.GetAllBookResponse
+	6, // 11: ielts.IeltsService.CreateAnswer:output_type -> ielts.AbsResponse
+	6, // 12: ielts.IeltsService.DeleteAnswer:output_type -> ielts.AbsResponse
+	5, // 13: ielts.IeltsService.GetAnswer:output_type -> ielts.GetAnswerResponse
+	8, // [8:14] is the sub-list for method output_type
+	2, // [2:8] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_ielts_proto_init() }
@@ -189,7 +673,103 @@ func file_proto_ielts_proto_init() {
 			}
 		}
 		file_proto_ielts_proto_msgTypes[1].Exporter = func(v any, i int) any {
-			switch v := v.(*CreateBookResponse); i {
+			switch v := v.(*DeleteBookRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[2].Exporter = func(v any, i int) any {
+			switch v := v.(*GetAllBookResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[3].Exporter = func(v any, i int) any {
+			switch v := v.(*CreateAnswerRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*GetAnswerRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*GetAnswerResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*AbsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*Answer); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*Book); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_ielts_proto_msgTypes[9].Exporter = func(v any, i int) any {
+			switch v := v.(*Empty); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -207,7 +787,7 @@ func file_proto_ielts_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_ielts_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -11,10 +11,29 @@ service IeltsService {
   rpc CreateAnswer(CreateAnswerRequest) returns(AbsResponse);
   rpc DeleteAnswer(DeleteBookRequest) returns(AbsResponse);
   rpc GetAnswer(GetAnswerRequest) returns(GetAnswerResponse);
+  rpc CreateExam(CreateExamRequest)returns(CreateExamResponse);
+  rpc GetExamByUserId(GetExamByUserIdRequest) returns(GetExamByUserIdResponse);
+  rpc CreateAttemptInline(CreateInlineAttemptRequest) returns(AbsResponse);
+  rpc CreateAttemptOutline(CreateOutlineAttemptRequest) returns(AbsResponse);
 }
 
 message CreateBookRequest {
   string name = 1;
+}
+message CreateExamResponse{
+  string examId = 1;
+}
+
+message GetExamByUserIdResponse{
+
+}
+
+message CreateExamRequest {
+  int32 userId = 1;
+  int32 bookId = 2;
+}
+message GetExamByUserIdRequest{
+  int32 userId = 1;
 }
 
 message DeleteBookRequest {
@@ -56,5 +75,19 @@ message Book {
   string title = 2;
 }
 
+message CreateInlineAttemptRequest{
+  string examId = 1;
+  repeated string userAnswer = 2;
+  string sectionType = 3;
+}
 
+message CreateOutlineAttemptRequest{
+  string examId = 1;
+  repeated QuestionUserAnswer Qua = 2;
+}
+
+message QuestionUserAnswer{
+  string question = 1;
+  string userAnswer = 2;
+}
 message Empty {}
