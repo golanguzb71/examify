@@ -4,15 +4,57 @@ package ielts;
 
 option go_package = "./proto/pb";
 
-service IeltsService{
-  rpc CreateBook(CreateBookRequest) returns (CreateBookResponse);
+service IeltsService {
+  rpc CreateBook(CreateBookRequest) returns (AbsResponse);
+  rpc DeleteBook(DeleteBookRequest) returns (AbsResponse);
+  rpc GetAllBook(Empty) returns (GetAllBookResponse);
+  rpc CreateAnswer(CreateAnswerRequest) returns(AbsResponse);
+  rpc DeleteAnswer(DeleteBookRequest) returns(AbsResponse);
+  rpc GetAnswer(GetAnswerRequest) returns(GetAnswerResponse);
 }
 
 message CreateBookRequest {
   string name = 1;
 }
 
-message CreateBookResponse {
+message DeleteBookRequest {
+  string bookId = 1;
+}
+
+message GetAllBookResponse {
+  repeated Book books = 1;
+}
+
+message CreateAnswerRequest{
+  string bookId = 1;
+  string sectionType = 2;
+  repeated string answers = 3;
+}
+
+message GetAnswerRequest{
+  string book_id = 1;
+}
+
+message GetAnswerResponse{
+  repeated Answer answers = 1;
+}
+
+message AbsResponse {
   int32 status = 1;
   string message = 2;
 }
+
+message Answer {
+  int32 id = 1;
+  int32 bookId = 2;
+  string sectionType = 3;
+  repeated string sectionAnswer = 4;
+}
+
+message Book {
+  int32 id = 1;
+  string title = 2;
+}
+
+
+message Empty {}

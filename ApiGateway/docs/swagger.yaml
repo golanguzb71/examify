@@ -1,4 +1,35 @@
 definitions:
+  models.CreateAnswer:
+    properties:
+      answers:
+        items:
+          type: string
+        type: array
+      sectionType:
+        type: string
+    required:
+    - answers
+    type: object
+  pb.Answer:
+    properties:
+      bookId:
+        type: integer
+      id:
+        type: integer
+      sectionAnswer:
+        items:
+          type: string
+        type: array
+      sectionType:
+        type: string
+    type: object
+  pb.GetAnswerResponse:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/pb.Answer'
+        type: array
+    type: object
   utils.AbsResponse:
     properties:
       message:
@@ -37,16 +68,41 @@ paths:
             $ref: '#/definitions/utils.AbsResponse'
       summary: User login via authorization code
       tags:
-      - Auth
-  /api/ielts/answer/create:
+      - auth
+  /api/ielts/answer/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the answer associated with a specific book ID via gRPC.
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Answer found
+          schema:
+            $ref: '#/definitions/pb.GetAnswerResponse'
+        "502":
+          description: Error while gRPC connection
+          schema:
+            type: string
+      summary: Get answer by book ID
+      tags:
+      - ielts-answer
+  /api/ielts/answer/create/{bookId}:
     post:
       consumes:
       - application/json
-      description: Create a new answer for an IELTS book
+      description: Create a new answer for a specified IELTS book
       parameters:
       - description: ID of the book
         in: path
-        name: book_id
+        name: bookId
         required: true
         type: string
       - description: Answer content
@@ -54,28 +110,25 @@ paths:
         name: answer
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/models.CreateAnswer'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Answer created successfully
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
         "400":
-          description: Bad Request
+          description: Invalid input
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
         "500":
-          description: Internal Server Error
+          description: Internal server error
           schema:
-            additionalProperties: true
-            type: object
-      summary: Create a new answer
+            $ref: '#/definitions/utils.AbsResponse'
+      summary: Create a new answer for a book
       tags:
-      - IELTS
+      - ielts-answer
   /api/ielts/answer/delete/{id}:
     delete:
       consumes:
@@ -91,28 +144,44 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Answer deleted successfully
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
         "400":
-          description: Bad Request
+          description: Invalid input
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
         "500":
-          description: Internal Server Error
+          description: Internal server error
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
       summary: Delete an answer
       tags:
-      - IELTS
+      - ielts-answer
+  /api/ielts/book/books:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all IELTS books
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of books
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      summary: Get all IELTS books
+      tags:
+      - ielts-book
   /api/ielts/book/create/{name}:
     post:
       consumes:
       - application/json
-      description: Create a new book for IELTS
+      description: Create a new book for IELTS exam preparation
       parameters:
       - description: Name of the book
         in: path
@@ -123,20 +192,20 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Book created successfully
           schema:
             $ref: '#/definitions/utils.AbsResponse'
         "400":
-          description: Bad Request
+          description: Invalid input
           schema:
             $ref: '#/definitions/utils.AbsResponse'
         "500":
-          description: Internal Server Error
+          description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
       summary: Create a new IELTS book
       tags:
-      - IELTS
+      - ielts-book
   /api/ielts/book/delete/{id}:
     delete:
       consumes:
@@ -152,44 +221,18 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Book deleted successfully
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
         "400":
-          description: Bad Request
+          description: Invalid input
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
         "500":
-          description: Internal Server Error
+          description: Internal server error
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/utils.AbsResponse'
       summary: Delete an IELTS book
       tags:
-      - IELTS
-  /api/ielts/books:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve a list of all IELTS books
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              additionalProperties: true
-              type: object
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Get all IELTS books
-      tags:
-      - IELTS
+      - ielts-book
 swagger: "2.0"

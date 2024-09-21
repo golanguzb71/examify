@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "User login via authorization code",
                 "parameters": [
@@ -59,9 +59,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ielts/answer/create": {
+        "/api/ielts/answer/create/{bookId}": {
             "post": {
-                "description": "Create a new answer for an IELTS book",
+                "description": "Create a new answer for a specified IELTS book",
                 "consumes": [
                     "application/json"
                 ],
@@ -69,14 +69,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IELTS"
+                    "ielts-answer"
                 ],
-                "summary": "Create a new answer",
+                "summary": "Create a new answer for a book",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "ID of the book",
-                        "name": "book_id",
+                        "name": "bookId",
                         "in": "path",
                         "required": true
                     },
@@ -86,30 +86,27 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.CreateAnswer"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Answer created successfully",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid input",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     }
                 }
@@ -125,7 +122,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IELTS"
+                    "ielts-answer"
                 ],
                 "summary": "Delete an answer",
                 "parameters": [
@@ -139,32 +136,29 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Answer deleted successfully",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid input",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     }
                 }
             }
         },
-        "/api/ielts/book/create/{name}": {
-            "post": {
-                "description": "Create a new book for IELTS",
+        "/api/ielts/answer/{id}": {
+            "get": {
+                "description": "Retrieve the answer associated with a specific book ID via gRPC.",
                 "consumes": [
                     "application/json"
                 ],
@@ -172,7 +166,74 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IELTS"
+                    "ielts-answer"
+                ],
+                "summary": "Get answer by book ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Answer found",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAnswerResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Error while gRPC connection",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/book/books": {
+            "get": {
+                "description": "Retrieve a list of all IELTS books",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-book"
+                ],
+                "summary": "Get all IELTS books",
+                "responses": {
+                    "200": {
+                        "description": "List of books",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/book/create/{name}": {
+            "post": {
+                "description": "Create a new book for IELTS exam preparation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-book"
                 ],
                 "summary": "Create a new IELTS book",
                 "parameters": [
@@ -186,19 +247,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Book created successfully",
                         "schema": {
                             "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid input",
                         "schema": {
                             "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/utils.AbsResponse"
                         }
@@ -216,7 +277,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IELTS"
+                    "ielts-book"
                 ],
                 "summary": "Delete an IELTS book",
                 "parameters": [
@@ -230,58 +291,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Book deleted successfully",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid input",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/api/ielts/books": {
-            "get": {
-                "description": "Retrieve a list of all IELTS books",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "IELTS"
-                ],
-                "summary": "Get all IELTS books",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "additionalProperties": true
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/utils.AbsResponse"
                         }
                     }
                 }
@@ -289,6 +313,54 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.CreateAnswer": {
+            "type": "object",
+            "required": [
+                "answers"
+            ],
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sectionType": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.Answer": {
+            "type": "object",
+            "properties": {
+                "bookId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "sectionAnswer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sectionType": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAnswerResponse": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.Answer"
+                    }
+                }
+            }
+        },
         "utils.AbsResponse": {
             "type": "object",
             "properties": {

@@ -8,7 +8,7 @@ import (
 // Login godoc
 // @Summary User login via authorization code
 // @Description Validate the authorization code and log in the user
-// @Tags Auth
+// @Tags auth
 // @Accept  json
 // @Produce  json
 // @Param code path string true "Authorization Code"

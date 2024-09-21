@@ -5,17 +5,5 @@ package user;
 option go_package = "./proto/pb";
 
 service UserService {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
-}
 
-message CreateUserRequest {
-  string name = 1;
-  string surname = 2;
-  string  phoneNumber = 3;
 }
-
-message CreateUserResponse {
-  string status = 1;
-  string message = 2;
-}
-
