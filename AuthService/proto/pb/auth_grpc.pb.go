@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	ValidateCode(ctx context.Context, in *ValidateCodeRequest, opts ...grpc.CallOption) (*ValidateCodeResponse, error)
-	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type authServiceClient struct {
@@ -49,9 +49,9 @@ func (c *authServiceClient) ValidateCode(ctx context.Context, in *ValidateCodeRe
 	return out, nil
 }
 
-func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
+func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ValidateTokenResponse)
+	out := new(User)
 	err := c.cc.Invoke(ctx, AuthService_ValidateToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateToken
 // for forward compatibility.
 type AuthServiceServer interface {
 	ValidateCode(context.Context, *ValidateCodeRequest) (*ValidateCodeResponse, error)
-	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	ValidateToken(context.Context, *ValidateTokenRequest) (*User, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -78,7 +78,7 @@ type UnimplementedAuthServiceServer struct{}
 func (UnimplementedAuthServiceServer) ValidateCode(context.Context, *ValidateCodeRequest) (*ValidateCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateCode not implemented")
 }
-func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error) {
+func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateTokenRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}

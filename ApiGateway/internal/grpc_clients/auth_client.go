@@ -20,11 +20,11 @@ func NewAuthClient(addr string) (*AuthClient, error) {
 	return &AuthClient{client: client}, nil
 }
 
-func (c *AuthClient) ValidateCode(code string) (*pb.ValidateResponse, error) {
+func (c *AuthClient) ValidateCode(code string) (*pb.ValidateCodeResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	req := &pb.ValidateRequest{Code: code}
+	req := &pb.ValidateCodeRequest{Code: code}
 	resp, err := c.client.ValidateCode(ctx, req)
 	if err != nil {
 		return resp, err
@@ -32,6 +32,17 @@ func (c *AuthClient) ValidateCode(code string) (*pb.ValidateResponse, error) {
 	return resp, nil
 }
 
-func (c *AuthClient) ValidateToken(token, requiredRoles string) {
+func (c *AuthClient) ValidateToken(token string, requiredRoles []string) (*pb.User, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second)
+	defer cancelFunc()
 
+	req := &pb.ValidateTokenRequest{
+		Token:         token,
+		RequiredRoles: requiredRoles,
+	}
+	resp, err := c.client.ValidateToken(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, err
 }

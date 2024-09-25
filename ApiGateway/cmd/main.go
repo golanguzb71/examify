@@ -10,6 +10,14 @@ import (
 	"log"
 )
 
+// @title Examify Swagger
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
 func main() {
 	router := gin.Default()
 
@@ -22,7 +30,7 @@ func main() {
 	handlers.InitIeltsClient(grpcClients.IeltsClient)
 	handlers.InitUserClient(grpcClients.UserClient)
 	handlers.InitAuthClient(grpcClients.AuthClient)
-	routes.SetUpRoutes(router)
+	routes.SetUpRoutes(router, grpcClients.AuthClient)
 
 	port := cfg.Server.Port
 	log.Printf("Starting Api Gateway on port %s", port)

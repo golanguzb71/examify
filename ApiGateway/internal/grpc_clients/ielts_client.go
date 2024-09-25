@@ -104,3 +104,46 @@ func (c *IeltsClient) GetAnswer(bookId string) (*pb.GetAnswerResponse, error) {
 	}
 	return answers, nil
 }
+
+func (c *IeltsClient) CreateExam(userId, bookId int32) (*pb.CreateExamResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	req := &pb.CreateExamRequest{
+		UserId: userId,
+		BookId: bookId,
+	}
+	response, err := c.client.CreateExam(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *IeltsClient) GetExamByUserId(userId, page, size int32) (*pb.GetExamByUserIdResponse, error) {
+	return nil, nil
+}
+
+func (c *IeltsClient) CreateAttemptInline(userId int64, examId string, userAnswer []string, sectionType string) (*pb.AbsResponse, error) {
+	return nil, nil
+}
+
+func (c *IeltsClient) CreateAttemptOutline(userId int64, examId string, userAnswer *pb.QuestionUserAnswer) (*pb.AbsResponse, error) {
+	return nil, nil
+}
+func (c *IeltsClient) GetTopExamResult(dataframe string, page, size int) (*pb.GetTopExamResult, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	req := &pb.GetTopExamRequest{
+		Dataframe: dataframe,
+		PageRequest: &pb.PageRequest{
+			Page: int32(page),
+			Size: int32(size),
+		},
+	}
+	list, err := c.client.GetTopExamResultList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}

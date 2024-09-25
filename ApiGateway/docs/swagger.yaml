@@ -30,6 +30,40 @@ definitions:
           $ref: '#/definitions/pb.Answer'
         type: array
     type: object
+  pb.GetTopExamResult:
+    properties:
+      bookName:
+        type: string
+      createdAt:
+        type: string
+      listening:
+        type: integer
+      overall:
+        type: integer
+      reading:
+        type: integer
+      speaking:
+        type: integer
+      user:
+        $ref: '#/definitions/pb.User'
+      writing:
+        type: integer
+    type: object
+  pb.User:
+    properties:
+      chatId:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phoneNumber:
+        type: string
+      role:
+        type: string
+      surname:
+        type: string
+    type: object
   utils.AbsResponse:
     properties:
       message:
@@ -39,6 +73,10 @@ definitions:
     type: object
 info:
   contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Examify Swagger
 paths:
   /api/auth/login/{code}:
     post:
@@ -91,6 +129,8 @@ paths:
           description: Error while gRPC connection
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: ROLE_ADMIN
       tags:
       - ielts-answer
@@ -126,6 +166,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
       summary: ROLE_ADMIN
       tags:
       - ielts-answer
@@ -155,6 +197,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
       summary: ROLE_ADMIN
       tags:
       - ielts-answer
@@ -174,6 +218,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
       summary: ROLE_ADMIN
       tags:
       - ielts-book
@@ -203,6 +249,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
       summary: ROLE_ADMIN
       tags:
       - ielts-book
@@ -232,7 +280,51 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
       summary: ROLE_ADMIN
       tags:
       - ielts-book
+  /api/ielts/exam/result/top-exam-result/{dataframe}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve top exam results based on the specified dataframe (MONTHLY,
+        DAILY, or WEEKLY)
+      parameters:
+      - description: The timeframe for which to retrieve top exam results (MONTHLY,
+          DAILY, WEEKLY)
+        in: path
+        name: dataframe
+        required: true
+        type: string
+      - description: The page number for pagination
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: The number of results per page
+        in: query
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with exam results
+          schema:
+            $ref: '#/definitions/pb.GetTopExamResult'
+        "400":
+          description: Bad request with error message
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      summary: ALL
+      tags:
+      - ielts-exam
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

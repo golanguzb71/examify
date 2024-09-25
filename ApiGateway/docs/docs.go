@@ -10,6 +10,10 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -61,6 +65,11 @@ const docTemplate = `{
         },
         "/api/ielts/answer/create/{bookId}": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new answer for a specified IELTS book",
                 "consumes": [
                     "application/json"
@@ -114,6 +123,11 @@ const docTemplate = `{
         },
         "/api/ielts/answer/delete/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete an answer by its ID",
                 "consumes": [
                     "application/json"
@@ -158,6 +172,11 @@ const docTemplate = `{
         },
         "/api/ielts/answer/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve the answer associated with a specific book ID via gRPC.",
                 "consumes": [
                     "application/json"
@@ -196,6 +215,11 @@ const docTemplate = `{
         },
         "/api/ielts/book/books": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of all IELTS books",
                 "consumes": [
                     "application/json"
@@ -225,6 +249,11 @@ const docTemplate = `{
         },
         "/api/ielts/book/create/{name}": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new book for IELTS exam preparation",
                 "consumes": [
                     "application/json"
@@ -269,6 +298,11 @@ const docTemplate = `{
         },
         "/api/ielts/book/delete/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete an IELTS book by its ID",
                 "consumes": [
                     "application/json"
@@ -304,6 +338,58 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/exam/result/top-exam-result/{dataframe}": {
+            "get": {
+                "description": "Retrieve top exam results based on the specified dataframe (MONTHLY, DAILY, or WEEKLY)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-exam"
+                ],
+                "summary": "ALL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The timeframe for which to retrieve top exam results (MONTHLY, DAILY, WEEKLY)",
+                        "name": "dataframe",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The number of results per page",
+                        "name": "size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with exam results",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetTopExamResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request with error message",
                         "schema": {
                             "$ref": "#/definitions/utils.AbsResponse"
                         }
@@ -361,6 +447,58 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetTopExamResult": {
+            "type": "object",
+            "properties": {
+                "bookName": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "listening": {
+                    "type": "integer"
+                },
+                "overall": {
+                    "type": "integer"
+                },
+                "reading": {
+                    "type": "integer"
+                },
+                "speaking": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/pb.User"
+                },
+                "writing": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.User": {
+            "type": "object",
+            "properties": {
+                "chatId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                }
+            }
+        },
         "utils.AbsResponse": {
             "type": "object",
             "properties": {
@@ -372,6 +510,13 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -381,7 +526,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "Examify Swagger",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

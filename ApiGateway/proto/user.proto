@@ -3,48 +3,34 @@ syntax = "proto3";
 package user;
 
 option go_package = "./proto/pb";
-import "proto/ielts.proto";
+
+import "proto/common.proto";
 
 service UserService {
-  rpc CreateUser (CreateUserRequest) returns (ielts.AbsResponse);
-  rpc GetUserByChatIdOrPhone(GetUserByChatIdOrPhoneRequest) returns (User);
-  rpc GetAllUsers(PageRequest) returns(GetAllUserResponse);
-  rpc UpdateInformation(UpdateInformationRequest) returns (ielts.AbsResponse);
+  rpc CreateUser(CreateUserRequest) returns (common.AbsResponse);
+  rpc GetUserByChatIdOrPhone(GetUserByChatIdOrPhoneRequest) returns (common.User);
+  rpc GetAllUsers(common.PageRequest) returns (GetAllUserResponse);
+  rpc UpdateInformation(UpdateInformationRequest) returns (common.AbsResponse);
 }
 
 message CreateUserRequest {
-  string name = 1 ;
+  string name = 1;
   string surname = 2;
   string chatId = 3;
   string phoneNumber = 4;
 }
 
-
-message GetUserByChatIdOrPhoneRequest{
+message GetUserByChatIdOrPhoneRequest {
   optional string chatId = 1;
   optional string phoneNumber = 2;
 }
 
-message GetAllUserResponse{
-  repeated User users = 1;
+message GetAllUserResponse {
+  repeated common.User users = 1;
   int32 totalPages = 2;
 }
 
 message UpdateInformationRequest {
-  User currentUser = 1;
-  User editUser = 2;
-}
-
-message User{
-  int64 id = 1;
-  string name = 2;
-  string surname = 3;
-  string phoneNumber = 4;
-  string role = 5;
-  string chatId = 6;
-}
-
-message PageRequest{
-  int32 page = 1;
-  int32 size = 2;
+  common.User currentUser = 1;
+  common.User editUser = 2;
 }

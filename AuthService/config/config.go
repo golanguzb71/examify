@@ -11,7 +11,7 @@ type Config struct {
 	} `yaml:"server"`
 	Redis struct {
 		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
+		Port string `yaml:"port"`
 	} `yaml:"redis"`
 	Telegram struct {
 		BotToken string `yaml:"bot_token"`

@@ -4,36 +4,62 @@ package ielts;
 
 option go_package = "./proto/pb";
 
+import "proto/common.proto";
+
+
 service IeltsService {
-  rpc CreateBook(CreateBookRequest) returns (AbsResponse);
-  rpc DeleteBook(DeleteBookRequest) returns (AbsResponse);
+  rpc CreateBook(CreateBookRequest) returns (common.AbsResponse);
+  rpc DeleteBook(DeleteBookRequest) returns (common.AbsResponse);
   rpc GetAllBook(Empty) returns (GetAllBookResponse);
-  rpc CreateAnswer(CreateAnswerRequest) returns(AbsResponse);
-  rpc DeleteAnswer(DeleteBookRequest) returns(AbsResponse);
-  rpc GetAnswer(GetAnswerRequest) returns(GetAnswerResponse);
-  rpc CreateExam(CreateExamRequest)returns(CreateExamResponse);
-  rpc GetExamByUserId(GetExamByUserIdRequest) returns(GetExamByUserIdResponse);
-  rpc CreateAttemptInline(CreateInlineAttemptRequest) returns(AbsResponse);
-  rpc CreateAttemptOutline(CreateOutlineAttemptRequest) returns(AbsResponse);
+  rpc CreateAnswer(CreateAnswerRequest) returns (common.AbsResponse);
+  rpc DeleteAnswer(DeleteBookRequest) returns (common.AbsResponse);
+  rpc GetAnswer(GetAnswerRequest) returns (GetAnswerResponse);
+  rpc CreateExam(CreateExamRequest) returns (CreateExamResponse);
+  rpc GetExamByUserId(GetExamByUserIdRequest) returns (GetExamByUserIdResponse);
+  rpc GetTopExamResultList(GetTopExamRequest) returns (GetTopExamResult);
+  rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
+  rpc CreateAttemptOutline(CreateOutlineAttemptRequest) returns (common.AbsResponse);
 }
 
 message CreateBookRequest {
   string name = 1;
 }
-message CreateExamResponse{
+
+message GetTopExamRequest{
+  string dataframe = 1;
+  common.PageRequest pageRequest = 2;
+}
+
+message GetTopExamResult{
+  repeated Result results = 1;
+}
+
+message Result {
+  common.User user = 1;
+  string bookName = 2;
+  string createdAt = 3;
+  string overall = 4;
+  string speaking = 5;
+  string writing = 6;
+  string listening = 7;
+  string reading = 8;
+  string examId = 9;
+}
+
+message CreateExamResponse {
   string examId = 1;
 }
 
-message GetExamByUserIdResponse{
-
-}
+message GetExamByUserIdResponse {}
 
 message CreateExamRequest {
   int32 userId = 1;
   int32 bookId = 2;
 }
-message GetExamByUserIdRequest{
+
+message GetExamByUserIdRequest {
   int32 userId = 1;
+  common.PageRequest pageRequest = 2;
 }
 
 message DeleteBookRequest {
@@ -44,23 +70,18 @@ message GetAllBookResponse {
   repeated Book books = 1;
 }
 
-message CreateAnswerRequest{
+message CreateAnswerRequest {
   string bookId = 1;
   string sectionType = 2;
   repeated string answers = 3;
 }
 
-message GetAnswerRequest{
+message GetAnswerRequest {
   string book_id = 1;
 }
 
-message GetAnswerResponse{
+message GetAnswerResponse {
   repeated Answer answers = 1;
-}
-
-message AbsResponse {
-  int32 status = 1;
-  string message = 2;
 }
 
 message Answer {
@@ -75,19 +96,20 @@ message Book {
   string title = 2;
 }
 
-message CreateInlineAttemptRequest{
+message CreateInlineAttemptRequest {
   string examId = 1;
   repeated string userAnswer = 2;
   string sectionType = 3;
 }
 
-message CreateOutlineAttemptRequest{
+message CreateOutlineAttemptRequest {
   string examId = 1;
   repeated QuestionUserAnswer Qua = 2;
 }
 
-message QuestionUserAnswer{
+message QuestionUserAnswer {
   string question = 1;
   string userAnswer = 2;
 }
+
 message Empty {}

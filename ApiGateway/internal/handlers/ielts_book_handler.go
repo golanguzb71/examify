@@ -18,6 +18,7 @@ import (
 // @Failure 400 {object} utils.AbsResponse "Invalid input"
 // @Failure 500 {object} utils.AbsResponse "Internal server error"
 // @Router /api/ielts/book/create/{name} [post]
+// @Security Bearer
 func CreateIeltsBook(ctx *gin.Context) {
 	bookName := ctx.Param("name")
 	resp, err := ieltsClient.CreateBook(bookName)
@@ -39,6 +40,7 @@ func CreateIeltsBook(ctx *gin.Context) {
 // @Failure 400 {object} utils.AbsResponse "Invalid input"
 // @Failure 500 {object} utils.AbsResponse "Internal server error"
 // @Router /api/ielts/book/delete/{id} [delete]
+// @Security Bearer
 func DeleteIeltsBook(ctx *gin.Context) {
 	bookId := ctx.Param("id")
 	resp, err := ieltsClient.DeleteBook(bookId)
@@ -59,6 +61,7 @@ func DeleteIeltsBook(ctx *gin.Context) {
 // @Success 200 {object} utils.AbsResponse "List of books"
 // @Failure 500 {object} utils.AbsResponse "Internal server error"
 // @Router /api/ielts/book/books [get]  // Ensure this matches the route definition
+// @Security Bearer
 func GetAllBook(ctx *gin.Context) {
 	books, err := ieltsClient.GetBook()
 	if err != nil {
@@ -80,6 +83,7 @@ func GetAllBook(ctx *gin.Context) {
 // @Failure 400 {object} utils.AbsResponse "Invalid input"
 // @Failure 500 {object} utils.AbsResponse "Internal server error"
 // @Router /api/ielts/answer/create/{bookId} [post]
+// @Security Bearer
 func CreateAnswer(ctx *gin.Context) {
 	bookId := ctx.Param("bookId")
 	var req models.CreateAnswer
@@ -107,6 +111,7 @@ func CreateAnswer(ctx *gin.Context) {
 // @Failure 400 {object} utils.AbsResponse "Invalid input"
 // @Failure 500 {object} utils.AbsResponse "Internal server error"
 // @Router /api/ielts/answer/delete/{id} [delete]
+// @Security Bearer
 func DeleteAnswer(ctx *gin.Context) {
 	bookId := ctx.Param("id")
 	answer, err := ieltsClient.DeleteAnswer(bookId)
@@ -129,6 +134,7 @@ func DeleteAnswer(ctx *gin.Context) {
 // @Success 200 {object} pb.GetAnswerResponse "Answer found"
 // @Failure 502 {string} string "Error while gRPC connection"
 // @Router /api/ielts/answer/{id} [get]
+// @Security Bearer
 func GetAnswerByBookId(ctx *gin.Context) {
 	bookId := ctx.Param("id")
 	answer, err := ieltsClient.GetAnswer(bookId)

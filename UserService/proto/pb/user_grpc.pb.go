@@ -30,7 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*AbsResponse, error)
-	GetUserByChatIdOrPhone(ctx context.Context, in *GetUserByChatIdOrPhoneRequest, opts ...grpc.CallOption) (*User, error)
+	GetUserByChatIdOrPhone(ctx context.Context, in *GetUserByChatIdOrPhoneRequestOrId, opts ...grpc.CallOption) (*User, error)
 	GetAllUsers(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*GetAllUserResponse, error)
 	UpdateInformation(ctx context.Context, in *UpdateInformationRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 }
@@ -53,7 +53,7 @@ func (c *userServiceClient) CreateUser(ctx context.Context, in *CreateUserReques
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserByChatIdOrPhone(ctx context.Context, in *GetUserByChatIdOrPhoneRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *userServiceClient) GetUserByChatIdOrPhone(ctx context.Context, in *GetUserByChatIdOrPhoneRequestOrId, opts ...grpc.CallOption) (*User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(User)
 	err := c.cc.Invoke(ctx, UserService_GetUserByChatIdOrPhone_FullMethodName, in, out, cOpts...)
@@ -88,7 +88,7 @@ func (c *userServiceClient) UpdateInformation(ctx context.Context, in *UpdateInf
 // for forward compatibility.
 type UserServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*AbsResponse, error)
-	GetUserByChatIdOrPhone(context.Context, *GetUserByChatIdOrPhoneRequest) (*User, error)
+	GetUserByChatIdOrPhone(context.Context, *GetUserByChatIdOrPhoneRequestOrId) (*User, error)
 	GetAllUsers(context.Context, *PageRequest) (*GetAllUserResponse, error)
 	UpdateInformation(context.Context, *UpdateInformationRequest) (*AbsResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -104,7 +104,7 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserRequest) (*AbsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserByChatIdOrPhone(context.Context, *GetUserByChatIdOrPhoneRequest) (*User, error) {
+func (UnimplementedUserServiceServer) GetUserByChatIdOrPhone(context.Context, *GetUserByChatIdOrPhoneRequestOrId) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserByChatIdOrPhone not implemented")
 }
 func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *PageRequest) (*GetAllUserResponse, error) {
@@ -153,7 +153,7 @@ func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _UserService_GetUserByChatIdOrPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserByChatIdOrPhoneRequest)
+	in := new(GetUserByChatIdOrPhoneRequestOrId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func _UserService_GetUserByChatIdOrPhone_Handler(srv interface{}, ctx context.Co
 		FullMethod: UserService_GetUserByChatIdOrPhone_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserByChatIdOrPhone(ctx, req.(*GetUserByChatIdOrPhoneRequest))
+		return srv.(UserServiceServer).GetUserByChatIdOrPhone(ctx, req.(*GetUserByChatIdOrPhoneRequestOrId))
 	}
 	return interceptor(ctx, in, info, handler)
 }

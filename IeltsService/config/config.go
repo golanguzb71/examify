@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Server   ServerConfig   `yaml:"server"`
 	Database DatabaseConfig `yaml:"database"`
+	Grpc     GrpcConfig     `yaml:"grpc"`
 }
 
 type ServerConfig struct {
@@ -23,6 +24,12 @@ type DatabaseConfig struct {
 	Password string `yaml:"password"`
 	DBName   string `yaml:"dbname"`
 	SSLMode  string `yaml:"sslmode"`
+}
+
+type GrpcConfig struct {
+	UserService struct {
+		Address string `yaml:"address"`
+	} `yaml:"userService"`
 }
 
 func LoadConfig() (*Config, error) {
