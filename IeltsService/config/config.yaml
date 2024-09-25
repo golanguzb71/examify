@@ -8,3 +8,8 @@ database:
   password: "postgres"
   dbname: "ielts_database"
   sslmode: "disable"
+
+
+grpc:
+  userService:
+    address: "localhost:50052"

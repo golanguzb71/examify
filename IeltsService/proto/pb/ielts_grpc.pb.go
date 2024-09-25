@@ -19,12 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IeltsService_CreateBook_FullMethodName   = "/ielts.IeltsService/CreateBook"
-	IeltsService_DeleteBook_FullMethodName   = "/ielts.IeltsService/DeleteBook"
-	IeltsService_GetAllBook_FullMethodName   = "/ielts.IeltsService/GetAllBook"
-	IeltsService_CreateAnswer_FullMethodName = "/ielts.IeltsService/CreateAnswer"
-	IeltsService_DeleteAnswer_FullMethodName = "/ielts.IeltsService/DeleteAnswer"
-	IeltsService_GetAnswer_FullMethodName    = "/ielts.IeltsService/GetAnswer"
+	IeltsService_CreateBook_FullMethodName           = "/ielts.IeltsService/CreateBook"
+	IeltsService_DeleteBook_FullMethodName           = "/ielts.IeltsService/DeleteBook"
+	IeltsService_GetAllBook_FullMethodName           = "/ielts.IeltsService/GetAllBook"
+	IeltsService_CreateAnswer_FullMethodName         = "/ielts.IeltsService/CreateAnswer"
+	IeltsService_DeleteAnswer_FullMethodName         = "/ielts.IeltsService/DeleteAnswer"
+	IeltsService_GetAnswer_FullMethodName            = "/ielts.IeltsService/GetAnswer"
+	IeltsService_CreateExam_FullMethodName           = "/ielts.IeltsService/CreateExam"
+	IeltsService_GetExamByUserId_FullMethodName      = "/ielts.IeltsService/GetExamByUserId"
+	IeltsService_GetTopExamResultList_FullMethodName = "/ielts.IeltsService/GetTopExamResultList"
+	IeltsService_CreateAttemptInline_FullMethodName  = "/ielts.IeltsService/CreateAttemptInline"
+	IeltsService_CreateAttemptOutline_FullMethodName = "/ielts.IeltsService/CreateAttemptOutline"
 )
 
 // IeltsServiceClient is the client API for IeltsService service.
@@ -37,6 +42,11 @@ type IeltsServiceClient interface {
 	CreateAnswer(ctx context.Context, in *CreateAnswerRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	DeleteAnswer(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error)
+	CreateExam(ctx context.Context, in *CreateExamRequest, opts ...grpc.CallOption) (*CreateExamResponse, error)
+	GetExamByUserId(ctx context.Context, in *GetExamByUserIdRequest, opts ...grpc.CallOption) (*GetExamByUserIdResponse, error)
+	GetTopExamResultList(ctx context.Context, in *GetTopExamRequest, opts ...grpc.CallOption) (*GetTopExamResult, error)
+	CreateAttemptInline(ctx context.Context, in *CreateInlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	CreateAttemptOutline(ctx context.Context, in *CreateOutlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 }
 
 type ieltsServiceClient struct {
@@ -107,6 +117,56 @@ func (c *ieltsServiceClient) GetAnswer(ctx context.Context, in *GetAnswerRequest
 	return out, nil
 }
 
+func (c *ieltsServiceClient) CreateExam(ctx context.Context, in *CreateExamRequest, opts ...grpc.CallOption) (*CreateExamResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateExamResponse)
+	err := c.cc.Invoke(ctx, IeltsService_CreateExam_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) GetExamByUserId(ctx context.Context, in *GetExamByUserIdRequest, opts ...grpc.CallOption) (*GetExamByUserIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetExamByUserIdResponse)
+	err := c.cc.Invoke(ctx, IeltsService_GetExamByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) GetTopExamResultList(ctx context.Context, in *GetTopExamRequest, opts ...grpc.CallOption) (*GetTopExamResult, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTopExamResult)
+	err := c.cc.Invoke(ctx, IeltsService_GetTopExamResultList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) CreateAttemptInline(ctx context.Context, in *CreateInlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_CreateAttemptInline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) CreateAttemptOutline(ctx context.Context, in *CreateOutlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_CreateAttemptOutline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IeltsServiceServer is the server API for IeltsService service.
 // All implementations must embed UnimplementedIeltsServiceServer
 // for forward compatibility.
@@ -117,6 +177,11 @@ type IeltsServiceServer interface {
 	CreateAnswer(context.Context, *CreateAnswerRequest) (*AbsResponse, error)
 	DeleteAnswer(context.Context, *DeleteBookRequest) (*AbsResponse, error)
 	GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error)
+	CreateExam(context.Context, *CreateExamRequest) (*CreateExamResponse, error)
+	GetExamByUserId(context.Context, *GetExamByUserIdRequest) (*GetExamByUserIdResponse, error)
+	GetTopExamResultList(context.Context, *GetTopExamRequest) (*GetTopExamResult, error)
+	CreateAttemptInline(context.Context, *CreateInlineAttemptRequest) (*AbsResponse, error)
+	CreateAttemptOutline(context.Context, *CreateOutlineAttemptRequest) (*AbsResponse, error)
 	mustEmbedUnimplementedIeltsServiceServer()
 }
 
@@ -144,6 +209,21 @@ func (UnimplementedIeltsServiceServer) DeleteAnswer(context.Context, *DeleteBook
 }
 func (UnimplementedIeltsServiceServer) GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAnswer not implemented")
+}
+func (UnimplementedIeltsServiceServer) CreateExam(context.Context, *CreateExamRequest) (*CreateExamResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateExam not implemented")
+}
+func (UnimplementedIeltsServiceServer) GetExamByUserId(context.Context, *GetExamByUserIdRequest) (*GetExamByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExamByUserId not implemented")
+}
+func (UnimplementedIeltsServiceServer) GetTopExamResultList(context.Context, *GetTopExamRequest) (*GetTopExamResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopExamResultList not implemented")
+}
+func (UnimplementedIeltsServiceServer) CreateAttemptInline(context.Context, *CreateInlineAttemptRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptInline not implemented")
+}
+func (UnimplementedIeltsServiceServer) CreateAttemptOutline(context.Context, *CreateOutlineAttemptRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptOutline not implemented")
 }
 func (UnimplementedIeltsServiceServer) mustEmbedUnimplementedIeltsServiceServer() {}
 func (UnimplementedIeltsServiceServer) testEmbeddedByValue()                      {}
@@ -274,6 +354,96 @@ func _IeltsService_GetAnswer_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IeltsService_CreateExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateExamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).CreateExam(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_CreateExam_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).CreateExam(ctx, req.(*CreateExamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_GetExamByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetExamByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).GetExamByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_GetExamByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).GetExamByUserId(ctx, req.(*GetExamByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_GetTopExamResultList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTopExamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).GetTopExamResultList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_GetTopExamResultList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).GetTopExamResultList(ctx, req.(*GetTopExamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_CreateAttemptInline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateInlineAttemptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).CreateAttemptInline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_CreateAttemptInline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).CreateAttemptInline(ctx, req.(*CreateInlineAttemptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_CreateAttemptOutline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOutlineAttemptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).CreateAttemptOutline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_CreateAttemptOutline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).CreateAttemptOutline(ctx, req.(*CreateOutlineAttemptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IeltsService_ServiceDesc is the grpc.ServiceDesc for IeltsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +474,26 @@ var IeltsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAnswer",
 			Handler:    _IeltsService_GetAnswer_Handler,
+		},
+		{
+			MethodName: "CreateExam",
+			Handler:    _IeltsService_CreateExam_Handler,
+		},
+		{
+			MethodName: "GetExamByUserId",
+			Handler:    _IeltsService_GetExamByUserId_Handler,
+		},
+		{
+			MethodName: "GetTopExamResultList",
+			Handler:    _IeltsService_GetTopExamResultList_Handler,
+		},
+		{
+			MethodName: "CreateAttemptInline",
+			Handler:    _IeltsService_CreateAttemptInline_Handler,
+		},
+		{
+			MethodName: "CreateAttemptOutline",
+			Handler:    _IeltsService_CreateAttemptOutline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,6 +3,7 @@ package handlers
 import (
 	"apigateway/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Login godoc
@@ -20,9 +21,9 @@ func Login(ctx *gin.Context) {
 	code := ctx.Param("code")
 	resp, err := authClient.ValidateCode(code)
 	if err != nil {
-		utils.RespondError(ctx, resp.StatusCode, resp.Message)
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
 		return
 	}
-	utils.RespondSuccess(ctx, resp.StatusCode, resp.Message)
+	utils.RespondSuccess(ctx, http.StatusOK, resp.Token)
 	return
 }

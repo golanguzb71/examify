@@ -2,6 +2,7 @@ package server
 
 import (
 	"ielts-service/config"
+	client "ielts-service/internal/grpc_clients"
 	"ielts-service/internal/repository"
 	"ielts-service/internal/service"
 	"ielts-service/proto/pb"
@@ -17,13 +18,18 @@ func RunServer() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
+	userClient, err := client.NewUserClient(cfg.Grpc.UserService.Address)
+	if err != nil {
+		log.Fatalf("Failed to listen grpc service %v", err)
+	}
+
 	db, err := repository.NewPostgresDB(&cfg.Database)
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
 
-	repo := repository.NewPostgresBookRepository(db)
+	repo := repository.NewPostgresRepository(db, userClient)
 	ieltsService := service.NewIeltsService(repo)
 
 	lis, err := net.Listen("tcp", ":"+cfg.Server.Port)

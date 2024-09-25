@@ -2,32 +2,37 @@ package server
 
 import (
 	"authService/config"
+	client "authService/internal/grpc_clients"
+	database "authService/internal/repository"
 	"authService/internal/service"
+	"authService/internal/telegram"
 	"authService/proto/pb"
+	"fmt"
+	"google.golang.org/grpc"
 	"log"
 	"net"
-
-	"google.golang.org/grpc"
 )
 
-func RunServer() {
-	cfg, err := config.LoadConfig()
+func Run(cfg *config.Config) error {
+	database.ConnectRedis(cfg)
+	userClient, err := client.NewUserClient(cfg.GRPC.UserService.Address)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		return err
 	}
-
-	ieltsService := service.NewAuthService()
-
+	telegram.SetUserClient(userClient)
+	authService := service.NewAuthService(userClient)
 	lis, err := net.Listen("tcp", ":"+cfg.Server.Port)
 	if err != nil {
-		log.Fatalf("Failed to listen on port %s: %v", cfg.Server.Port, err)
+		return fmt.Errorf("failed to listen on port %s: %v", cfg.Server.Port, err)
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterAuthServiceServer(grpcServer, ieltsService)
+	pb.RegisterAuthServiceServer(grpcServer, authService)
 
 	log.Printf("Server listening on port %s", cfg.Server.Port)
 	if err = grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		return fmt.Errorf("failed to serve: %v", err)
 	}
+
+	return nil
 }

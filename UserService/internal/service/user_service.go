@@ -2,35 +2,31 @@ package service
 
 import (
 	"context"
-	"log"
+	"user-service/internal/repository"
 	"user-service/proto/pb"
 )
 
-type UserRepository interface {
-	CreateUser(name, surname, phoneNumber, role string) (int32, string, error)
-}
-
 type UserService struct {
 	pb.UnimplementedUserServiceServer
-	repo UserRepository
+	repo repository.UserRepository
 }
 
-func NewUserService(repo UserRepository) *UserService {
+func NewUserService(repo *repository.PostgresUserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	status, message, err := s.repo.CreateUser(req.Name, req.Surname, req.PhoneNumber, req.Role)
-	if err != nil {
-		log.Printf("Failed to create user: %v", err)
-		return &pb.CreateUserResponse{
-			Status:  500,
-			Message: "Internal server error",
-		}, err
-	}
+func (s *UserService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.AbsResponse, error) {
+	return s.repo.CreateUser(req.Name, req.Surname, req.PhoneNumber, "USER", req.ChatId)
+}
 
-	return &pb.CreateUserResponse{
-		Status:  status,
-		Message: message,
-	}, nil
+func (s *UserService) GetUserByChatIdOrPhone(ctx context.Context, req *pb.GetUserByChatIdOrPhoneRequestOrId) (*pb.User, error) {
+	return s.repo.GetUserByChatIdOrPhone(req.ChatId, req.PhoneNumber, req.Id)
+}
+
+func (s *UserService) GetAllUsers(ctx context.Context, req *pb.PageRequest) (*pb.GetAllUserResponse, error) {
+	return s.repo.GetAllUsers(req.Page, req.Size)
+}
+
+func (s *UserService) UpdateInformation(ctx context.Context, req *pb.UpdateInformationRequest) (*pb.AbsResponse, error) {
+	return s.repo.UpdateInformation(req)
 }

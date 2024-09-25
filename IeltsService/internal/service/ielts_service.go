@@ -10,10 +10,10 @@ import (
 
 type IeltsService struct {
 	pb.UnimplementedIeltsServiceServer
-	repo *repository.PostgresBookRepository
+	repo *repository.PostgresRepository
 }
 
-func NewIeltsService(repo *repository.PostgresBookRepository) *IeltsService {
+func NewIeltsService(repo *repository.PostgresRepository) *IeltsService {
 	return &IeltsService{repo: repo}
 }
 
@@ -103,4 +103,50 @@ func (s *IeltsService) GetAnswer(ctx context.Context, req *pb.GetAnswerRequest) 
 	}
 
 	return &pb.GetAnswerResponse{Answers: protoAnswers}, nil
+}
+
+func (s *IeltsService) CreateExam(ctx context.Context, req *pb.CreateExamRequest) (*pb.CreateExamResponse, error) {
+	examID, err := s.repo.CreateExam(req.UserId, req.BookId)
+	if err != nil {
+		log.Printf("Failed to create exam: %v", err)
+		return nil, err
+	}
+
+	return &pb.CreateExamResponse{
+		ExamId: *examID,
+	}, nil
+}
+
+func (s *IeltsService) GetExamByUserId(ctx context.Context, req *pb.GetExamByUserIdRequest) (*pb.GetExamByUserIdResponse, error) {
+	return s.repo.GetExamsByUserId(req.UserId, req.PageRequest.Page, req.PageRequest.Size)
+}
+
+func (s *IeltsService) GetTopExamResultList(ctx context.Context, req *pb.GetTopExamRequest) (*pb.GetTopExamResult, error) {
+	return s.repo.GetTopExamResults(req.Dataframe, req.PageRequest.Page, req.PageRequest.Size)
+}
+
+func (s *IeltsService) CreateAttemptInline(ctx context.Context, req *pb.CreateInlineAttemptRequest) (*pb.AbsResponse, error) {
+	err := s.repo.CreateAttemptInline(req.ExamId, req.UserAnswer, req.SectionType)
+	if err != nil {
+		log.Printf("Failed to create inline attempt: %v", err)
+		return nil, err
+	}
+
+	return &pb.AbsResponse{
+		Status:  http.StatusOK,
+		Message: "Inline attempt created successfully",
+	}, nil
+}
+
+func (s *IeltsService) CreateAttemptOutline(ctx context.Context, req *pb.CreateOutlineAttemptRequest) (*pb.AbsResponse, error) {
+	err := s.repo.CreateAttemptOutline(req.ExamId, req)
+	if err != nil {
+		log.Printf("Failed to create outline attempt: %v", err)
+		return nil, err
+	}
+
+	return &pb.AbsResponse{
+		Status:  http.StatusOK,
+		Message: "Outline attempt created successfully",
+	}, nil
 }
