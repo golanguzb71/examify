@@ -117,6 +117,7 @@ func (c *IeltsClient) CreateExam(userId, bookId int32) (*pb.CreateExamResponse, 
 	if err != nil {
 		return nil, err
 	}
+
 	return response, nil
 }
 
@@ -131,6 +132,7 @@ func (c *IeltsClient) CreateAttemptInline(userId int64, examId string, userAnswe
 func (c *IeltsClient) CreateAttemptOutline(userId int64, examId string, userAnswer *pb.QuestionUserAnswer) (*pb.AbsResponse, error) {
 	return nil, nil
 }
+
 func (c *IeltsClient) GetTopExamResult(dataframe string, page, size int) (*pb.GetTopExamResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -146,4 +148,18 @@ func (c *IeltsClient) GetTopExamResult(dataframe string, page, size int) (*pb.Ge
 		return nil, err
 	}
 	return list, nil
+}
+
+func (c *IeltsClient) UpdateBookById(id, name string) (*pb.AbsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	req := &pb.UpdateBookRequest{
+		Id:   id,
+		Name: name,
+	}
+	resp, err := c.client.UpdateBookById(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

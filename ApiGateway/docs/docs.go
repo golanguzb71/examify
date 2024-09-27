@@ -170,6 +170,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/ielts/answer/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update answer associated with a specific ID via gRPC.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-answer"
+                ],
+                "summary": "ROLE_ADMIN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Answer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Answer New Name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SuccessFull",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ielts/answer/{id}": {
             "get": {
                 "security": [
@@ -215,11 +265,6 @@ const docTemplate = `{
         },
         "/api/ielts/book/books": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieve a list of all IELTS books",
                 "consumes": [
                     "application/json"
@@ -230,7 +275,7 @@ const docTemplate = `{
                 "tags": [
                     "ielts-book"
                 ],
-                "summary": "ROLE_ADMIN",
+                "summary": "ALL",
                 "responses": {
                     "200": {
                         "description": "List of books",
@@ -332,6 +377,105 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/book/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve the answer associated with a specific book ID via gRPC.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-book"
+                ],
+                "summary": "ROLE_ADMIN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book New Name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SuccessFull",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/exam/create": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "This endpoint creates a new exam for the specified user and book.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-exam"
+                ],
+                "summary": "USER",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "bookId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exam created successfully, returning the exam ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input parameters",
                         "schema": {
                             "$ref": "#/definitions/utils.AbsResponse"
                         }
@@ -450,29 +594,46 @@ const docTemplate = `{
         "pb.GetTopExamResult": {
             "type": "object",
             "properties": {
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.Result"
+                    }
+                },
+                "totalPageCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.Result": {
+            "type": "object",
+            "properties": {
                 "bookName": {
                     "type": "string"
                 },
                 "createdAt": {
                     "type": "string"
                 },
+                "examId": {
+                    "type": "string"
+                },
                 "listening": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "overall": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "reading": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "speaking": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "user": {
                     "$ref": "#/definitions/pb.User"
                 },
                 "writing": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },

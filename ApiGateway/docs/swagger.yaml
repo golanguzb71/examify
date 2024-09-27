@@ -32,22 +32,33 @@ definitions:
     type: object
   pb.GetTopExamResult:
     properties:
+      results:
+        items:
+          $ref: '#/definitions/pb.Result'
+        type: array
+      totalPageCount:
+        type: integer
+    type: object
+  pb.Result:
+    properties:
       bookName:
         type: string
       createdAt:
         type: string
+      examId:
+        type: string
       listening:
-        type: integer
+        type: string
       overall:
-        type: integer
+        type: string
       reading:
-        type: integer
+        type: string
       speaking:
-        type: integer
+        type: string
       user:
         $ref: '#/definitions/pb.User'
       writing:
-        type: integer
+        type: string
     type: object
   pb.User:
     properties:
@@ -202,6 +213,38 @@ paths:
       summary: ROLE_ADMIN
       tags:
       - ielts-answer
+  /api/ielts/answer/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update answer associated with a specific ID via gRPC.
+      parameters:
+      - description: Answer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Answer New Name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SuccessFull
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "502":
+          description: Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: ROLE_ADMIN
+      tags:
+      - ielts-answer
   /api/ielts/book/books:
     get:
       consumes:
@@ -218,9 +261,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.AbsResponse'
-      security:
-      - Bearer: []
-      summary: ROLE_ADMIN
+      summary: ALL
       tags:
       - ielts-book
   /api/ielts/book/create/{name}:
@@ -285,6 +326,69 @@ paths:
       summary: ROLE_ADMIN
       tags:
       - ielts-book
+  /api/ielts/book/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Retrieve the answer associated with a specific book ID via gRPC.
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book New Name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SuccessFull
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "502":
+          description: Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: ROLE_ADMIN
+      tags:
+      - ielts-book
+  /api/ielts/exam/create:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint creates a new exam for the specified user and book.
+      parameters:
+      - description: Book ID
+        in: query
+        name: bookId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Exam created successfully, returning the exam ID
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "400":
+          description: Invalid input parameters
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: USER
+      tags:
+      - ielts-exam
   /api/ielts/exam/result/top-exam-result/{dataframe}:
     get:
       consumes:

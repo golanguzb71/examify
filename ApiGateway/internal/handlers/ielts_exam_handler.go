@@ -53,3 +53,38 @@ func GetTopExamResult(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 	return
 }
+
+// CreateExam godoc
+// @Summary USER
+// @Description This endpoint creates a new exam for the specified user and book.
+// @Tags ielts-exam
+// @Accept  json
+// @Produce  json
+// @Param  bookId  query  int  true  "Book ID"
+// @Success 200 {object} utils.AbsResponse "Exam created successfully, returning the exam ID"
+// @Failure 400 {object} utils.AbsResponse "Invalid input parameters"
+// @Failure 500 {object} utils.AbsResponse "Internal server error"
+// @Router /api/ielts/exam/create [post]
+// @Security Bearer
+func CreateExam(ctx *gin.Context) {
+	bookIdStr := ctx.Query("bookId")
+	user, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	bookId, err := strconv.ParseInt(bookIdStr, 10, 32)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	examId, err := ieltsClient.CreateExam(int32(user.Id), int32(bookId))
+	if err != nil {
+		utils.RespondError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	utils.RespondSuccess(ctx, http.StatusOK, examId.ExamId)
+	return
+}

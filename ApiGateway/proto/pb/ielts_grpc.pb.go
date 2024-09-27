@@ -22,6 +22,7 @@ const (
 	IeltsService_CreateBook_FullMethodName           = "/ielts.IeltsService/CreateBook"
 	IeltsService_DeleteBook_FullMethodName           = "/ielts.IeltsService/DeleteBook"
 	IeltsService_GetAllBook_FullMethodName           = "/ielts.IeltsService/GetAllBook"
+	IeltsService_UpdateBookById_FullMethodName       = "/ielts.IeltsService/UpdateBookById"
 	IeltsService_CreateAnswer_FullMethodName         = "/ielts.IeltsService/CreateAnswer"
 	IeltsService_DeleteAnswer_FullMethodName         = "/ielts.IeltsService/DeleteAnswer"
 	IeltsService_GetAnswer_FullMethodName            = "/ielts.IeltsService/GetAnswer"
@@ -39,6 +40,7 @@ type IeltsServiceClient interface {
 	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	GetAllBook(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBookResponse, error)
+	UpdateBookById(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	CreateAnswer(ctx context.Context, in *CreateAnswerRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	DeleteAnswer(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error)
@@ -81,6 +83,16 @@ func (c *ieltsServiceClient) GetAllBook(ctx context.Context, in *Empty, opts ...
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAllBookResponse)
 	err := c.cc.Invoke(ctx, IeltsService_GetAllBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) UpdateBookById(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_UpdateBookById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,6 +186,7 @@ type IeltsServiceServer interface {
 	CreateBook(context.Context, *CreateBookRequest) (*AbsResponse, error)
 	DeleteBook(context.Context, *DeleteBookRequest) (*AbsResponse, error)
 	GetAllBook(context.Context, *Empty) (*GetAllBookResponse, error)
+	UpdateBookById(context.Context, *UpdateBookRequest) (*AbsResponse, error)
 	CreateAnswer(context.Context, *CreateAnswerRequest) (*AbsResponse, error)
 	DeleteAnswer(context.Context, *DeleteBookRequest) (*AbsResponse, error)
 	GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error)
@@ -200,6 +213,9 @@ func (UnimplementedIeltsServiceServer) DeleteBook(context.Context, *DeleteBookRe
 }
 func (UnimplementedIeltsServiceServer) GetAllBook(context.Context, *Empty) (*GetAllBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllBook not implemented")
+}
+func (UnimplementedIeltsServiceServer) UpdateBookById(context.Context, *UpdateBookRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBookById not implemented")
 }
 func (UnimplementedIeltsServiceServer) CreateAnswer(context.Context, *CreateAnswerRequest) (*AbsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAnswer not implemented")
@@ -296,6 +312,24 @@ func _IeltsService_GetAllBook_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IeltsServiceServer).GetAllBook(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_UpdateBookById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).UpdateBookById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_UpdateBookById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).UpdateBookById(ctx, req.(*UpdateBookRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -462,6 +496,10 @@ var IeltsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllBook",
 			Handler:    _IeltsService_GetAllBook_Handler,
+		},
+		{
+			MethodName: "UpdateBookById",
+			Handler:    _IeltsService_UpdateBookById_Handler,
 		},
 		{
 			MethodName: "CreateAnswer",
