@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
@@ -11,7 +12,9 @@ import (
 	"ielts-service/internal/utils"
 	"ielts-service/proto/pb"
 	"log"
+	"math"
 	"strconv"
+	"strings"
 )
 
 type PostgresRepository struct {
@@ -162,8 +165,17 @@ func (r *PostgresRepository) GetAnswerByBookId(bookId string) ([]models.Answer, 
 }
 
 func (r *PostgresRepository) CreateExam(userID, bookID int32) (*string, error) {
+	var count int
+	err := r.db.QueryRow(`SELECT count(*) 
+                      FROM exam 
+                      WHERE user_id = $1 
+                      AND DATE(created_at) = CURRENT_DATE`, userID).Scan(&count)
+	if err != nil || count >= 2 {
+		return nil, errors.New("you can create exam 2 times in a day")
+	}
+
 	var id string
-	err := r.db.QueryRow(
+	err = r.db.QueryRow(
 		`INSERT INTO exam(id, user_id, book_id) VALUES ($1, $2, $3) RETURNING id`,
 		uuid.New().String(), userID, bookID,
 	).Scan(&id)
@@ -197,9 +209,26 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 		return nil, fmt.Errorf("invalid dataframe: %s", dataframe)
 	}
 
+	countQuery := `
+		SELECT COUNT(*) 
+		FROM exam e 
+		JOIN book b ON e.book_id = b.id 
+		WHERE ` + timeframeCondition
+
+	var totalCount int32
+	err := r.db.QueryRow(countQuery).Scan(&totalCount)
+	if err != nil {
+		return nil, err
+	}
+
 	finalQuery := baseQuery + timeframeCondition + `
 		ORDER BY e.over_all_band_score
 		LIMIT $1 OFFSET $2`
+
+	totalPageCount := int32(math.Ceil(float64(totalCount) / float64(size)))
+	if page > totalPageCount {
+		return &pb.GetTopExamResult{Results: []*pb.Result{}, TotalPageCount: totalPageCount}, nil
+	}
 
 	offset := utils.OffSetGenerator(&page, &size)
 	rows, err := r.db.Query(finalQuery, size, offset)
@@ -221,20 +250,94 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 		result.User = user
 
 		setExtraFieldResult(&result, r.db)
-		fmt.Println(&result)
 		results = append(results, &result)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return &pb.GetTopExamResult{Results: results}, nil
+	return &pb.GetTopExamResult{Results: results, TotalPageCount: totalPageCount}, nil
 }
 
 func (r *PostgresRepository) CreateAttemptInline(examID string, userAnswer []string, sectionType string) error {
+	var bookID int
+	query := `SELECT book_id FROM exam WHERE id = $1`
+	err := r.db.QueryRow(query, examID).Scan(&bookID)
+	if err != nil {
+		return fmt.Errorf("failed to fetch book ID for exam %s: %w", examID, err)
+	}
+
+	var correctAnswers []string
+	query = `SELECT section_answer FROM answer WHERE book_id = $1 AND section_type = $2`
+	err = r.db.QueryRow(query, bookID, sectionType).Scan(pq.Array(&correctAnswers))
+	if err != nil {
+		return fmt.Errorf("failed to fetch correct answers for book ID %d: %w", bookID, err)
+	}
+
+	if len(userAnswer) != len(correctAnswers) {
+		return errors.New("number of user answers does not match the number of correct answers")
+	}
+
+	var correctCount int
+	var answerDetails []models.AnswerDetail
+	for i, uAnswer := range userAnswer {
+		isTrue := strings.EqualFold(strings.TrimSpace(uAnswer), strings.TrimSpace(correctAnswers[i]))
+		if isTrue {
+			correctCount++
+		}
+		answerDetails = append(answerDetails, models.AnswerDetail{
+			UserAnswer: uAnswer,
+			TrueAnswer: correctAnswers[i],
+			IsTrue:     isTrue,
+		})
+	}
+
+	bandScore := utils.CalculateBandScore(correctCount)
+
+	answerDetailsJSON, err := json.Marshal(answerDetails)
+	if err != nil {
+		return fmt.Errorf("failed to marshal answer details: %w", err)
+	}
+
+	switch sectionType {
+	case "READING":
+		query = `
+            INSERT INTO reading_detail (id, exam_id, band_score, user_answer, created_at)
+            VALUES ($1, $2, $3, $4, now())`
+		_, err = r.db.Exec(query, uuid.New(), examID, bandScore, answerDetailsJSON)
+		if err != nil {
+			return fmt.Errorf("failed to insert reading detail: %w", err)
+		}
+	case "LISTENING":
+		query = `
+            INSERT INTO listening_detail (id, exam_id, band_score, user_answer, created_at)
+            VALUES ($1, $2, $3, $4, now())`
+		_, err = r.db.Exec(query, uuid.New(), examID, bandScore, answerDetailsJSON)
+		if err != nil {
+			return fmt.Errorf("failed to insert listening detail: %w", err)
+		}
+	default:
+		return errors.New("invalid section type: inline attempts only support READING or LISTENING")
+	}
+
 	return nil
 }
 
 func (r *PostgresRepository) CreateAttemptOutline(examID string, answers *pb.CreateOutlineAttemptRequest) error {
+	sectionType := answers.SectionType
+	if sectionType == "WRITING" {
+		return nil
+	} else if sectionType == "SPEAKING" {
+		return nil
+	} else {
+		return errors.New("invalid section type outline attempt only receive writing or speaking")
+	}
+}
+
+func (r *PostgresRepository) UpdateBook(id string, name string) error {
+	_, err := r.db.Exec(`UPDATE book SET title=$1 where id=$2`, name, id)
+	if err != nil {
+		return err
+	}
 	return nil
 }

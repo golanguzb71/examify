@@ -11,3 +11,9 @@ type Answer struct {
 	SectionType string   `json:"sectionType"`
 	Answer      []string `json:"answer"`
 }
+
+type AnswerDetail struct {
+	UserAnswer string `json:"user_answer"`
+	TrueAnswer string `json:"true_answer"`
+	IsTrue     bool   `json:"is_true"`
+}

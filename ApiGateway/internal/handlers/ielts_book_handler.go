@@ -53,7 +53,7 @@ func DeleteIeltsBook(ctx *gin.Context) {
 }
 
 // GetAllBook retrieves all IELTS books
-// @Summary ROLE_ADMIN
+// @Summary ALL
 // @Description Retrieve a list of all IELTS books
 // @Tags ielts-book
 // @Accept  json
@@ -61,7 +61,6 @@ func DeleteIeltsBook(ctx *gin.Context) {
 // @Success 200 {object} utils.AbsResponse "List of books"
 // @Failure 500 {object} utils.AbsResponse "Internal server error"
 // @Router /api/ielts/book/books [get]  // Ensure this matches the route definition
-// @Security Bearer
 func GetAllBook(ctx *gin.Context) {
 	books, err := ieltsClient.GetBook()
 	if err != nil {
@@ -124,7 +123,6 @@ func DeleteAnswer(ctx *gin.Context) {
 }
 
 // GetAnswerByBookId retrieves an answer by book ID.
-//
 // @Summary ROLE_ADMIN
 // @Description Retrieve the answer associated with a specific book ID via gRPC.
 // @Tags ielts-answer
@@ -144,4 +142,44 @@ func GetAnswerByBookId(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, answer)
 	return
+}
+
+// UpdateIeltsBook updateBook by book ID.
+// @Summary ROLE_ADMIN
+// @Description Retrieve the answer associated with a specific book ID via gRPC.
+// @Tags ielts-book
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID"
+// @Param name query string true "Book New Name"
+// @Success 200 {object} utils.AbsResponse "SuccessFull"
+// @Failure 502 {string} utils.AbsResponse "Error"
+// @Router /api/ielts/book/update/{id} [put]
+// @Security Bearer
+func UpdateIeltsBook(ctx *gin.Context) {
+	id := ctx.Param("id")
+	name := ctx.Query("name")
+	result, err := ieltsClient.UpdateBookById(id, name)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, result)
+	return
+}
+
+// UpdateAnswer by ID.
+// @Summary ROLE_ADMIN
+// @Description Update answer associated with a specific ID via gRPC.
+// @Tags ielts-answer
+// @Accept json
+// @Produce json
+// @Param id path string true "Answer ID"
+// @Param name query string true "Answer New Name"
+// @Success 200 {object} utils.AbsResponse "SuccessFull"
+// @Failure 502 {string} utils.AbsResponse "Error"
+// @Router /api/ielts/answer/update/{id} [put]
+// @Security Bearer
+func UpdateAnswer(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, "updated")
 }

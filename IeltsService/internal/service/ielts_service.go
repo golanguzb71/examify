@@ -61,6 +61,17 @@ func (s *IeltsService) GetAllBook(ctx context.Context, req *pb.Empty) (*pb.GetAl
 	return &pb.GetAllBookResponse{Books: protoBooks}, nil
 }
 
+func (s *IeltsService) UpdateBookById(ctx context.Context, req *pb.UpdateBookRequest) (*pb.AbsResponse, error) {
+	err := s.repo.UpdateBook(req.Id, req.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AbsResponse{
+		Status:  http.StatusOK,
+		Message: "Book updated successfully",
+	}, nil
+}
+
 func (s *IeltsService) CreateAnswer(ctx context.Context, req *pb.CreateAnswerRequest) (*pb.AbsResponse, error) {
 	err := s.repo.CreateAnswer(req.BookId, req.SectionType, req.Answers)
 	if err != nil {
@@ -105,26 +116,6 @@ func (s *IeltsService) GetAnswer(ctx context.Context, req *pb.GetAnswerRequest) 
 	return &pb.GetAnswerResponse{Answers: protoAnswers}, nil
 }
 
-func (s *IeltsService) CreateExam(ctx context.Context, req *pb.CreateExamRequest) (*pb.CreateExamResponse, error) {
-	examID, err := s.repo.CreateExam(req.UserId, req.BookId)
-	if err != nil {
-		log.Printf("Failed to create exam: %v", err)
-		return nil, err
-	}
-
-	return &pb.CreateExamResponse{
-		ExamId: *examID,
-	}, nil
-}
-
-func (s *IeltsService) GetExamByUserId(ctx context.Context, req *pb.GetExamByUserIdRequest) (*pb.GetExamByUserIdResponse, error) {
-	return s.repo.GetExamsByUserId(req.UserId, req.PageRequest.Page, req.PageRequest.Size)
-}
-
-func (s *IeltsService) GetTopExamResultList(ctx context.Context, req *pb.GetTopExamRequest) (*pb.GetTopExamResult, error) {
-	return s.repo.GetTopExamResults(req.Dataframe, req.PageRequest.Page, req.PageRequest.Size)
-}
-
 func (s *IeltsService) CreateAttemptInline(ctx context.Context, req *pb.CreateInlineAttemptRequest) (*pb.AbsResponse, error) {
 	err := s.repo.CreateAttemptInline(req.ExamId, req.UserAnswer, req.SectionType)
 	if err != nil {
@@ -149,4 +140,24 @@ func (s *IeltsService) CreateAttemptOutline(ctx context.Context, req *pb.CreateO
 		Status:  http.StatusOK,
 		Message: "Outline attempt created successfully",
 	}, nil
+}
+
+func (s *IeltsService) CreateExam(ctx context.Context, req *pb.CreateExamRequest) (*pb.CreateExamResponse, error) {
+	examID, err := s.repo.CreateExam(req.UserId, req.BookId)
+	if err != nil {
+		log.Printf("Failed to create exam: %v", err)
+		return nil, err
+	}
+
+	return &pb.CreateExamResponse{
+		ExamId: *examID,
+	}, nil
+}
+
+func (s *IeltsService) GetExamByUserId(ctx context.Context, req *pb.GetExamByUserIdRequest) (*pb.GetExamByUserIdResponse, error) {
+	return s.repo.GetExamsByUserId(req.UserId, req.PageRequest.Page, req.PageRequest.Size)
+}
+
+func (s *IeltsService) GetTopExamResultList(ctx context.Context, req *pb.GetTopExamRequest) (*pb.GetTopExamResult, error) {
+	return s.repo.GetTopExamResults(req.Dataframe, req.PageRequest.Page, req.PageRequest.Size)
 }

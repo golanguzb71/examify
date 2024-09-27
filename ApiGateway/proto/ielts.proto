@@ -11,6 +11,7 @@ service IeltsService {
   rpc CreateBook(CreateBookRequest) returns (common.AbsResponse);
   rpc DeleteBook(DeleteBookRequest) returns (common.AbsResponse);
   rpc GetAllBook(Empty) returns (GetAllBookResponse);
+  rpc UpdateBookById(UpdateBookRequest) returns(common.AbsResponse);
   rpc CreateAnswer(CreateAnswerRequest) returns (common.AbsResponse);
   rpc DeleteAnswer(DeleteBookRequest) returns (common.AbsResponse);
   rpc GetAnswer(GetAnswerRequest) returns (GetAnswerResponse);
@@ -19,6 +20,10 @@ service IeltsService {
   rpc GetTopExamResultList(GetTopExamRequest) returns (GetTopExamResult);
   rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
   rpc CreateAttemptOutline(CreateOutlineAttemptRequest) returns (common.AbsResponse);
+}
+message UpdateBookRequest{
+  string id = 1;
+  string name = 2;
 }
 
 message CreateBookRequest {
@@ -32,6 +37,7 @@ message GetTopExamRequest{
 
 message GetTopExamResult{
   repeated Result results = 1;
+  int32 totalPageCount = 2;
 }
 
 message Result {
@@ -104,7 +110,8 @@ message CreateInlineAttemptRequest {
 
 message CreateOutlineAttemptRequest {
   string examId = 1;
-  repeated QuestionUserAnswer Qua = 2;
+  string sectionType = 2;
+  repeated QuestionUserAnswer Qua = 3;
 }
 
 message QuestionUserAnswer {
