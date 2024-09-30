@@ -203,3 +203,4 @@ The project is composed of the following microservices:
 ## Technology Stack
 - **Primary Language**: Go (98.9%)
 - **Communication Protocol**: gRPC for efficient microservice-to-microservice communication.
+- **Containerizing** Docker containers.
