@@ -189,7 +189,6 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 		return
 	}
 
-	// Print the number of uploaded files
 	fmt.Printf("Number of uploaded files: %d\n", len(files))
 
 }
