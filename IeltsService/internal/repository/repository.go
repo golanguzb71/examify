@@ -18,12 +18,13 @@ import (
 )
 
 type PostgresRepository struct {
-	db         *sql.DB
-	userClient *client.UserClient
+	db                *sql.DB
+	userClient        *client.UserClient
+	integrationClient *client.IntegrationClient
 }
 
-func NewPostgresRepository(db *sql.DB, userClient *client.UserClient) *PostgresRepository {
-	return &PostgresRepository{db: db, userClient: userClient}
+func NewPostgresRepository(db *sql.DB, userClient *client.UserClient, integrationClient *client.IntegrationClient) *PostgresRepository {
+	return &PostgresRepository{db: db, userClient: userClient, integrationClient: integrationClient}
 }
 
 func (r *PostgresRepository) CreateBook(name string) error {
@@ -195,7 +196,7 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 		SELECT e.id, e.user_id, b.title, e.over_all_band_score, b.created_at
 		FROM exam e
 		JOIN book b ON e.book_id = b.id 
-		WHERE `
+		WHERE e.status='FINISHED' and `
 
 	var timeframeCondition string
 	switch dataframe {
@@ -213,7 +214,7 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 		SELECT COUNT(*) 
 		FROM exam e 
 		JOIN book b ON e.book_id = b.id 
-		WHERE ` + timeframeCondition
+		WHERE e.status='FINISHED' and ` + timeframeCondition
 
 	var totalCount int32
 	err := r.db.QueryRow(countQuery).Scan(&totalCount)
@@ -319,19 +320,44 @@ func (r *PostgresRepository) CreateAttemptInline(examID string, userAnswer []str
 	default:
 		return errors.New("invalid section type: inline attempts only support READING or LISTENING")
 	}
-
+	err = utils.UpdateOverallScore(examID, r.db)
+	if err != nil {
+		return fmt.Errorf("failed to update overall score: %w", err)
+	}
 	return nil
 }
 
-func (r *PostgresRepository) CreateAttemptOutline(examID string, answers *pb.CreateOutlineAttemptRequest) error {
-	sectionType := answers.SectionType
-	if sectionType == "WRITING" {
-		return nil
-	} else if sectionType == "SPEAKING" {
-		return nil
-	} else {
-		return errors.New("invalid section type outline attempt only receive writing or speaking")
+func (r *PostgresRepository) CreateAttemptOutlineWriting(req *pb.CreateOutlineAttemptRequestWriting) error {
+	id := req.ExamId
+	parsedUUID, err := uuid.Parse(id)
+	if err != nil {
+		return err
 	}
+	var checker = false
+	err = r.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM exam where id=$1 and status!='FINISHED')`, parsedUUID).Scan(&checker)
+	if err != nil || !checker {
+		return errors.New("exam not found or exam finished")
+	}
+	for i, perQua := range req.Qua {
+		rpcRequest := pb.WritingTaskAbsRequest{
+			Question: perQua.Question,
+			Answer:   perQua.UserAnswer,
+		}
+		resp, err := r.integrationClient.GetResultWritingTask(&rpcRequest)
+		if err != nil {
+			return err
+		}
+		response, err := json.Marshal(perQua)
+		if err != nil {
+			return err
+		}
+		_, err = r.db.Exec(`INSERT INTO writing_detail(id, exam_id, task_number, response, feedback, coherence_score, grammar_score, lexical_resource_score, task_achievement_score, task_band_score) 
+		values ($1 , $2 , $3 , $4 , $5 , $6 , $7,$8,$9,$10)`, uuid.New(), parsedUUID, i+1, response, resp.Feedback, resp.CoherenceScore, resp.GrammarScore, resp.LexicalResourceScore, resp.TaskAchievementScore, resp.TaskBandScore)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *PostgresRepository) UpdateBook(id string, name string) error {

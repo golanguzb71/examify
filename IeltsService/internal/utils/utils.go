@@ -1,5 +1,10 @@
 package utils
 
+import (
+	"database/sql"
+	"fmt"
+)
+
 func OffSetGenerator(page, size *int32) int {
 	if page == nil || *page < 1 {
 		p := int32(1)
@@ -46,4 +51,40 @@ func CalculateBandScore(correctCount int) float64 {
 	default:
 		return 2.0
 	}
+}
+
+func UpdateOverallScore(examID string, db *sql.DB) error {
+	query := `
+        WITH scores AS (
+            SELECT 
+                COALESCE((SELECT band_score FROM reading_detail WHERE exam_id = $1), 0) as reading_score,
+                COALESCE((SELECT band_score FROM listening_detail WHERE exam_id = $1), 0) as listening_score,
+                COALESCE((SELECT AVG(task_score) FROM writing_detail WHERE exam_id = $1), 0) as writing_score,
+                COALESCE((SELECT speaking_score FROM speaking_detail WHERE exam_id = $1), 0) as speaking_score
+        )
+        UPDATE exam
+        SET over_all_band_score = (
+            SELECT 
+                CASE 
+                    WHEN remainder >= 0.75 THEN whole + 1
+                    WHEN remainder >= 0.25 THEN whole + 0.5
+                    ELSE whole
+                END
+            FROM (
+                SELECT 
+                    FLOOR((reading_score + listening_score + writing_score + speaking_score) / 4.0) as whole,
+                    ((reading_score + listening_score + writing_score + speaking_score) / 4.0) - FLOOR((reading_score + listening_score + writing_score + speaking_score) / 4.0) as remainder
+                FROM scores
+            ) subquery
+        )
+        FROM scores
+        WHERE exam.id = $1
+    `
+
+	_, err := db.Exec(query, examID)
+	if err != nil {
+		return fmt.Errorf("failed to update overall score for exam %s: %w", examID, err)
+	}
+
+	return nil
 }

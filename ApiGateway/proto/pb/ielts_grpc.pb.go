@@ -19,18 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IeltsService_CreateBook_FullMethodName           = "/ielts.IeltsService/CreateBook"
-	IeltsService_DeleteBook_FullMethodName           = "/ielts.IeltsService/DeleteBook"
-	IeltsService_GetAllBook_FullMethodName           = "/ielts.IeltsService/GetAllBook"
-	IeltsService_UpdateBookById_FullMethodName       = "/ielts.IeltsService/UpdateBookById"
-	IeltsService_CreateAnswer_FullMethodName         = "/ielts.IeltsService/CreateAnswer"
-	IeltsService_DeleteAnswer_FullMethodName         = "/ielts.IeltsService/DeleteAnswer"
-	IeltsService_GetAnswer_FullMethodName            = "/ielts.IeltsService/GetAnswer"
-	IeltsService_CreateExam_FullMethodName           = "/ielts.IeltsService/CreateExam"
-	IeltsService_GetExamByUserId_FullMethodName      = "/ielts.IeltsService/GetExamByUserId"
-	IeltsService_GetTopExamResultList_FullMethodName = "/ielts.IeltsService/GetTopExamResultList"
-	IeltsService_CreateAttemptInline_FullMethodName  = "/ielts.IeltsService/CreateAttemptInline"
-	IeltsService_CreateAttemptOutline_FullMethodName = "/ielts.IeltsService/CreateAttemptOutline"
+	IeltsService_CreateBook_FullMethodName                   = "/ielts.IeltsService/CreateBook"
+	IeltsService_DeleteBook_FullMethodName                   = "/ielts.IeltsService/DeleteBook"
+	IeltsService_GetAllBook_FullMethodName                   = "/ielts.IeltsService/GetAllBook"
+	IeltsService_UpdateBookById_FullMethodName               = "/ielts.IeltsService/UpdateBookById"
+	IeltsService_CreateAnswer_FullMethodName                 = "/ielts.IeltsService/CreateAnswer"
+	IeltsService_DeleteAnswer_FullMethodName                 = "/ielts.IeltsService/DeleteAnswer"
+	IeltsService_GetAnswer_FullMethodName                    = "/ielts.IeltsService/GetAnswer"
+	IeltsService_CreateExam_FullMethodName                   = "/ielts.IeltsService/CreateExam"
+	IeltsService_GetExamByUserId_FullMethodName              = "/ielts.IeltsService/GetExamByUserId"
+	IeltsService_GetTopExamResultList_FullMethodName         = "/ielts.IeltsService/GetTopExamResultList"
+	IeltsService_CreateAttemptInline_FullMethodName          = "/ielts.IeltsService/CreateAttemptInline"
+	IeltsService_CreateAttemptOutlineWriting_FullMethodName  = "/ielts.IeltsService/CreateAttemptOutlineWriting"
+	IeltsService_CreateAttemptOutlineSpeaking_FullMethodName = "/ielts.IeltsService/CreateAttemptOutlineSpeaking"
 )
 
 // IeltsServiceClient is the client API for IeltsService service.
@@ -48,7 +49,8 @@ type IeltsServiceClient interface {
 	GetExamByUserId(ctx context.Context, in *GetExamByUserIdRequest, opts ...grpc.CallOption) (*GetExamByUserIdResponse, error)
 	GetTopExamResultList(ctx context.Context, in *GetTopExamRequest, opts ...grpc.CallOption) (*GetTopExamResult, error)
 	CreateAttemptInline(ctx context.Context, in *CreateInlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error)
-	CreateAttemptOutline(ctx context.Context, in *CreateOutlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	CreateAttemptOutlineWriting(ctx context.Context, in *CreateOutlineAttemptRequestWriting, opts ...grpc.CallOption) (*AbsResponse, error)
+	CreateAttemptOutlineSpeaking(ctx context.Context, in *CreateOutlineAttemptRequestSpeaking, opts ...grpc.CallOption) (*AbsResponse, error)
 }
 
 type ieltsServiceClient struct {
@@ -169,10 +171,20 @@ func (c *ieltsServiceClient) CreateAttemptInline(ctx context.Context, in *Create
 	return out, nil
 }
 
-func (c *ieltsServiceClient) CreateAttemptOutline(ctx context.Context, in *CreateOutlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+func (c *ieltsServiceClient) CreateAttemptOutlineWriting(ctx context.Context, in *CreateOutlineAttemptRequestWriting, opts ...grpc.CallOption) (*AbsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AbsResponse)
-	err := c.cc.Invoke(ctx, IeltsService_CreateAttemptOutline_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, IeltsService_CreateAttemptOutlineWriting_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ieltsServiceClient) CreateAttemptOutlineSpeaking(ctx context.Context, in *CreateOutlineAttemptRequestSpeaking, opts ...grpc.CallOption) (*AbsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AbsResponse)
+	err := c.cc.Invoke(ctx, IeltsService_CreateAttemptOutlineSpeaking_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -194,7 +206,8 @@ type IeltsServiceServer interface {
 	GetExamByUserId(context.Context, *GetExamByUserIdRequest) (*GetExamByUserIdResponse, error)
 	GetTopExamResultList(context.Context, *GetTopExamRequest) (*GetTopExamResult, error)
 	CreateAttemptInline(context.Context, *CreateInlineAttemptRequest) (*AbsResponse, error)
-	CreateAttemptOutline(context.Context, *CreateOutlineAttemptRequest) (*AbsResponse, error)
+	CreateAttemptOutlineWriting(context.Context, *CreateOutlineAttemptRequestWriting) (*AbsResponse, error)
+	CreateAttemptOutlineSpeaking(context.Context, *CreateOutlineAttemptRequestSpeaking) (*AbsResponse, error)
 	mustEmbedUnimplementedIeltsServiceServer()
 }
 
@@ -238,8 +251,11 @@ func (UnimplementedIeltsServiceServer) GetTopExamResultList(context.Context, *Ge
 func (UnimplementedIeltsServiceServer) CreateAttemptInline(context.Context, *CreateInlineAttemptRequest) (*AbsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptInline not implemented")
 }
-func (UnimplementedIeltsServiceServer) CreateAttemptOutline(context.Context, *CreateOutlineAttemptRequest) (*AbsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptOutline not implemented")
+func (UnimplementedIeltsServiceServer) CreateAttemptOutlineWriting(context.Context, *CreateOutlineAttemptRequestWriting) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptOutlineWriting not implemented")
+}
+func (UnimplementedIeltsServiceServer) CreateAttemptOutlineSpeaking(context.Context, *CreateOutlineAttemptRequestSpeaking) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptOutlineSpeaking not implemented")
 }
 func (UnimplementedIeltsServiceServer) mustEmbedUnimplementedIeltsServiceServer() {}
 func (UnimplementedIeltsServiceServer) testEmbeddedByValue()                      {}
@@ -460,20 +476,38 @@ func _IeltsService_CreateAttemptInline_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IeltsService_CreateAttemptOutline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOutlineAttemptRequest)
+func _IeltsService_CreateAttemptOutlineWriting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOutlineAttemptRequestWriting)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IeltsServiceServer).CreateAttemptOutline(ctx, in)
+		return srv.(IeltsServiceServer).CreateAttemptOutlineWriting(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IeltsService_CreateAttemptOutline_FullMethodName,
+		FullMethod: IeltsService_CreateAttemptOutlineWriting_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IeltsServiceServer).CreateAttemptOutline(ctx, req.(*CreateOutlineAttemptRequest))
+		return srv.(IeltsServiceServer).CreateAttemptOutlineWriting(ctx, req.(*CreateOutlineAttemptRequestWriting))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IeltsService_CreateAttemptOutlineSpeaking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOutlineAttemptRequestSpeaking)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).CreateAttemptOutlineSpeaking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_CreateAttemptOutlineSpeaking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).CreateAttemptOutlineSpeaking(ctx, req.(*CreateOutlineAttemptRequestSpeaking))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -530,8 +564,12 @@ var IeltsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IeltsService_CreateAttemptInline_Handler,
 		},
 		{
-			MethodName: "CreateAttemptOutline",
-			Handler:    _IeltsService_CreateAttemptOutline_Handler,
+			MethodName: "CreateAttemptOutlineWriting",
+			Handler:    _IeltsService_CreateAttemptOutlineWriting_Handler,
+		},
+		{
+			MethodName: "CreateAttemptOutlineSpeaking",
+			Handler:    _IeltsService_CreateAttemptOutlineSpeaking_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

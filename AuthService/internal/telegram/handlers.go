@@ -2,10 +2,9 @@ package telegram
 
 import (
 	"fmt"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func handleCommand(message *tgbotapi.Message) {
@@ -64,6 +63,20 @@ func handleContact(message *tgbotapi.Message) {
 			return
 		}
 	}
+
+	//requiredChannels := []string{"mock_examify"}
+	//isMember, err := checkExistInRequiredChannel(chatID, requiredChannels)
+	//if err != nil {
+	//	log.Printf("Error checking channel membership: %v", err)
+	//	return
+	//}
+
+	//if !isMember {
+	//	msg := tgbotapi.NewMessage(chatID, "Please join our required channels before proceeding. @mock_examify")
+	//	bot.Send(msg)
+	//	return
+	//}
+
 	existingCode := GetStoredCode(fmt.Sprintf("%v", chatID))
 	if existingCode != nil {
 		msg := tgbotapi.NewMessage(chatID, fmt.Sprintf("Eski kodingiz hali ham kuchda ☝️ <code>%s</code>", *existingCode))

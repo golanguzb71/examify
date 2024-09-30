@@ -19,7 +19,8 @@ service IeltsService {
   rpc GetExamByUserId(GetExamByUserIdRequest) returns (GetExamByUserIdResponse);
   rpc GetTopExamResultList(GetTopExamRequest) returns (GetTopExamResult);
   rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
-  rpc CreateAttemptOutline(CreateOutlineAttemptRequest) returns (common.AbsResponse);
+  rpc CreateAttemptOutlineWriting(CreateOutlineAttemptRequestWriting) returns (common.AbsResponse);
+  rpc CreateAttemptOutlineSpeaking(CreateOutlineAttemptRequestSpeaking) returns (common.AbsResponse);
 }
 message UpdateBookRequest{
   string id = 1;
@@ -108,15 +109,23 @@ message CreateInlineAttemptRequest {
   string sectionType = 3;
 }
 
-message CreateOutlineAttemptRequest {
+message CreateOutlineAttemptRequestWriting {
   string examId = 1;
-  string sectionType = 2;
-  repeated QuestionUserAnswer Qua = 3;
+  repeated QuestionUserAnswerWriting Qua = 2;
+}
+message CreateOutlineAttemptRequestSpeaking{
+  string examId = 1;
+  repeated QuestionUserAnswerSpeaking Qua = 2;
+  int32 partNumber = 3;
 }
 
-message QuestionUserAnswer {
+message QuestionUserAnswerWriting {
   string question = 1;
   string userAnswer = 2;
 }
 
+message QuestionUserAnswerSpeaking {
+  string question = 1;
+  bytes voiceAnswer = 2;
+}
 message Empty {}

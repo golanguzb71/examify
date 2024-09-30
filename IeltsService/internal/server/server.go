@@ -19,6 +19,8 @@ func RunServer() {
 	}
 
 	userClient, err := client.NewUserClient(cfg.Grpc.UserService.Address)
+	integrationClient, err := client.NewIntegrationClient(cfg.Grpc.IntegrationService.Address)
+
 	if err != nil {
 		log.Fatalf("Failed to listen grpc service %v", err)
 	}
@@ -29,7 +31,7 @@ func RunServer() {
 	}
 	defer db.Close()
 
-	repo := repository.NewPostgresRepository(db, userClient)
+	repo := repository.NewPostgresRepository(db, userClient, integrationClient)
 	ieltsService := service.NewIeltsService(repo)
 
 	lis, err := net.Listen("tcp", ":"+cfg.Server.Port)

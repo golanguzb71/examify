@@ -13,3 +13,5 @@ database:
 grpc:
   userService:
     address: "localhost:50052"
+  integrationService:
+    address: "localhost:50054"

@@ -125,12 +125,23 @@ func (c *IeltsClient) GetExamByUserId(userId, page, size int32) (*pb.GetExamByUs
 	return nil, nil
 }
 
-func (c *IeltsClient) CreateAttemptInline(userId int64, examId string, userAnswer []string, sectionType string) (*pb.AbsResponse, error) {
-	return nil, nil
+func (c *IeltsClient) CreateAttemptInline(CAI *pb.CreateInlineAttemptRequest) (*pb.AbsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := c.client.CreateAttemptInline(ctx, CAI)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
-func (c *IeltsClient) CreateAttemptOutline(userId int64, examId string, userAnswer *pb.QuestionUserAnswer) (*pb.AbsResponse, error) {
-	return nil, nil
+func (c *IeltsClient) CreateAttemptOutlineWriting(coaw *pb.CreateOutlineAttemptRequestWriting) (*pb.AbsResponse, error) {
+	ctx := context.TODO()
+	resp, err := c.client.CreateAttemptOutlineWriting(ctx, coaw)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (c *IeltsClient) GetTopExamResult(dataframe string, page, size int) (*pb.GetTopExamResult, error) {

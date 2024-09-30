@@ -34,5 +34,12 @@ func IELTSRoutes(r *gin.RouterGroup, authClient *client.AuthClient) {
 			result.GET("/user-answers/:examId", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.GetExamUserAnswers)
 			result.GET("/top-exam-result/:dataframe", handlers.GetTopExamResult)
 		}
+		attempt := exam.Group("/attempt")
+		{
+			attempt.POST("/create/inline", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateInlineAttempt)
+			attempt.POST("/create/outline-writing", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateOutlineAttemptWriting)
+			attempt.POST("/create/outline-speaking", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateOutlineAttemptSpeaking)
+		}
+
 	}
 }

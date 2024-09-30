@@ -129,16 +129,15 @@ func (s *IeltsService) CreateAttemptInline(ctx context.Context, req *pb.CreateIn
 	}, nil
 }
 
-func (s *IeltsService) CreateAttemptOutline(ctx context.Context, req *pb.CreateOutlineAttemptRequest) (*pb.AbsResponse, error) {
-	err := s.repo.CreateAttemptOutline(req.ExamId, req)
+func (s *IeltsService) CreateAttemptOutlineWriting(ctx context.Context, req *pb.CreateOutlineAttemptRequestWriting) (*pb.AbsResponse, error) {
+	err := s.repo.CreateAttemptOutlineWriting(req)
 	if err != nil {
 		log.Printf("Failed to create outline attempt: %v", err)
 		return nil, err
 	}
-
 	return &pb.AbsResponse{
 		Status:  http.StatusOK,
-		Message: "Outline attempt created successfully",
+		Message: "Outline Writing attempt created successfully",
 	}, nil
 }
 

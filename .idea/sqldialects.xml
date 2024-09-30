@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/IeltsService/internal/repository/book_repository.go" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/IeltsService/internal/repository/helper.go" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/IeltsService/internal/repository/repository.go" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/IeltsService/internal/utils/utils.go" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/IeltsService/migrations/ielts_service_down.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/IeltsService/migrations/ielts_service_up.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/IntegrationService/migrations/integration_service_down.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/IntegrationService/migrations/integration_service_up.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/UserService/internal/repository/user_repository.go" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/UserService/migrations/user_service_up.sql" dialect="PostgreSQL" />
   </component>
