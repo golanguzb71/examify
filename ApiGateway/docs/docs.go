@@ -440,6 +440,178 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/ielts/exam/attempt/create/inline": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a new inline attempt for IELTS",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "attempts"
+                ],
+                "summary": "USER",
+                "parameters": [
+                    {
+                        "description": "Create inline attempt request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.CreateInlineAttemptRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/exam/attempt/create/outline-speaking": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a new inline attempt for IELTS",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "attempts"
+                ],
+                "summary": "USER",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Exam ID",
+                        "name": "examId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Part Number",
+                        "name": "partNumber",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Questions",
+                        "name": "questions",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Voice Answer files (MP3 files)",
+                        "name": "voiceAnswers",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/exam/attempt/create/outline-writing": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a new inline attempt for IELTS",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "attempts"
+                ],
+                "summary": "USER",
+                "parameters": [
+                    {
+                        "description": "Create outline attempt request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.CreateOutlineAttemptRequestWriting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ielts/exam/create": {
             "post": {
                 "security": [
@@ -580,6 +752,37 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.CreateInlineAttemptRequest": {
+            "type": "object",
+            "properties": {
+                "examId": {
+                    "type": "string"
+                },
+                "sectionType": {
+                    "type": "string"
+                },
+                "userAnswer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.CreateOutlineAttemptRequestWriting": {
+            "type": "object",
+            "properties": {
+                "Qua": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.QuestionUserAnswerWriting"
+                    }
+                },
+                "examId": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.GetAnswerResponse": {
             "type": "object",
             "properties": {
@@ -602,6 +805,17 @@ const docTemplate = `{
                 },
                 "totalPageCount": {
                     "type": "integer"
+                }
+            }
+        },
+        "pb.QuestionUserAnswerWriting": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                },
+                "userAnswer": {
+                    "type": "string"
                 }
             }
         },

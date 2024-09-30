@@ -23,6 +23,26 @@ definitions:
       sectionType:
         type: string
     type: object
+  pb.CreateInlineAttemptRequest:
+    properties:
+      examId:
+        type: string
+      sectionType:
+        type: string
+      userAnswer:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.CreateOutlineAttemptRequestWriting:
+    properties:
+      Qua:
+        items:
+          $ref: '#/definitions/pb.QuestionUserAnswerWriting'
+        type: array
+      examId:
+        type: string
+    type: object
   pb.GetAnswerResponse:
     properties:
       answers:
@@ -38,6 +58,13 @@ definitions:
         type: array
       totalPageCount:
         type: integer
+    type: object
+  pb.QuestionUserAnswerWriting:
+    properties:
+      question:
+        type: string
+      userAnswer:
+        type: string
     type: object
   pb.Result:
     properties:
@@ -358,6 +385,116 @@ paths:
       summary: ROLE_ADMIN
       tags:
       - ielts-book
+  /api/ielts/exam/attempt/create/inline:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new inline attempt for IELTS
+      parameters:
+      - description: Create inline attempt request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pb.CreateInlineAttemptRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: USER
+      tags:
+      - attempts
+  /api/ielts/exam/attempt/create/outline-speaking:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Creates a new inline attempt for IELTS
+      parameters:
+      - description: Exam ID
+        in: formData
+        name: examId
+        required: true
+        type: string
+      - description: Part Number
+        in: formData
+        name: partNumber
+        required: true
+        type: integer
+      - description: Questions
+        in: formData
+        name: questions
+        required: true
+        type: string
+      - description: Voice Answer files (MP3 files)
+        in: formData
+        name: voiceAnswers
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: USER
+      tags:
+      - attempts
+  /api/ielts/exam/attempt/create/outline-writing:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new inline attempt for IELTS
+      parameters:
+      - description: Create outline attempt request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pb.CreateOutlineAttemptRequestWriting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: USER
+      tags:
+      - attempts
   /api/ielts/exam/create:
     post:
       consumes:

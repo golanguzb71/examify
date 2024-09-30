@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package integration;
+
+option go_package = "./proto/pb";
+
+
+service IntegrationService{
+  rpc GetResultWritingTask(WritingTaskAbsRequest)returns(WritingTaskAbsResponse);
+  rpc GetResultSpeakingPart(SpeakingPartAbsRequest)returns(SpeakingPartAbsResponse);
+}
+
+message WritingTaskAbsRequest{
+  string  question = 1;
+  string  answer = 2;
+}
+
+
+message WritingTaskAbsResponse{
+  string feedback = 1;
+  float coherence_score = 2;
+  float grammar_score = 3;
+  float lexical_resource_score = 4;
+  float task_achievement_score = 5;
+  float task_band_score = 6;
+}
+
+message SpeakingPartAbsResponse{
+
+}
+
+message SpeakingPartAbsRequest{
+
+}
