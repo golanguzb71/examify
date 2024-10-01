@@ -162,7 +162,6 @@ func CreateOutlineAttemptWriting(ctx *gin.Context) {
 // @Security Bearer
 // @Router /api/ielts/exam/attempt/create/outline-speaking [post]
 func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
-	// Parse form data
 	examId := ctx.PostForm("examId")
 	partNumberStr := ctx.PostForm("partNumber")
 	question := ctx.PostForm("question")

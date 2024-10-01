@@ -261,9 +261,18 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 }
 
 func (r *PostgresRepository) CreateAttemptInline(examID string, userAnswer []string, sectionType string) error {
+	parsedUUID, err := uuid.Parse(examID)
+	if err != nil {
+		return err
+	}
+	var checker bool
+	err = r.db.QueryRow(`SELECT exists(SELECT 1 FROM exam where id=$1 and status='PENDING')`, parsedUUID).Scan(&checker)
+	if err != nil || !checker {
+		return errors.New("exam not found or Exam already finished")
+	}
 	var bookID int
 	query := `SELECT book_id FROM exam WHERE id = $1`
-	err := r.db.QueryRow(query, examID).Scan(&bookID)
+	err = r.db.QueryRow(query, examID).Scan(&bookID)
 	if err != nil {
 		return fmt.Errorf("failed to fetch book ID for exam %s: %w", examID, err)
 	}
@@ -334,7 +343,7 @@ func (r *PostgresRepository) CreateAttemptOutlineWriting(req *pb.CreateOutlineAt
 		return err
 	}
 	var checker = false
-	err = r.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM exam where id=$1 and status!='FINISHED')`, parsedUUID).Scan(&checker)
+	err = r.db.QueryRow(`SELECT EXISTS(SELECT 1 FROM exam where id=$1 and status='PENDING')`, parsedUUID).Scan(&checker)
 	if err != nil || !checker {
 		return errors.New("exam not found or exam finished")
 	}
@@ -356,6 +365,10 @@ func (r *PostgresRepository) CreateAttemptOutlineWriting(req *pb.CreateOutlineAt
 		if err != nil {
 			return err
 		}
+	}
+	err = utils.UpdateOverallScore(id, r.db)
+	if err != nil {
+		return err
 	}
 	return nil
 }

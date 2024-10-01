@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  postgres-ielts:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ielts_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_ielts_data:/var/lib/postgresql/data
+      - ./ielts-service/migrations/ielts_service_up.sql:/docker-entrypoint-initdb.d/ielts_service_up.sql
+
+  postgres-user:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user_database
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+      - ./user-service/migrations/user_service_up.sql:/docker-entrypoint-initdb.d/user_service_up.sql
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  integration-service:
+    build:
+      context: ./integration-service
+      dockerfile: Dockerfile
+    ports:
+      - "50053:50053"
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "50054:50054"
+    depends_on:
+      - postgres-user
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    depends_on:
+      - postgres-user
+      - user-service
+
+  ielts-service:
+    build:
+      context: ./ielts-service
+      dockerfile: Dockerfile
+    ports:
+      - "50052:50052"
+    depends_on:
+      - postgres-ielts
+      - integration-service
+      - user-service
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - ielts-service
+      - integration-service
+      - user-service
+
+volumes:
+  postgres_ielts_data:
+  postgres_user_data:
+  redis_data:
+
+networks:
+  default:
+    driver: bridge
