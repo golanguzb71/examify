@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ielts_database
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - postgres_ielts_data:/var/lib/postgresql/data
       - ./ielts-service/migrations/ielts_service_up.sql:/docker-entrypoint-initdb.d/ielts_service_up.sql
@@ -32,7 +32,7 @@ services:
   redis:
     image: "redis:alpine"
     ports:
-      - "6379:6379" # Redis port
+      - "6369:6379" # Redis port
     volumes:
       - redis_data:/data
 
