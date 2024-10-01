@@ -12,8 +12,8 @@ import (
 // @Description Retrieves the profile information of the currently authenticated user
 // @Tags User
 // @Produce  json
-// @Success 200 {object} pb.UserProfileResponse "User Profile Response"
-// @Failure 409 {object} utils.ErrorResponse "Conflict Error"
+// @Success 200 {object} pb.User "User Profile Response"
+// @Failure 409 {object} utils.AbsResponse "Conflict Error"
 // @Router /api/user/profile [get]
 // @Security Bearer
 func GetUserProfile(ctx *gin.Context) {
@@ -32,8 +32,8 @@ func GetUserProfile(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param data body pb.UpdateUserNameSurnameRequest true "Name and Surname Update Request"
-// @Success 200 {object} pb.UpdateUserNameSurnameResponse
-// @Failure 409 {object} utils.ErrorResponse "Conflict Error"
+// @Success 200 {object} utils.AbsResponse
+// @Failure 409 {object} utils.AbsResponse "Conflict Error"
 // @Router /api/user/update-information [put]
 // @Security Bearer
 func ChangeNameSurname(ctx *gin.Context) {

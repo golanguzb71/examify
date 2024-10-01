@@ -87,6 +87,13 @@ definitions:
       writing:
         type: string
     type: object
+  pb.UpdateUserNameSurnameRequest:
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+    type: object
   pb.User:
     properties:
       chatId:
@@ -563,6 +570,54 @@ paths:
       summary: ALL
       tags:
       - ielts-exam
+  /api/user/profile:
+    get:
+      description: Retrieves the profile information of the currently authenticated
+        user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Profile Response
+          schema:
+            $ref: '#/definitions/pb.User'
+        "409":
+          description: Conflict Error
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: Get user profile
+      tags:
+      - User
+  /api/user/update-information:
+    put:
+      consumes:
+      - application/json
+      description: Allows a user to update their name and surname
+      parameters:
+      - description: Name and Surname Update Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateUserNameSurnameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "409":
+          description: Conflict Error
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: Update user's name and surname
+      tags:
+      - user-default
 securityDefinitions:
   Bearer:
     in: header
