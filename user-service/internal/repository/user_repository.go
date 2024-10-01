@@ -11,7 +11,7 @@ type UserRepository interface {
 	CreateUser(name, surname, phoneNumber, role, chatId string) (*pb.AbsResponse, error)
 	GetUserByChatIdOrPhone(chatId, phoneNumber, id *string) (*pb.User, error)
 	GetAllUsers(page, size int32) (*pb.GetAllUserResponse, error)
-	UpdateNameOrSurname(name, surname string) (*pb.AbsResponse, error)
+	UpdateNameOrSurname(name, surname, userId string) (*pb.AbsResponse, error)
 }
 
 type PostgresUserRepository struct {
@@ -63,6 +63,13 @@ func (r *PostgresUserRepository) GetAllUsers(page, size int32) (*pb.GetAllUserRe
 	return nil, nil
 }
 
-func (r *PostgresUserRepository) UpdateNameOrSurname(name, surname string) (*pb.AbsResponse, error) {
-	return nil, nil
+func (r *PostgresUserRepository) UpdateNameOrSurname(name, surname, userId string) (*pb.AbsResponse, error) {
+	_, err := r.db.Exec(`UPDATE users SET name=$1 , surname=$2 where id=$3`, name, surname, userId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AbsResponse{
+		Status:  http.StatusOK,
+		Message: "updated",
+	}, nil
 }

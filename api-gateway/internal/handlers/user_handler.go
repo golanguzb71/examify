@@ -5,6 +5,7 @@ import (
 	"apigateway/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // GetUserProfile godoc
@@ -43,10 +44,17 @@ func ChangeNameSurname(ctx *gin.Context) {
 		utils.RespondError(ctx, http.StatusConflict, err.Error())
 		return
 	}
+	user, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
+		return
+	}
+	req.UserId = strconv.FormatInt(user.Id, 10)
 	resp, err := userClient.UpdateNameSurname(&req)
 	if err != nil {
 		utils.RespondError(ctx, http.StatusConflict, err.Error())
 		return
 	}
 	utils.RespondSuccess(ctx, resp.Status, resp.Message)
+	return
 }

@@ -34,4 +34,5 @@ message GetAllUserResponse {
 message UpdateUserNameSurnameRequest{
   string name = 1;
   string surname = 2;
+  string userId = 3;
 }

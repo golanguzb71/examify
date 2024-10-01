@@ -93,6 +93,8 @@ definitions:
         type: string
       surname:
         type: string
+      userId:
+        type: string
     type: object
   pb.User:
     properties:

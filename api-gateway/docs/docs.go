@@ -935,6 +935,9 @@ const docTemplate = `{
                 },
                 "surname": {
                     "type": "string"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },
