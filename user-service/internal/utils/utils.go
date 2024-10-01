@@ -28,7 +28,7 @@ func MigrateUp(db *sql.DB) {
     created_at timestamp DEFAULT now()
 );
 
-INSERT INTO users(name, phone_number, chat_id, role) values ('Abdulaziz' , '+998950960153' , 7777 , 'ADMIN');
+INSERT INTO users(name, phone_number, chat_id, role) values ('Shokhruh' , '+998970206868' , 5214859281, 'ADMIN');
 `
 	_, err := db.Exec(sqlContent)
 	if err != nil {
