@@ -59,8 +59,8 @@ func UpdateOverallScore(examID string, db *sql.DB) error {
             SELECT 
                 COALESCE((SELECT band_score FROM reading_detail WHERE exam_id = $1), 0) as reading_score,
                 COALESCE((SELECT band_score FROM listening_detail WHERE exam_id = $1), 0) as listening_score,
-                COALESCE((SELECT AVG(task_score) FROM writing_detail WHERE exam_id = $1), 0) as writing_score,
-                COALESCE((SELECT speaking_score FROM speaking_detail WHERE exam_id = $1), 0) as speaking_score
+                COALESCE((SELECT AVG(task_band_score) FROM writing_detail WHERE exam_id = $1), 0) as writing_score,
+                COALESCE((SELECT part_band_score FROM speaking_detail WHERE exam_id = $1), 0) as speaking_score
         )
         UPDATE exam
         SET over_all_band_score = (

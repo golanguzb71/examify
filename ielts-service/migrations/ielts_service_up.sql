@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS speaking_detail
     transcription    JSONB,
     voice_url        TEXT[],
     part_band_score  FLOAT                     NOT NULL DEFAULT 0 CHECK (part_band_score >= 0 AND part_band_score <= 9),
-    created_at       TIMESTAMP                          DEFAULT NOW()
+    created_at       TIMESTAMP                          DEFAULT NOW(),
+    UNIQUE (part_number, exam_id)
 );
 
 CREATE TABLE IF NOT EXISTS writing_detail
@@ -62,7 +63,8 @@ CREATE TABLE IF NOT EXISTS writing_detail
                                         task_achievement_score * 2 = ROUND(task_achievement_score * 2)),
     task_band_score        FLOAT CHECK (task_band_score >= 0 AND task_band_score <= 9 AND
                                         task_band_score * 2 = ROUND(task_band_score * 2)) NOT NULL DEFAULT 0,
-    created_at             TIMESTAMP                                                               DEFAULT NOW()
+    created_at             TIMESTAMP                                                               DEFAULT NOW(),
+    UNIQUE (task_number, exam_id)
 );
 
 CREATE TABLE IF NOT EXISTS listening_detail

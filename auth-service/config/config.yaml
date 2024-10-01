@@ -1,8 +1,8 @@
 server:
-  port: 50053
+  port: 50051
 
 redis:
-  host: localhost
+  host: redis
   port: 6379
 
 telegram:
@@ -10,4 +10,4 @@ telegram:
 
 grpc:
   userService:
-    address: "localhost:50052"
+    address: "user-service:50054"

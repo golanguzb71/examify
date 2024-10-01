@@ -1,8 +1,8 @@
 server:
-  port: 50051
+  port: 50052
 
 database:
-  host: "localhost"
+  host: "postgres-ielts"
   port: 5432
   user: "postgres"
   password: "postgres"
@@ -12,6 +12,6 @@ database:
 
 grpc:
   userService:
-    address: "localhost:50052"
+    address: "user-service:50054"
   integrationService:
-    address: "localhost:50054"
+    address: "integration-service:50053"
