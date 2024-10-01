@@ -22,7 +22,7 @@ const (
 	UserService_CreateUser_FullMethodName             = "/user.UserService/CreateUser"
 	UserService_GetUserByChatIdOrPhone_FullMethodName = "/user.UserService/GetUserByChatIdOrPhone"
 	UserService_GetAllUsers_FullMethodName            = "/user.UserService/GetAllUsers"
-	UserService_UpdateInformation_FullMethodName      = "/user.UserService/UpdateInformation"
+	UserService_UpdateNameSurname_FullMethodName      = "/user.UserService/UpdateNameSurname"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -32,7 +32,7 @@ type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	GetUserByChatIdOrPhone(ctx context.Context, in *GetUserByChatIdOrPhoneRequestOrId, opts ...grpc.CallOption) (*User, error)
 	GetAllUsers(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*GetAllUserResponse, error)
-	UpdateInformation(ctx context.Context, in *UpdateInformationRequest, opts ...grpc.CallOption) (*AbsResponse, error)
+	UpdateNameSurname(ctx context.Context, in *UpdateUserNameSurnameRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 }
 
 type userServiceClient struct {
@@ -73,10 +73,10 @@ func (c *userServiceClient) GetAllUsers(ctx context.Context, in *PageRequest, op
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateInformation(ctx context.Context, in *UpdateInformationRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
+func (c *userServiceClient) UpdateNameSurname(ctx context.Context, in *UpdateUserNameSurnameRequest, opts ...grpc.CallOption) (*AbsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AbsResponse)
-	err := c.cc.Invoke(ctx, UserService_UpdateInformation_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, UserService_UpdateNameSurname_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ type UserServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*AbsResponse, error)
 	GetUserByChatIdOrPhone(context.Context, *GetUserByChatIdOrPhoneRequestOrId) (*User, error)
 	GetAllUsers(context.Context, *PageRequest) (*GetAllUserResponse, error)
-	UpdateInformation(context.Context, *UpdateInformationRequest) (*AbsResponse, error)
+	UpdateNameSurname(context.Context, *UpdateUserNameSurnameRequest) (*AbsResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -110,8 +110,8 @@ func (UnimplementedUserServiceServer) GetUserByChatIdOrPhone(context.Context, *G
 func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *PageRequest) (*GetAllUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateInformation(context.Context, *UpdateInformationRequest) (*AbsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateInformation not implemented")
+func (UnimplementedUserServiceServer) UpdateNameSurname(context.Context, *UpdateUserNameSurnameRequest) (*AbsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNameSurname not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -188,20 +188,20 @@ func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateInformationRequest)
+func _UserService_UpdateNameSurname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserNameSurnameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateInformation(ctx, in)
+		return srv.(UserServiceServer).UpdateNameSurname(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_UpdateInformation_FullMethodName,
+		FullMethod: UserService_UpdateNameSurname_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateInformation(ctx, req.(*UpdateInformationRequest))
+		return srv.(UserServiceServer).UpdateNameSurname(ctx, req.(*UpdateUserNameSurnameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,8 +226,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_GetAllUsers_Handler,
 		},
 		{
-			MethodName: "UpdateInformation",
-			Handler:    _UserService_UpdateInformation_Handler,
+			MethodName: "UpdateNameSurname",
+			Handler:    _UserService_UpdateNameSurname_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

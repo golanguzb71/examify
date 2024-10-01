@@ -10,8 +10,7 @@ service UserService {
   rpc CreateUser(CreateUserRequest) returns (common.AbsResponse);
   rpc GetUserByChatIdOrPhone(GetUserByChatIdOrPhoneRequestOrId) returns (common.User);
   rpc GetAllUsers(common.PageRequest) returns (GetAllUserResponse);
-  rpc UpdateInformation(UpdateInformationRequest) returns (common.AbsResponse);
-
+  rpc UpdateNameSurname(UpdateUserNameSurnameRequest) returns(common.AbsResponse);
 }
 
 message CreateUserRequest {
@@ -32,7 +31,7 @@ message GetAllUserResponse {
   int32 totalPages = 2;
 }
 
-message UpdateInformationRequest {
-  common.User currentUser = 1;
-  common.User editUser = 2;
+message UpdateUserNameSurnameRequest{
+  string name = 1;
+  string surname = 2;
 }

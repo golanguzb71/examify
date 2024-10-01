@@ -27,6 +27,6 @@ func (s *UserService) GetAllUsers(ctx context.Context, req *pb.PageRequest) (*pb
 	return s.repo.GetAllUsers(req.Page, req.Size)
 }
 
-func (s *UserService) UpdateInformation(ctx context.Context, req *pb.UpdateInformationRequest) (*pb.AbsResponse, error) {
-	return s.repo.UpdateInformation(req)
+func (s *UserService) UpdateNameSurname(ctx context.Context, req *pb.UpdateUserNameSurnameRequest) (*pb.AbsResponse, error) {
+	return s.repo.UpdateNameOrSurname(req.Name, req.Surname)
 }
