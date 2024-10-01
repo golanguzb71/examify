@@ -6,6 +6,7 @@ import (
 	"user-service/config"
 	"user-service/internal/repository"
 	"user-service/internal/service"
+	"user-service/internal/utils"
 	"user-service/proto/pb"
 
 	"google.golang.org/grpc"
@@ -22,6 +23,8 @@ func RunServer() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
+
+	utils.MigrateUp(db)
 
 	repo := repository.NewPostgresUserRepository(db)
 	userService := service.NewUserService(repo)
