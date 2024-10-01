@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: user_database
     ports:
-      - "5433:5432"
+      - "5435:5432"
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
       - ./user-service/migrations/user_service_up.sql:/docker-entrypoint-initdb.d/user_service_up.sql
