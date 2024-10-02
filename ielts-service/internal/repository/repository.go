@@ -253,6 +253,7 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 		setExtraFieldResult(&result, r.db)
 		results = append(results, &result)
 	}
+
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}

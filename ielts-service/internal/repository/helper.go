@@ -31,12 +31,12 @@ func setExtraFieldResult(result *pb.Result, db *sql.DB) {
 	}
 
 	var task1Score, task2Score float64
-	err = db.QueryRow(`SELECT task_score FROM writing_detail WHERE exam_id = $1 AND task_number = 1`, examId).Scan(&task1Score)
+	err = db.QueryRow(`SELECT task_band_score FROM writing_detail WHERE exam_id = $1 AND task_number = 1`, examId).Scan(&task1Score)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Println("Error fetching writing task 1 score:", err.Error())
 	}
 
-	err = db.QueryRow(`SELECT task_score FROM writing_detail WHERE exam_id = $1 AND task_number = 2`, examId).Scan(&task2Score)
+	err = db.QueryRow(`SELECT task_band_score FROM writing_detail WHERE exam_id = $1 AND task_number = 2`, examId).Scan(&task2Score)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Println("Error fetching writing task 2 score:", err.Error())
 	}
@@ -48,17 +48,17 @@ func setExtraFieldResult(result *pb.Result, db *sql.DB) {
 	}
 
 	var part1Score, part2Score, part3Score float64
-	err = db.QueryRow(`SELECT speaking_score FROM speaking_detail WHERE exam_id = $1 AND part_number = 1`, examId).Scan(&part1Score)
+	err = db.QueryRow(`SELECT part_band_score FROM speaking_detail WHERE exam_id = $1 AND part_number = 1`, examId).Scan(&part1Score)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Println("Error fetching speaking part 1 score:", err.Error())
 	}
 
-	err = db.QueryRow(`SELECT speaking_score FROM speaking_detail WHERE exam_id = $1 AND part_number = 2`, examId).Scan(&part2Score)
+	err = db.QueryRow(`SELECT part_band_score FROM speaking_detail WHERE exam_id = $1 AND part_number = 2`, examId).Scan(&part2Score)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Println("Error fetching speaking part 2 score:", err.Error())
 	}
 
-	err = db.QueryRow(`SELECT speaking_score FROM speaking_detail WHERE exam_id = $1 AND part_number = 3`, examId).Scan(&part3Score)
+	err = db.QueryRow(`SELECT part_band_score FROM speaking_detail WHERE exam_id = $1 AND part_number = 3`, examId).Scan(&part3Score)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Println("Error fetching speaking part 3 score:", err.Error())
 	}
