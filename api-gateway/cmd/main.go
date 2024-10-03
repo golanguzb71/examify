@@ -9,7 +9,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
-	"time"
 )
 
 // @title Examify Swagger
@@ -29,12 +28,11 @@ func main() {
 	}
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	corsConfig.ExposeHeaders = []string{"Content-Length"}
 	corsConfig.AllowCredentials = true
-	corsConfig.MaxAge = 12 * time.Hour
 
 	router.Use(cors.New(corsConfig))
 
