@@ -68,6 +68,7 @@ func setExtraFieldResult(result *pb.Result, db *sql.DB) {
 	} else {
 		result.Speaking = "N/A"
 	}
+	
 }
 
 func roundToNearestHalf(score float64) string {

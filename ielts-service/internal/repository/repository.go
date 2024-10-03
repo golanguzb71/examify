@@ -171,9 +171,9 @@ func (r *PostgresRepository) CreateExam(userID, bookID int32) (*string, error) {
                       FROM exam 
                       WHERE user_id = $1 
                       AND DATE(created_at) = CURRENT_DATE`, userID).Scan(&count)
-	if err != nil || count >= 2 {
-		return nil, errors.New("you can create exam 2 times in a day")
-	}
+	//if err != nil || count >= 2 {
+	//	return nil, errors.New("you can create exam 2 times in a day")
+	//}
 
 	var id string
 	err = r.db.QueryRow(

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/ielts-service/internal/repository/helper.go" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/ielts-service/internal/repository/repository.go" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/ielts-service/internal/utils/utils.go" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/ielts-service/migrations/ielts_service_down.sql" dialect="PostgreSQL" />
