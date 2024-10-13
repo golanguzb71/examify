@@ -52,7 +52,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
 	defer cancel()
 
-	apiKey := "YOUR_API_KEY" // Replace with your actual API key
+	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E" // Replace with your actual API key
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %w", err)
