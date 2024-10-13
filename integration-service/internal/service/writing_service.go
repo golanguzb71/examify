@@ -5,19 +5,54 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 	"time"
 
 	"github.com/google/generative-ai-go/genai"
+	"google.golang.org/api/googleapi"
 	"google.golang.org/api/option"
 	"integration-service/proto/pb"
 )
 
+const (
+	maxRetries = 5
+	baseDelay  = 1 * time.Second
+	apiTimeout = 120 * time.Second
+)
+
+func processEssayWithRetry(essayText string) (*pb.WritingTaskAbsResponse, error) {
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		response, err := processEssay(essayText)
+		if err == nil {
+			return response, nil
+		}
+
+		if shouldRetry(err) {
+			delay := time.Duration(math.Pow(2, float64(attempt))) * baseDelay
+			log.Printf("Attempt %d failed, retrying in %v: %v", attempt+1, delay, err)
+			time.Sleep(delay)
+			continue
+		}
+
+		return nil, err
+	}
+
+	return nil, fmt.Errorf("max retries reached")
+}
+
+func shouldRetry(err error) bool {
+	if apiErr, ok := err.(*googleapi.Error); ok {
+		return apiErr.Code == 429 || (apiErr.Code >= 500 && apiErr.Code < 600)
+	}
+	return false
+}
+
 func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
 	defer cancel()
 
-	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E"
+	apiKey := "YOUR_API_KEY" // Replace with your actual API key
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %w", err)
@@ -25,6 +60,23 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	defer client.Close()
 
 	model := client.GenerativeModel("gemini-1.5-flash")
+	configureModel(model)
+
+	session := model.StartChat()
+	session.History = getInitialChatHistory()
+
+	resp, err := session.SendMessage(ctx, genai.Text(essayText))
+	if err != nil {
+		if apiErr, ok := err.(*googleapi.Error); ok && apiErr.Code == 429 {
+			return nil, fmt.Errorf("rate limit exceeded: %w", err)
+		}
+		return nil, fmt.Errorf("error sending message: %w", err)
+	}
+
+	return parseResponse(resp)
+}
+
+func configureModel(model *genai.GenerativeModel) {
 	model.SetTemperature(0.7)
 	model.SetTopK(64)
 	model.SetTopP(0.95)
@@ -41,9 +93,10 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 			"task_band_score":        {Type: genai.TypeNumber},
 		},
 	}
+}
 
-	session := model.StartChat()
-	session.History = []*genai.Content{
+func getInitialChatHistory() []*genai.Content {
+	return []*genai.Content{
 		{
 			Role:  "user",
 			Parts: []genai.Part{genai.Text("Some people think that parents should teach their children how to be good members of society. Others, however, believe that school is the best place to learn this. Discuss both views and give your own opinion.\n\n[Sample essay content...]")},
@@ -53,12 +106,9 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 			Parts: []genai.Part{genai.Text("```json\n{\"coherence_score\": 6, \"feedback\": \"The essay has a clear structure and a well-defined thesis statement. The examples used to support the arguments are relevant and well-chosen. However, the essay could be improved by providing more specific examples and further developing the arguments. \", \"grammar_score\": 6, \"lexical_resource_score\": 6, \"task_achievement_score\": 6, \"task_band_score\": 6}\n\n```")},
 		},
 	}
+}
 
-	resp, err := session.SendMessage(ctx, genai.Text(essayText))
-	if err != nil {
-		return nil, fmt.Errorf("error sending message: %w", err)
-	}
-
+func parseResponse(resp *genai.GenerateContentResponse) (*pb.WritingTaskAbsResponse, error) {
 	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
 		return nil, fmt.Errorf("no content in response")
 	}
@@ -70,13 +120,11 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 
 	log.Printf("Received response: %s", text)
 
-	jsonStart := strings.Index(string(text), "{")
-	jsonEnd := strings.LastIndex(string(text), "}") + 1
-	if jsonStart < 0 || jsonEnd <= jsonStart {
+	jsonStr := extractJSON(string(text))
+	if jsonStr == "" {
 		return nil, fmt.Errorf("no valid JSON found in response")
 	}
 
-	jsonStr := string(text)[jsonStart:jsonEnd]
 	log.Printf("Extracted JSON: %s", jsonStr)
 
 	var rawData map[string]interface{}
@@ -84,19 +132,27 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 		return nil, fmt.Errorf("error parsing response: %w", err)
 	}
 
-	requiredFields := []string{"feedback", "coherence_score", "grammar_score", "lexical_resource_score", "task_achievement_score", "task_band_score"}
-	for _, field := range requiredFields {
-		if _, ok := rawData[field]; !ok {
-			return nil, fmt.Errorf("required field '%s' is missing from the response", field)
-		}
-	}
+	return createResponseData(rawData)
+}
 
+func extractJSON(text string) string {
+	jsonStart := strings.Index(text, "{")
+	jsonEnd := strings.LastIndex(text, "}") + 1
+	if jsonStart < 0 || jsonEnd <= jsonStart {
+		return ""
+	}
+	return text[jsonStart:jsonEnd]
+}
+
+func createResponseData(rawData map[string]interface{}) (*pb.WritingTaskAbsResponse, error) {
 	responseData := &pb.WritingTaskAbsResponse{}
 
+	// Handle feedback field
 	if feedback, ok := rawData["feedback"].(string); ok {
 		responseData.Feedback = feedback
 	} else {
-		return nil, fmt.Errorf("feedback field is not a string")
+		log.Printf("Warning: 'feedback' field is missing or not a string")
+		responseData.Feedback = "No feedback provided"
 	}
 
 	floatFields := map[string]*float32{
@@ -111,7 +167,8 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 		if score, ok := rawData[field].(float64); ok {
 			*ptr = float32(clampScore(score))
 		} else {
-			return nil, fmt.Errorf("%s field is not a number", field)
+			log.Printf("Warning: '%s' field is missing or not a number", field)
+			*ptr = 0 // Set a default value
 		}
 	}
 
