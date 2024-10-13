@@ -122,7 +122,10 @@ func (c *IeltsClient) CreateExam(userId, bookId int32) (*pb.CreateExamResponse, 
 }
 
 func (c *IeltsClient) GetExamByUserId(userId, page, size int32) (*pb.GetExamByUserIdResponse, error) {
-	return nil, nil
+	return c.client.GetExamByUserId(context.Background(), &pb.GetExamByUserIdRequest{
+		UserId:      userId,
+		PageRequest: &pb.PageRequest{Page: page, Size: size},
+	})
 }
 
 func (c *IeltsClient) CreateAttemptInline(CAI *pb.CreateInlineAttemptRequest) (*pb.AbsResponse, error) {
@@ -169,6 +172,15 @@ func (c *IeltsClient) UpdateBookById(id, name string) (*pb.AbsResponse, error) {
 		Name: name,
 	}
 	resp, err := c.client.UpdateBookById(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *IeltsClient) CreateOutlineSpeakingAttempt(req *pb.CreateOutlineAttemptRequestSpeaking) (*pb.AbsResponse, error) {
+	ctx := context.TODO()
+	resp, err := c.client.CreateAttemptOutlineSpeaking(ctx, req)
 	if err != nil {
 		return nil, err
 	}

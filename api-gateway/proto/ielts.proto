@@ -133,8 +133,9 @@ message CreateOutlineAttemptRequestWriting {
 }
 message CreateOutlineAttemptRequestSpeaking{
   string examId = 1;
-  repeated QuestionUserAnswerSpeaking Qua = 2;
-  int32 partNumber = 3;
+  string question = 2;
+  bytes voiceAnswer = 3;
+  int32 partNumber = 4;
 }
 
 message QuestionUserAnswerWriting {
@@ -142,8 +143,4 @@ message QuestionUserAnswerWriting {
   string userAnswer = 2;
 }
 
-message QuestionUserAnswerSpeaking {
-  string question = 1;
-  bytes voiceAnswer = 2;
-}
 message Empty {}

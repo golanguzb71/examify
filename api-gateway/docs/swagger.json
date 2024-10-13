@@ -504,27 +504,27 @@
                         "type": "string",
                         "description": "Exam ID",
                         "name": "examId",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Part Number",
-                        "name": "partNumber",
-                        "in": "formData",
+                        "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Questions",
-                        "name": "questions",
-                        "in": "formData",
+                        "description": "Question",
+                        "name": "question",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Part Number",
+                        "name": "partNumber",
+                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "file",
-                        "description": "Voice Answer files (MP3 files)",
-                        "name": "voiceAnswers",
+                        "description": "Voice Answer (only MP3)",
+                        "name": "voiceAnswer",
                         "in": "formData",
                         "required": true
                     }

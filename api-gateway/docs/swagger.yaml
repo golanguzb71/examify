@@ -465,23 +465,23 @@ paths:
       description: Creates a new inline attempt for IELTS
       parameters:
       - description: Exam ID
-        in: formData
+        in: path
         name: examId
         required: true
         type: string
-      - description: Part Number
-        in: formData
-        name: partNumber
-        required: true
-        type: integer
-      - description: Questions
-        in: formData
-        name: questions
+      - description: Question
+        in: query
+        name: question
         required: true
         type: string
-      - description: Voice Answer files (MP3 files)
+      - description: Part Number
+        in: query
+        name: partNumber
+        required: true
+        type: string
+      - description: Voice Answer (only MP3)
         in: formData
-        name: voiceAnswers
+        name: voiceAnswer
         required: true
         type: file
       produces:

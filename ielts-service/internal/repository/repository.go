@@ -205,7 +205,7 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
             LEFT JOIN listening_detail ld ON e.id = ld.exam_id
             LEFT JOIN reading_detail rd ON e.id = rd.exam_id
             WHERE e.user_id = $1
-            GROUP BY e.id, b.title, e.created_at, e.over_all_band_score, e.status
+            GROUP BY e.id, b.title, e.created_at, e.over_all_band_score, e.status , ld.band_score , rd.band_score
         )
         SELECT exam_id, book_name, created_at, over_all_band_score, status,
                speaking_score, writing_score, listening_score, reading_score,
@@ -263,13 +263,12 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 	}
 
 	totalPages := int32(math.Ceil(float64(totalCount) / float64(size)))
-	fmt.Println(results)
-	fmt.Println(totalPages)
 	return &pb.GetExamByUserIdResponse{
 		Results:        results,
 		TotalPageCount: totalPages,
 	}, nil
 }
+
 func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int32) (*pb.GetTopExamResult, error) {
 	baseQuery := `
 		SELECT e.id, e.user_id, b.title, e.over_all_band_score, b.created_at
@@ -284,7 +283,7 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 	case "DAILY":
 		timeframeCondition = `e.created_at >= CURRENT_DATE`
 	case "WEEKLY":
-		timeframeCondition = `e.created_at >= date_trunc('week', CURRENT_DATE)`
+		timeframeCondition = `e.created_at >= CURRENT_DATE - INTERVAL '7 days'`
 	default:
 		return nil, fmt.Errorf("invalid dataframe: %s", dataframe)
 	}
@@ -458,5 +457,9 @@ func (r *PostgresRepository) UpdateBook(id string, name string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineAttemptRequestSpeaking) error {
 	return nil
 }

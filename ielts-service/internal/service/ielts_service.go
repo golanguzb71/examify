@@ -160,3 +160,14 @@ func (s *IeltsService) GetExamByUserId(ctx context.Context, req *pb.GetExamByUse
 func (s *IeltsService) GetTopExamResultList(ctx context.Context, req *pb.GetTopExamRequest) (*pb.GetTopExamResult, error) {
 	return s.repo.GetTopExamResults(req.Dataframe, req.PageRequest.Page, req.PageRequest.Size)
 }
+
+func (s *IeltsService) CreateAttemptOutlineSpeaking(ctx context.Context, req *pb.CreateOutlineAttemptRequestSpeaking) (*pb.AbsResponse, error) {
+	err := s.repo.CreateAttemptOutlineSpeaking(req)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AbsResponse{
+		Status:  200,
+		Message: "Speaking saved",
+	}, nil
+}

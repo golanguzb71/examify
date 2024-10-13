@@ -3,10 +3,12 @@ package handlers
 import (
 	"apigateway/proto/pb"
 	"apigateway/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 func GetExamResult(c *gin.Context) {
@@ -152,42 +154,73 @@ func CreateOutlineAttemptWriting(ctx *gin.Context) {
 // @Tags attempts
 // @Accept multipart/form-data
 // @Produce json
-// @Param examId formData string true "Exam ID"
-// @Param partNumber formData int true "Part Number"
-// @Param questions formData string true "Questions"
-// @Param voiceAnswers formData file true "Voice Answer files (MP3 files)"
+// @Param examId path string true "Exam ID"
+// @Param question query string true "Question"
+// @Param partNumber query string true "Part Number"
+// @Param voiceAnswer formData file true "Voice Answer (only MP3)"
 // @Success 200 {object} utils.AbsResponse
 // @Failure 400 {object} utils.AbsResponse
 // @Failure 409 {object} utils.AbsResponse
 // @Security Bearer
 // @Router /api/ielts/exam/attempt/create/outline-speaking [post]
 func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
-	examId := ctx.PostForm("examId")
-	partNumberStr := ctx.PostForm("partNumber")
-	question := ctx.PostForm("question")
-
-	fmt.Println("Exam ID:", examId)
-	fmt.Println("Part Number:", partNumberStr)
-	fmt.Println("Question:", question)
-
-	form, err := ctx.MultipartForm()
+	strExamId := ctx.Param("examId")
+	strQuestion := ctx.Query("question")
+	file, err := ctx.FormFile("voiceAnswer")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, utils.AbsResponse{
-			Status:  http.StatusBadRequest,
-			Message: "Failed to parse multipart form",
-		})
+		utils.RespondError(ctx, http.StatusBadRequest, "Voice answer file is required")
+		return
+	}
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+	if ext != ".mp3" {
+		utils.RespondError(ctx, http.StatusBadRequest, "Only MP3 files are allowed")
+		return
+	}
+	fileContent, err := file.Open()
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Could not open the uploaded file")
+		return
+	}
+	defer fileContent.Close()
+	buffer := make([]byte, 512)
+	_, err = fileContent.Read(buffer)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Could not read the file content")
 		return
 	}
 
-	files := form.File["voiceAnswers"]
-	if len(files) == 0 {
-		ctx.JSON(http.StatusBadRequest, utils.AbsResponse{
-			Status:  http.StatusBadRequest,
-			Message: "No files uploaded",
-		})
+	mimeType := http.DetectContentType(buffer)
+	if mimeType != "audio/mpeg" {
+		utils.RespondError(ctx, http.StatusBadRequest, "Only MP3 files are accepted")
 		return
 	}
 
-	fmt.Printf("Number of uploaded files: %d\n", len(files))
+	fileContent.Seek(0, 0)
 
+	strPartNumber := ctx.Query("partNumber")
+	partNumber, err := strconv.ParseInt(strPartNumber, 10, 32)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Invalid part number")
+		return
+	}
+
+	fileBytes, err := ioutil.ReadAll(fileContent)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Could not read the file content")
+		return
+	}
+
+	var req pb.CreateOutlineAttemptRequestSpeaking
+	req.ExamId = strExamId
+	req.Question = strQuestion
+	req.VoiceAnswer = fileBytes
+	req.PartNumber = int32(partNumber)
+
+	resp, err := ieltsClient.CreateOutlineSpeakingAttempt(&req)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
+		return
+	}
+	utils.RespondSuccess(ctx, resp.Status, resp.Message)
+	return
 }

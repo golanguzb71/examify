@@ -1,10 +1,22 @@
+#server:
+#  port: 8080
+#
+#grpc:
+#  ieltsService:
+#    address: "ielts-service:50052"
+#  userService:
+#    address: "user-service:50054"
+#  authService:
+#    address: "auth-service:50051"
+
+
 server:
   port: 8080
 
 grpc:
   ieltsService:
-    address: "ielts-service:50052"
+    address: "localhost:50052"
   userService:
-    address: "user-service:50054"
+    address: "localhost:50054"
   authService:
-    address: "auth-service:50051"
+    address: "localhost:50051"
