@@ -263,7 +263,8 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 	}
 
 	totalPages := int32(math.Ceil(float64(totalCount) / float64(size)))
-
+	fmt.Println(results)
+	fmt.Println(totalPages)
 	return &pb.GetExamByUserIdResponse{
 		Results:        results,
 		TotalPageCount: totalPages,
