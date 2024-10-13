@@ -643,7 +643,7 @@ paths:
       - Bearer: []
       summary: USER
       tags:
-      - ielts-results
+      - ielts-exam
   /api/user/profile:
     get:
       description: Retrieves the profile information of the currently authenticated

@@ -62,7 +62,7 @@ func ChangeNameSurname(ctx *gin.Context) {
 // GetMyResults godoc
 // @Summary USER
 // @Description Retrieves a paginated list of exam results for the logged-in user
-// @Tags ielts-results
+// @Tags ielts-exam
 // @Accept  json
 // @Produce  json
 // @Param page query int true "Page number"

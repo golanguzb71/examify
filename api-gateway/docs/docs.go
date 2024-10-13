@@ -728,7 +728,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ielts-results"
+                    "ielts-exam"
                 ],
                 "summary": "USER",
                 "parameters": [
