@@ -188,17 +188,6 @@ func (r *PostgresRepository) CreateExam(userID, bookID int32) (*string, error) {
 	return &id, nil
 }
 
-import (
-"context"
-"database/sql"
-"fmt"
-"math"
-"time"
-
-"github.com/lib/pq"
-"google.golang.org/protobuf/types/known/timestamppb"
-)
-
 func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.GetExamByUserIdResponse, error) {
 	offset := (page - 1) * size
 
