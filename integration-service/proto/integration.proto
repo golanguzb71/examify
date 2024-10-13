@@ -4,19 +4,17 @@ package integration;
 
 option go_package = "./proto/pb";
 
-
-service IntegrationService{
-  rpc GetResultWritingTask(WritingTaskAbsRequest)returns(WritingTaskAbsResponse);
-  rpc GetResultSpeakingPart(SpeakingPartAbsRequest)returns(SpeakingPartAbsResponse);
+service IntegrationService {
+  rpc GetResultWritingTask(WritingTaskAbsRequest) returns (WritingTaskAbsResponse);
+  rpc GetResultSpeakingPart(SpeakingPartAbsRequest) returns (SpeakingPartAbsResponse);
 }
 
-message WritingTaskAbsRequest{
-  string  question = 1;
-  string  answer = 2;
+message WritingTaskAbsRequest {
+  string question = 1;
+  string answer = 2;
 }
 
-
-message WritingTaskAbsResponse{
+message WritingTaskAbsResponse {
   string feedback = 1;
   float coherence_score = 2;
   float grammar_score = 3;
@@ -25,10 +23,26 @@ message WritingTaskAbsResponse{
   float task_band_score = 6;
 }
 
-message SpeakingPartAbsResponse{
-
+message SpeakingPartAbsRequest {
+  repeated SpeakingQuestion part1 = 1;
+  SpeakingQuestion part2 = 2;
+  repeated SpeakingQuestion part3 = 3;
 }
 
-message SpeakingPartAbsRequest{
-
+message SpeakingQuestion {
+  string question = 1;
+  bytes voice_message = 2;
 }
+
+message SpeakingPartAbsResponse {
+  float fluency_score = 1;
+  float grammar_score = 2;
+  float vocabulary_score = 3;
+  float coherence_score = 4;
+  float topic_dev_score = 5;
+  float relevance_score = 6;
+  int32 word_count = 7;
+  string transcription = 8;
+  float part_band_score = 9;
+}
+

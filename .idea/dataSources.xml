@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="user_database@localhost" uuid="4eccc7d9-f050-474f-9a5f-06f48da871d6">
+    <data-source source="LOCAL" name="ielts_database@localhost" uuid="855f903a-c204-4f65-856d-f7f53c67f7a6">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/ielts_database</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.host.port" />
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+        <property name="com.intellij.clouds.kubernetes.db.container.port" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="user_database@localhost" uuid="a75881f8-883c-4476-964c-e4eb82120e13">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
@@ -10,18 +22,6 @@
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
         <property name="com.intellij.clouds.kubernetes.db.resource.type" value="Deployment" />
-        <property name="com.intellij.clouds.kubernetes.db.container.port" />
-      </jdbc-additional-properties>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="ielts_database@localhost [2]" uuid="630a4ee7-a900-4de1-9ec7-bbe47046aaeb">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/ielts_database</jdbc-url>
-      <jdbc-additional-properties>
-        <property name="com.intellij.clouds.kubernetes.db.host.port" />
-        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
         <property name="com.intellij.clouds.kubernetes.db.container.port" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>

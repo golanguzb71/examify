@@ -3,6 +3,7 @@ module apigateway
 go 1.23.1
 
 require (
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
@@ -19,7 +20,6 @@ require (
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.5 // indirect
-	github.com/gin-contrib/cors v1.7.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect

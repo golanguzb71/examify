@@ -5,13 +5,13 @@ setup_database() {
     local db_name=$1
     local migration_file=$2
 
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "$POSTGRES_DB" <<-EOSQL
         SELECT 'CREATE DATABASE $db_name'
         WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$db_name')\gexec
 EOSQL
 
     if [ -f "$migration_file" ]; then
-        psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$db_name" -f "$migration_file"
+        psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "$db_name" -f "$migration_file"
         echo "$db_name setup and migrations completed."
     else
         echo "Migration file $migration_file not found. Skipping migrations for $db_name."
