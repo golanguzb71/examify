@@ -4,7 +4,7 @@ package ielts;
 
 option go_package = "./proto/pb";
 
-import "proto/common.proto";
+import "common.proto";
 
 
 service IeltsService {
@@ -57,7 +57,23 @@ message CreateExamResponse {
   string examId = 1;
 }
 
-message GetExamByUserIdResponse {}
+message GetExamByUserIdResponse {
+  repeated GetExamAbsResult results = 1;
+  int32 totalPageCount = 2;
+}
+
+message GetExamAbsResult{
+  string bookName = 2;
+  string createdAt = 3;
+  string overall = 4;
+  string speaking = 5;
+  string writing = 6;
+  string listening = 7;
+  string reading = 8;
+  string examId = 9;
+  string status = 10;
+  int32 remainTimeForEndExam = 11;
+}
 
 message CreateExamRequest {
   int32 userId = 1;

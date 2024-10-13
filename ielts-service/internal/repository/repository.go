@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -15,6 +16,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type PostgresRepository struct {
@@ -186,9 +188,113 @@ func (r *PostgresRepository) CreateExam(userID, bookID int32) (*string, error) {
 	return &id, nil
 }
 
+import (
+"context"
+"database/sql"
+"fmt"
+"math"
+"time"
+
+"github.com/lib/pq"
+"google.golang.org/protobuf/types/known/timestamppb"
+)
+
 func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.GetExamByUserIdResponse, error) {
-	r.db.Query(`SELECT id, user_id, book_id, over_all_band_score , created_at FROM exam where user_id=$1 order by created_at desc  offset $2 limit $3`)
-	return nil, nil
+	offset := (page - 1) * size
+
+	query := `
+		WITH exam_data AS (
+			SELECT 
+				e.id AS exam_id,
+				b.title AS book_name,
+				e.created_at,
+				e.over_all_band_score,
+				e.status,
+				COALESCE(AVG(sd.part_band_score), 0) AS speaking_score,
+				COALESCE(AVG(wd.task_band_score), 0) AS writing_score,
+				COALESCE(ld.band_score, 0) AS listening_score,
+				COALESCE(rd.band_score, 0) AS reading_score
+			FROM 
+				exam e
+				JOIN book b ON e.book_id = b.id
+				LEFT JOIN speaking_detail sd ON e.id = sd.exam_id
+				LEFT JOIN writing_detail wd ON e.id = wd.exam_id
+				LEFT JOIN listening_detail ld ON e.id = ld.exam_id
+				LEFT JOIN reading_detail rd ON e.id = rd.exam_id
+			WHERE 
+				e.user_id = $1
+			GROUP BY 
+				e.id, b.title, e.created_at, e.over_all_band_score, e.status, ld.band_score, rd.band_score
+		)
+		SELECT 
+			exam_id, book_name, created_at, over_all_band_score, status,
+			speaking_score, writing_score, listening_score, reading_score,
+			COUNT(*) OVER() AS total_count
+		FROM 
+			exam_data
+		ORDER BY 
+			created_at DESC
+		LIMIT $2 OFFSET $3
+	`
+
+	rows, err := r.db.QueryContext(context.Background(), query, userID, size, offset)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %v", err)
+	}
+	defer rows.Close()
+
+	var results []*pb.GetExamAbsResult
+	var totalCount int32
+
+	for rows.Next() {
+		var examId, bookName, status string
+		var createdAt time.Time
+		var overallScore, speakingScore, writingScore, listeningScore, readingScore float64
+
+		err := rows.Scan(
+			&examId, &bookName, &createdAt, &overallScore, &status,
+			&speakingScore, &writingScore, &listeningScore, &readingScore,
+			&totalCount,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %v", err)
+		}
+
+		remainTimeForEndExam := int32(0)
+		if status == "PENDING" {
+			endTime := createdAt.Add(4 * time.Hour)
+			remainTime := time.Until(endTime)
+			if remainTime > 0 {
+				remainTimeForEndExam = int32(remainTime.Seconds())
+			}
+		}
+
+		result := &pb.GetExamAbsResult{
+			ExamId:               examId,
+			BookName:             bookName,
+			CreatedAt:            createdAt.Format(time.RFC3339),
+			Overall:              fmt.Sprintf("%.1f", overallScore),
+			Speaking:             fmt.Sprintf("%.1f", speakingScore),
+			Writing:              fmt.Sprintf("%.1f", writingScore),
+			Listening:            fmt.Sprintf("%.1f", listeningScore),
+			Reading:              fmt.Sprintf("%.1f", readingScore),
+			Status:               status,
+			RemainTimeForEndExam: remainTimeForEndExam,
+		}
+
+		results = append(results, result)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating over rows: %v", err)
+	}
+
+	totalPages := int32(math.Ceil(float64(totalCount) / float64(size)))
+
+	return &pb.GetExamByUserIdResponse{
+		Results:        results,
+		TotalPageCount: totalPages,
+	}, nil
 }
 
 func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int32) (*pb.GetTopExamResult, error) {

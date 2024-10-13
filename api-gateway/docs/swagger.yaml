@@ -50,6 +50,38 @@ definitions:
           $ref: '#/definitions/pb.Answer'
         type: array
     type: object
+  pb.GetExamAbsResult:
+    properties:
+      bookName:
+        type: string
+      createdAt:
+        type: string
+      examId:
+        type: string
+      listening:
+        type: string
+      overall:
+        type: string
+      reading:
+        type: string
+      remainTimeForEndExam:
+        type: integer
+      speaking:
+        type: string
+      status:
+        type: string
+      writing:
+        type: string
+    type: object
+  pb.GetExamByUserIdResponse:
+    properties:
+      results:
+        items:
+          $ref: '#/definitions/pb.GetExamAbsResult'
+        type: array
+      totalPageCount:
+        type: integer
+    type: object
   pb.GetTopExamResult:
     properties:
       results:
@@ -572,6 +604,46 @@ paths:
       summary: ALL
       tags:
       - ielts-exam
+  /api/user/get-my-results:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a paginated list of exam results for the logged-in user
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User's exam results
+          schema:
+            $ref: '#/definitions/pb.GetExamByUserIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: USER
+      tags:
+      - ielts-results
   /api/user/profile:
     get:
       description: Retrieves the profile information of the currently authenticated

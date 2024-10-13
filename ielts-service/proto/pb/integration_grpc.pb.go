@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.21.12
-// source: proto/integration.proto
+// source: integration.proto
 
 package pb
 
@@ -155,5 +155,5 @@ var IntegrationService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/integration.proto",
+	Metadata: "integration.proto",
 }

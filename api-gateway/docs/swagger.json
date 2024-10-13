@@ -703,6 +703,68 @@
                 }
             }
         },
+        "/api/user/get-my-results": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves a paginated list of exam results for the logged-in user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ielts-results"
+                ],
+                "summary": "USER",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's exam results",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetExamByUserIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/profile": {
             "get": {
                 "security": [
@@ -857,6 +919,55 @@
                     "items": {
                         "$ref": "#/definitions/pb.Answer"
                     }
+                }
+            }
+        },
+        "pb.GetExamAbsResult": {
+            "type": "object",
+            "properties": {
+                "bookName": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "examId": {
+                    "type": "string"
+                },
+                "listening": {
+                    "type": "string"
+                },
+                "overall": {
+                    "type": "string"
+                },
+                "reading": {
+                    "type": "string"
+                },
+                "remainTimeForEndExam": {
+                    "type": "integer"
+                },
+                "speaking": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "writing": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetExamByUserIdResponse": {
+            "type": "object",
+            "properties": {
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.GetExamAbsResult"
+                    }
+                },
+                "totalPageCount": {
+                    "type": "integer"
                 }
             }
         },

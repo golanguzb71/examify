@@ -58,3 +58,42 @@ func ChangeNameSurname(ctx *gin.Context) {
 	utils.RespondSuccess(ctx, resp.Status, resp.Message)
 	return
 }
+
+// GetMyResults godoc
+// @Summary USER
+// @Description Retrieves a paginated list of exam results for the logged-in user
+// @Tags ielts-results
+// @Accept  json
+// @Produce  json
+// @Param page query int true "Page number"
+// @Param size query int true "Page size"
+// @Success 200 {object} pb.GetExamByUserIdResponse "User's exam results"
+// @Failure 400 {object} utils.AbsResponse "Bad Request"
+// @Failure 401 {object} utils.AbsResponse "Unauthorized"
+// @Failure 502 {object} utils.AbsResponse "Bad Gateway"
+// @Router /api/user/get-my-results [get]
+// @Security Bearer
+func GetMyResults(ctx *gin.Context) {
+	user, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusUnauthorized, err.Error())
+		return
+	}
+	page, err := strconv.ParseInt(ctx.Query("page"), 10, 32)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	size, err := strconv.ParseInt(ctx.Query("size"), 10, 32)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	resp, err := ieltsClient.GetExamByUserId(int32(user.Id), int32(page), int32(size))
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadGateway, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, resp)
+	return
+}

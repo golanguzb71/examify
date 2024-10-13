@@ -147,7 +147,6 @@ func extractJSON(text string) string {
 func createResponseData(rawData map[string]interface{}) (*pb.WritingTaskAbsResponse, error) {
 	responseData := &pb.WritingTaskAbsResponse{}
 
-	// Handle feedback field
 	if feedback, ok := rawData["feedback"].(string); ok {
 		responseData.Feedback = feedback
 	} else {
@@ -168,7 +167,7 @@ func createResponseData(rawData map[string]interface{}) (*pb.WritingTaskAbsRespo
 			*ptr = float32(clampScore(score))
 		} else {
 			log.Printf("Warning: '%s' field is missing or not a number", field)
-			*ptr = 0 // Set a default value
+			*ptr = 0
 		}
 	}
 
