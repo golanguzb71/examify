@@ -1,28 +1,28 @@
-#server:
-#  port: 50051
-#
-#redis:
-#  host: redis
-#  port: 6379
-#
-#telegram:
-#  bot_token: "7629206943:AAGN_dK0E4ZrpqIbwRefKqPvbGAvLcggCak"
-#
-#grpc:
-#  userService:
-#    address: "user-service:50054"
-
-
 server:
   port: 50051
 
 redis:
-  host: localhost
+  host: redis
   port: 6379
 
 telegram:
-  bot_token: "7223682774:AAFAabANpwopxAQs3BHo2kvtGMr8x9heJcc"
+  bot_token: "7629206943:AAGN_dK0E4ZrpqIbwRefKqPvbGAvLcggCak"
 
 grpc:
   userService:
-    address: "localhost:50054"
+    address: "user-service:50054"
+
+
+#server:
+#  port: 50051
+#
+#redis:
+#  host: localhost
+#  port: 6379
+#
+#telegram:
+#  bot_token: "7223682774:AAFAabANpwopxAQs3BHo2kvtGMr8x9heJcc"
+#
+#grpc:
+#  userService:
+#    address: "localhost:50054"
