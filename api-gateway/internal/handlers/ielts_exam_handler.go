@@ -172,7 +172,7 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 		return
 	}
 	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if ext != "mp3" {
+	if ext != ".mp3" {
 		utils.RespondError(ctx, http.StatusBadRequest, "Only MP3 files are allowed")
 		return
 	}
@@ -186,12 +186,6 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 	_, err = fileContent.Read(buffer)
 	if err != nil {
 		utils.RespondError(ctx, http.StatusBadRequest, "Could not read the file content")
-		return
-	}
-
-	mimeType := http.DetectContentType(buffer)
-	if mimeType != "audio/mpeg" {
-		utils.RespondError(ctx, http.StatusBadRequest, "Only MP3 files are accepted")
 		return
 	}
 
