@@ -172,7 +172,7 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 		return
 	}
 	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if ext != ".mp3" {
+	if ext != "mp3" {
 		utils.RespondError(ctx, http.StatusBadRequest, "Only MP3 files are allowed")
 		return
 	}
