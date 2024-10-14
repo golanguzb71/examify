@@ -953,6 +953,9 @@ const docTemplate = `{
                 "reading": {
                     "type": "string"
                 },
+                "remainSection": {
+                    "type": "string"
+                },
                 "remainTimeForEndExam": {
                     "type": "integer"
                 },

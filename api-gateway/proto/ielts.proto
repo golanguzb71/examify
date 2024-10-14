@@ -75,6 +75,7 @@ message GetExamAbsResult{
   string examId = 9;
   string status = 10;
   int32 remainTimeForEndExam = 11;
+  string remainSection = 12;
 }
 
 message CreateExamRequest {

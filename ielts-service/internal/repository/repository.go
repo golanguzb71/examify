@@ -239,11 +239,13 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 		}
 
 		remainTime := int32(0)
+		var remainSection string
 		if status == "PENDING" {
 			endTime := createdAt.Add(4 * time.Hour)
 			if remain := time.Until(endTime); remain > 0 {
 				remainTime = int32(remain.Seconds())
 			}
+			checkIsHaveRemainSection(&remainSection, r.db, examId)
 		}
 
 		results = append(results, &pb.GetExamAbsResult{
@@ -257,6 +259,7 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 			Reading:              fmt.Sprintf("%.1f", readingScore),
 			Status:               status,
 			RemainTimeForEndExam: remainTime,
+			RemainSection:        remainSection,
 		})
 	}
 
@@ -579,4 +582,32 @@ func validateIELTSBandScores(scores ...float32) error {
 		}
 	}
 	return nil
+}
+
+func checkIsHaveRemainSection(remainSection *string, db *sql.DB, examId string) {
+	var checkerListening, checkerReading, checkerSpeaking, checkerWriting bool
+	checkerListeningQuery := `SELECT exists(SELECT 1 FROM listening_detail where exam_id=$1)`
+	_ = db.QueryRow(checkerListeningQuery, examId).Scan(&checkerListening)
+	if !checkerListening {
+		*remainSection = "LISTENING"
+		return
+	}
+	checkerReadingQuery := `SELECT exists(SELECT 1 FROM reading_detail where exam_id=$1)`
+	_ = db.QueryRow(checkerReadingQuery, examId).Scan(&checkerReading)
+	if !checkerReading {
+		*remainSection = "READING"
+		return
+	}
+	checkerSpeakingQuery := `SELECT exists(SELECT 1 FROM speaking_detail where exam_id=$1)`
+	_ = db.QueryRow(checkerSpeakingQuery, examId).Scan(&checkerSpeaking)
+	if !checkerSpeaking {
+		*remainSection = "SPEAKING"
+		return
+	}
+	checkerWritingQuery := `SELECT exists(SELECT 1 FROM writing_detail where exam_id=$1)`
+	_ = db.QueryRow(checkerWritingQuery, examId).Scan(&checkerWriting)
+	if !checkerWriting {
+		*remainSection = "WRITING"
+		return
+	}
 }
