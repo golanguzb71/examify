@@ -18,5 +18,5 @@ func (i *IntegrationService) GetResultWritingTask(ctx context.Context, wta *pb.W
 }
 
 func (i *IntegrationService) GetResultSpeakingPart(ctx context.Context, spr *pb.SpeakingPartAbsRequest) (*pb.SpeakingPartAbsResponse, error) {
-	return nil, nil
+	return processPartOfSpeaking(spr.Question, spr.VoiceMessage)
 }
