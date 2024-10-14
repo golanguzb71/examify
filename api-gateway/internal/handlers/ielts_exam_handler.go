@@ -157,7 +157,7 @@ func CreateOutlineAttemptWriting(ctx *gin.Context) {
 // @Param examId path string true "Exam ID"
 // @Param question query string true "Question"
 // @Param partNumber query string true "Part Number"
-// @Param voiceAnswer formData file true "Voice Answer (only MP3)"
+// @Param voiceAnswer formData file true "Voice Answer (only wav)"
 // @Success 200 {object} utils.AbsResponse
 // @Failure 400 {object} utils.AbsResponse
 // @Failure 409 {object} utils.AbsResponse
@@ -172,8 +172,8 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 		return
 	}
 	ext := strings.ToLower(filepath.Ext(file.Filename))
-	if ext != ".mp3" {
-		utils.RespondError(ctx, http.StatusBadRequest, "Only MP3 files are allowed")
+	if ext != ".wav" {
+		utils.RespondError(ctx, http.StatusBadRequest, "Only only wav files are allowed")
 		return
 	}
 	fileContent, err := file.Open()

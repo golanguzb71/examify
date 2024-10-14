@@ -533,7 +533,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Voice Answer (only MP3)",
+                        "description": "Voice Answer (only wav)",
                         "name": "voiceAnswer",
                         "in": "formData",
                         "required": true

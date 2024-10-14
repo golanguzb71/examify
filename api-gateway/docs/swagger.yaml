@@ -481,7 +481,7 @@ paths:
         name: partNumber
         required: true
         type: string
-      - description: Voice Answer (only MP3)
+      - description: Voice Answer (only wav)
         in: formData
         name: voiceAnswer
         required: true
