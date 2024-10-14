@@ -463,61 +463,120 @@ func (r *PostgresRepository) UpdateBook(id string, name string) error {
 }
 
 func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineAttemptRequestSpeaking) error {
-	var checker bool
-	err := r.db.QueryRow(`SELECT exists(SELECT 1 FROM speaking_detail sd join exam e on e.id=sd.exam_id WHERE sd.exam_id=$1 and e.status='PENDING')`, req.ExamId).Scan(&checker)
+	var exists bool
+	err := r.db.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1 FROM exam WHERE status = 'PENDING' AND id = $1
+		)
+	`, req.ExamId).Scan(&exists)
 	if err != nil {
-		return err
+		return fmt.Errorf("error checking for pending exam: %v", err)
 	}
+	if !exists {
+		return fmt.Errorf("no pending speaking attempts for exam ID: %s", req.ExamId)
+	}
+
 	fileName := fmt.Sprintf("%s_part%d_%s.wav", req.ExamId, req.PartNumber, uuid.New().String())
 	filePath := filepath.Join("voice_answers", fileName)
+
 	err = os.MkdirAll(filepath.Dir(filePath), 0755)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating directory: %v", err)
 	}
+
 	err = os.WriteFile(filePath, req.VoiceAnswer, 0644)
 	if err != nil {
-		return err
+		return fmt.Errorf("error writing voice answer to file: %v", err)
 	}
+
 	voiceURL := fmt.Sprintf("/voice_answers/%s", fileName)
+
 	resp, err := r.integrationClient.GetResultSpeakingPart(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting result from integration client: %v", err)
 	}
-	var transcription map[string]string
-	err = json.Unmarshal([]byte(resp.Transcription), &transcription)
-	if err != nil {
-		return err
+
+	transcription := map[string]string{
+		"question":      resp.Transcription.Question,
+		"feedback":      resp.Transcription.Feedback,
+		"transcription": resp.Transcription.Transcription,
 	}
-	transcription[req.Question] = resp.Transcription
+
 	transcriptionJSON, err := json.Marshal(transcription)
 	if err != nil {
+		return fmt.Errorf("error marshaling transcription to JSON: %v", err)
+	}
+
+	if err := validateIELTSBandScores(
+		resp.FluencyScore,
+		resp.GrammarScore,
+		resp.VocabularyScore,
+		resp.CoherenceScore,
+		resp.TopicDevScore,
+		resp.RelevanceScore,
+		resp.PartBandScore,
+	); err != nil {
 		return err
 	}
+
 	_, err = r.db.Exec(`
-		INSERT INTO speaking_detail (
-			id, exam_id, part_number, fluency_score, grammar_score, vocabulary_score,
-			coherence_score, topic_dev_score, relevance_score, transcription, voice_url, part_band_score, word_count
-		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, ARRAY[$11], $12, $13
-		)
-		ON CONFLICT (exam_id, part_number) DO UPDATE SET
-			fluency_score = (speaking_detail.fluency_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.fluency_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			grammar_score = (speaking_detail.grammar_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.grammar_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			vocabulary_score = (speaking_detail.vocabulary_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.vocabulary_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			coherence_score = (speaking_detail.coherence_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.coherence_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			topic_dev_score = (speaking_detail.topic_dev_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.topic_dev_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			relevance_score = (speaking_detail.relevance_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.relevance_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			part_band_score = (speaking_detail.part_band_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.part_band_score) / (array_length(speaking_detail.voice_url, 1) + 1),
-			word_count = speaking_detail.word_count + EXCLUDED.word_count,
-			transcription = speaking_detail.transcription || EXCLUDED.transcription,
-			voice_url = array_append(speaking_detail.voice_url, EXCLUDED.voice_url[1])
-	`,
+	INSERT INTO speaking_detail (
+		id, exam_id, part_number, fluency_score, grammar_score, vocabulary_score,
+		coherence_score, topic_dev_score, relevance_score, transcription, voice_url, part_band_score, word_count
+	) VALUES (
+		$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, ARRAY[$11], $12, $13
+	)
+	ON CONFLICT (exam_id, part_number) DO UPDATE SET
+		fluency_score = (speaking_detail.fluency_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.fluency_score) / array_length(speaking_detail.voice_url, 1),
+		grammar_score = (speaking_detail.grammar_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.grammar_score) / array_length(speaking_detail.voice_url, 1),
+		vocabulary_score = (speaking_detail.vocabulary_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.vocabulary_score) / array_length(speaking_detail.voice_url, 1),
+		coherence_score = (speaking_detail.coherence_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.coherence_score) / array_length(speaking_detail.voice_url, 1),
+		topic_dev_score = (speaking_detail.topic_dev_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.topic_dev_score) / array_length(speaking_detail.voice_url, 1),
+		relevance_score = (speaking_detail.relevance_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.relevance_score) / array_length(speaking_detail.voice_url, 1),
+		part_band_score = (speaking_detail.part_band_score * (array_length(speaking_detail.voice_url, 1) - 1) + EXCLUDED.part_band_score) / array_length(speaking_detail.voice_url, 1),
+		word_count = speaking_detail.word_count + EXCLUDED.word_count,
+		transcription = speaking_detail.transcription || jsonb_build_array(EXCLUDED.transcription),
+		voice_url = array_append(speaking_detail.voice_url, EXCLUDED.voice_url[1])
+`,
 		uuid.New(), req.ExamId, req.PartNumber, resp.FluencyScore, resp.GrammarScore, resp.VocabularyScore,
 		resp.CoherenceScore, resp.TopicDevScore, resp.RelevanceScore, transcriptionJSON, voiceURL, resp.PartBandScore, resp.WordCount,
 	)
+	if err != nil {
+		return fmt.Errorf("error executing insert/update query: %v", err)
+	}
+
 	err = utils.UpdateOverallScore(req.ExamId, r.db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error updating overall score: %v", err)
 	}
-	return err
+
+	return nil
+}
+
+func validateIELTSBandScores(scores ...float32) error {
+	validScores := map[float32]bool{
+		1:   true,
+		1.5: true,
+		2:   true,
+		2.5: true,
+		3:   true,
+		3.5: true,
+		4:   true,
+		4.5: true,
+		5:   true,
+		5.5: true,
+		6:   true,
+		6.5: true,
+		7:   true,
+		7.5: true,
+		8:   true,
+		8.5: true,
+	}
+
+	for _, score := range scores {
+		if !validScores[score] {
+			return fmt.Errorf("invalid score: %.2f; valid scores are 1, 1.5, ..., 8, 8.5", score)
+		}
+	}
+	return nil
 }

@@ -38,7 +38,7 @@ func IELTSRoutes(r *gin.RouterGroup, authClient *client.AuthClient) {
 		{
 			attempt.POST("/create/inline", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateInlineAttempt)
 			attempt.POST("/create/outline-writing", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateOutlineAttemptWriting)
-			attempt.POST("/create/outline-speaking", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateOutlineAttemptSpeaking)
+			attempt.POST("/create/outline-speaking/:examId", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateOutlineAttemptSpeaking)
 		}
 
 	}

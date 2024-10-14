@@ -162,7 +162,7 @@ func CreateOutlineAttemptWriting(ctx *gin.Context) {
 // @Failure 400 {object} utils.AbsResponse
 // @Failure 409 {object} utils.AbsResponse
 // @Security Bearer
-// @Router /api/ielts/exam/attempt/create/outline-speaking [post]
+// @Router /api/ielts/exam/attempt/create/outline-speaking/{examId} [post]
 func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 	strExamId := ctx.Param("examId")
 	strQuestion := ctx.Query("question")

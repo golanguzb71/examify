@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"math"
@@ -53,7 +52,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
 	defer cancel()
 
-	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E"
+	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E" // Replace with your actual API key
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %w", err)
@@ -68,8 +67,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 
 	resp, err := session.SendMessage(ctx, genai.Text(essayText))
 	if err != nil {
-		var apiErr *googleapi.Error
-		if errors.As(err, &apiErr) && apiErr.Code == 429 {
+		if apiErr, ok := err.(*googleapi.Error); ok && apiErr.Code == 429 {
 			return nil, fmt.Errorf("rate limit exceeded: %w", err)
 		}
 		return nil, fmt.Errorf("error sending message: %w", err)

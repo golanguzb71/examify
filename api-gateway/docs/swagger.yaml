@@ -458,7 +458,7 @@ paths:
       summary: USER
       tags:
       - attempts
-  /api/ielts/exam/attempt/create/outline-speaking:
+  /api/ielts/exam/attempt/create/outline-speaking/{examId}:
     post:
       consumes:
       - multipart/form-data

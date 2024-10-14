@@ -29,7 +29,10 @@ func (c *IntegrationClient) GetResultWritingTask(qua *pb.WritingTaskAbsRequest) 
 }
 
 func (c *IntegrationClient) GetResultSpeakingPart(req *pb.CreateOutlineAttemptRequestSpeaking) (*pb.SpeakingPartAbsResponse, error) {
-	resp, err := c.GetResultSpeakingPart(req)
+	resp, err := c.client.GetResultSpeakingPart(context.TODO(), &pb.SpeakingPartAbsRequest{
+		Question:     req.GetQuestion(),
+		VoiceMessage: req.GetVoiceAnswer(),
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -491,7 +491,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ielts/exam/attempt/create/outline-speaking": {
+        "/api/ielts/exam/attempt/create/outline-speaking/{examId}": {
             "post": {
                 "security": [
                     {
