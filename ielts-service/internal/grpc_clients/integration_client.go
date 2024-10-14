@@ -27,3 +27,11 @@ func (c *IntegrationClient) GetResultWritingTask(qua *pb.WritingTaskAbsRequest) 
 	}
 	return resp, nil
 }
+
+func (c *IntegrationClient) GetResultSpeakingPart(req *pb.CreateOutlineAttemptRequestSpeaking) (*pb.SpeakingPartAbsResponse, error) {
+	resp, err := c.GetResultSpeakingPart(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

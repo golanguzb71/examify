@@ -24,15 +24,10 @@ message WritingTaskAbsResponse {
 }
 
 message SpeakingPartAbsRequest {
-  repeated SpeakingQuestion part1 = 1;
-  SpeakingQuestion part2 = 2;
-  repeated SpeakingQuestion part3 = 3;
-}
-
-message SpeakingQuestion {
   string question = 1;
   bytes voice_message = 2;
 }
+
 
 message SpeakingPartAbsResponse {
   float fluency_score = 1;
@@ -45,4 +40,3 @@ message SpeakingPartAbsResponse {
   string transcription = 8;
   float part_band_score = 9;
 }
-

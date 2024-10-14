@@ -13,6 +13,8 @@ import (
 	"ielts-service/proto/pb"
 	"log"
 	"math"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -461,5 +463,61 @@ func (r *PostgresRepository) UpdateBook(id string, name string) error {
 }
 
 func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineAttemptRequestSpeaking) error {
-	return nil
+	var checker bool
+	err := r.db.QueryRow(`SELECT exists(SELECT 1 FROM speaking_detail WHERE exam_id=$1 AND part_number=$2)`, req.ExamId, req.PartNumber).Scan(&checker)
+	if err != nil {
+		return err
+	}
+	fileName := fmt.Sprintf("%s_part%d_%s.wav", req.ExamId, req.PartNumber, uuid.New().String())
+	filePath := filepath.Join("voice_answers", fileName)
+	err = os.MkdirAll(filepath.Dir(filePath), 0755)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(filePath, req.VoiceAnswer, 0644)
+	if err != nil {
+		return err
+	}
+	voiceURL := fmt.Sprintf("/voice_answers/%s", fileName)
+	resp, err := r.integrationClient.GetResultSpeakingPart(req)
+	if err != nil {
+		return err
+	}
+	var transcription map[string]string
+	err = json.Unmarshal([]byte(resp.Transcription), &transcription)
+	if err != nil {
+		return err
+	}
+	transcription[req.Question] = resp.Transcription
+	transcriptionJSON, err := json.Marshal(transcription)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.Exec(`
+		INSERT INTO speaking_detail (
+			id, exam_id, part_number, fluency_score, grammar_score, vocabulary_score,
+			coherence_score, topic_dev_score, relevance_score, transcription, voice_url, part_band_score, word_count
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, ARRAY[$11], $12, $13
+		)
+		ON CONFLICT (exam_id, part_number) DO UPDATE SET
+			fluency_score = (speaking_detail.fluency_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.fluency_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			grammar_score = (speaking_detail.grammar_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.grammar_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			vocabulary_score = (speaking_detail.vocabulary_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.vocabulary_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			coherence_score = (speaking_detail.coherence_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.coherence_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			topic_dev_score = (speaking_detail.topic_dev_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.topic_dev_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			relevance_score = (speaking_detail.relevance_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.relevance_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			part_band_score = (speaking_detail.part_band_score * array_length(speaking_detail.voice_url, 1) + EXCLUDED.part_band_score) / (array_length(speaking_detail.voice_url, 1) + 1),
+			word_count = speaking_detail.word_count + EXCLUDED.word_count,
+			transcription = speaking_detail.transcription || EXCLUDED.transcription,
+			voice_url = array_append(speaking_detail.voice_url, EXCLUDED.voice_url[1])
+	`,
+		uuid.New(), req.ExamId, req.PartNumber, resp.FluencyScore, resp.GrammarScore, resp.VocabularyScore,
+		resp.CoherenceScore, resp.TopicDevScore, resp.RelevanceScore, transcriptionJSON, voiceURL, resp.PartBandScore, resp.WordCount,
+	)
+	err = utils.UpdateOverallScore(req.ExamId, r.db)
+	if err != nil {
+		return err
+	}
+	return err
 }
