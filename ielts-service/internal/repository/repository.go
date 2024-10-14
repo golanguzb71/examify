@@ -464,7 +464,7 @@ func (r *PostgresRepository) UpdateBook(id string, name string) error {
 
 func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineAttemptRequestSpeaking) error {
 	var checker bool
-	err := r.db.QueryRow(`SELECT exists(SELECT 1 FROM speaking_detail WHERE exam_id=$1 AND part_number=$2)`, req.ExamId, req.PartNumber).Scan(&checker)
+	err := r.db.QueryRow(`SELECT exists(SELECT 1 FROM speaking_detail sd join exam e on e.id=sd.exam_id WHERE sd.exam_id=$1 and e.status='PENDING')`, req.ExamId).Scan(&checker)
 	if err != nil {
 		return err
 	}
