@@ -203,8 +203,8 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 	}
 
 	if result.Transcription == nil || result.Transcription.Transcription == "" {
-		return nil, fmt.Errorf("no transcription or transcription text found in the response")
+		result.Transcription.Transcription = ""
+		result.Transcription.Feedback = "Please speak english clearly and fluently. The AI couldn't understand your speech"
 	}
-
 	return &result, nil
 }
