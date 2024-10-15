@@ -661,7 +661,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ielts/exam/get-results-inline/{sectionType}/{examId}": {
+        "/api/ielts/exam/result/get-results-inline/{sectionType}/{examId}": {
             "get": {
                 "security": [
                     {
@@ -711,7 +711,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ielts/exam/get-results-outline-speaking/{examId}": {
+        "/api/ielts/exam/result/get-results-outline-speaking/{examId}": {
             "get": {
                 "security": [
                     {
@@ -754,7 +754,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ielts/exam/get-results-outline-writing/{examId}": {
+        "/api/ielts/exam/result/get-results-outline-writing/{examId}": {
             "get": {
                 "security": [
                     {
