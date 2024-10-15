@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"math"
@@ -42,7 +43,8 @@ func processEssayWithRetry(essayText string) (*pb.WritingTaskAbsResponse, error)
 }
 
 func shouldRetry(err error) bool {
-	if apiErr, ok := err.(*googleapi.Error); ok {
+	var apiErr *googleapi.Error
+	if errors.As(err, &apiErr) {
 		return apiErr.Code == 429 || (apiErr.Code >= 500 && apiErr.Code < 600)
 	}
 	return false
@@ -52,7 +54,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
 	defer cancel()
 
-	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E" // Replace with your actual API key
+	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E"
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %w", err)

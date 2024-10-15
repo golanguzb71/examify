@@ -230,7 +230,7 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 // @Success 200 {object} pb.GetResultResponse
 // @Failure 409 {object} utils.AbsResponse
 // @Security Bearer
-// @Router /api/ielts/exam/get-results-inline/{sectionType}/{examId} [get]
+// @Router /api/ielts/exam/result/get-results-inline/{sectionType}/{examId} [get]
 func GetResultsInlineBySection(ctx *gin.Context) {
 	sectionType := ctx.Param("sectionType")
 	examId := ctx.Param("examId")
@@ -253,7 +253,7 @@ func GetResultsInlineBySection(ctx *gin.Context) {
 // @Success 200 {object} pb.GetResultOutlineWritingResponse
 // @Failure 409 {object} utils.AbsResponse
 // @Security Bearer
-// @Router /api/ielts/exam/get-results-outline-writing/{examId} [get]
+// @Router /api/ielts/exam/result/get-results-outline-writing/{examId} [get]
 func GetResultsOutlineWriting(ctx *gin.Context) {
 	examId := ctx.Param("examId")
 	response, err := ieltsClient.GetResultsOutlineWriting(examId)
@@ -275,7 +275,7 @@ func GetResultsOutlineWriting(ctx *gin.Context) {
 // @Success 200 {object} pb.GetResultOutlineSpeakingResponse
 // @Failure 409 {object} utils.AbsResponse
 // @Security Bearer
-// @Router /api/ielts/exam/get-results-outline-speaking/{examId} [get]
+// @Router /api/ielts/exam/result/get-results-outline-speaking/{examId} [get]
 func GetResultsOutlineSpeaking(ctx *gin.Context) {
 	examId := ctx.Param("examId")
 	response, err := ieltsClient.GetResultsOutlineSpeaking(examId)
