@@ -651,6 +651,142 @@
                 }
             }
         },
+        "/api/ielts/exam/get-results-inline/{sectionType}/{examId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves the inline results of a specific section in an IELTS exam",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "results"
+                ],
+                "summary": "Get results by section",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Section Type",
+                        "name": "sectionType",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Exam ID",
+                        "name": "examId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetResultResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/exam/get-results-outline-speaking/{examId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves the outline results of the Speaking section in an IELTS exam",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "results"
+                ],
+                "summary": "Get outline of Speaking results",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Exam ID",
+                        "name": "examId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetResultOutlineSpeakingResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ielts/exam/get-results-outline-writing/{examId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves the outline results of the Writing section in an IELTS exam",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "results"
+                ],
+                "summary": "Get outline of Writing results",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Exam ID",
+                        "name": "examId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetResultOutlineWritingResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ielts/exam/result/top-exam-result/{dataframe}": {
             "get": {
                 "description": "Retrieve top exam results based on the specified dataframe (MONTHLY, DAILY, or WEEKLY)",
@@ -974,6 +1110,42 @@
                 }
             }
         },
+        "pb.GetResultOutlineSpeakingResponse": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.SpeakingPartAbsResponse"
+                    }
+                }
+            }
+        },
+        "pb.GetResultOutlineWritingResponse": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.OutlineWritingResponseAbs"
+                    }
+                },
+                "sectionBandScore": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetResultResponse": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.UserAnswer"
+                    }
+                }
+            }
+        },
         "pb.GetTopExamResult": {
             "type": "object",
             "properties": {
@@ -985,6 +1157,41 @@
                 },
                 "totalPageCount": {
                     "type": "integer"
+                }
+            }
+        },
+        "pb.OutlineWritingResponseAbs": {
+            "type": "object",
+            "properties": {
+                "coherenceScore": {
+                    "type": "integer"
+                },
+                "crated_at": {
+                    "type": "string"
+                },
+                "feedback": {
+                    "type": "string"
+                },
+                "grammarScore": {
+                    "type": "integer"
+                },
+                "lexicalResourceScore": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "taskAchievementScore": {
+                    "type": "integer"
+                },
+                "taskBandScore": {
+                    "type": "integer"
+                },
+                "taskNumber": {
+                    "type": "integer"
+                },
+                "userAnswer": {
+                    "type": "string"
                 }
             }
         },
@@ -1031,6 +1238,55 @@
                 }
             }
         },
+        "pb.SpeakingPartAbsResponse": {
+            "type": "object",
+            "properties": {
+                "coherence_score": {
+                    "type": "number"
+                },
+                "fluency_score": {
+                    "type": "number"
+                },
+                "grammar_score": {
+                    "type": "number"
+                },
+                "part_band_score": {
+                    "type": "number"
+                },
+                "relevance_score": {
+                    "type": "number"
+                },
+                "topic_dev_score": {
+                    "type": "number"
+                },
+                "transcription": {
+                    "$ref": "#/definitions/pb.Transcription"
+                },
+                "vocabulary_score": {
+                    "type": "number"
+                },
+                "voiceUrl": {
+                    "type": "string"
+                },
+                "word_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.Transcription": {
+            "type": "object",
+            "properties": {
+                "feedback": {
+                    "type": "string"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "transcription": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.UpdateUserNameSurnameRequest": {
             "type": "object",
             "properties": {
@@ -1064,6 +1320,20 @@
                     "type": "string"
                 },
                 "surname": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UserAnswer": {
+            "type": "object",
+            "properties": {
+                "isTrue": {
+                    "type": "boolean"
+                },
+                "trueAnswer": {
+                    "type": "string"
+                },
+                "userAnswer": {
                     "type": "string"
                 }
             }

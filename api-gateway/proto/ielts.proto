@@ -17,14 +17,76 @@ service IeltsService {
   rpc GetAnswer(GetAnswerRequest) returns (GetAnswerResponse);
   rpc CreateExam(CreateExamRequest) returns (CreateExamResponse);
   rpc GetExamByUserId(GetExamByUserIdRequest) returns (GetExamByUserIdResponse);
+  rpc GetResultsInlineBySection(GetResultRequest) returns(GetResultResponse);
+  rpc GetResultOutlineWriting(GetResultOutlineAbsRequest) returns(GetResultOutlineWritingResponse);
+  rpc GetResultOutlineSpeaking(GetResultOutlineAbsRequest) returns(GetResultOutlineSpeakingResponse);
   rpc GetTopExamResultList(GetTopExamRequest) returns (GetTopExamResult);
   rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
   rpc CreateAttemptOutlineWriting(CreateOutlineAttemptRequestWriting) returns (common.AbsResponse);
   rpc CreateAttemptOutlineSpeaking(CreateOutlineAttemptRequestSpeaking) returns (common.AbsResponse);
 }
+
+message GetResultOutlineSpeakingResponse{
+  repeated SpeakingPartAbsResponse answers = 1;
+}
+
+message SpeakingPartAbsResponse {
+  float fluency_score = 1;
+  float grammar_score = 2;
+  float vocabulary_score = 3;
+  float coherence_score = 4;
+  float topic_dev_score = 5;
+  float relevance_score = 6;
+  int32 word_count = 7;
+  Transcription transcription = 8;
+  float part_band_score = 9;
+  string voiceUrl = 10;
+}
+
+message Transcription {
+  string question = 1;
+  string feedback = 2;
+  string transcription = 3;
+}
+
 message UpdateBookRequest{
   string id = 1;
   string name = 2;
+}
+
+message GetResultResponse{
+  repeated UserAnswer answers = 1;
+}
+message GetResultOutlineAbsRequest{
+  string examId = 1;
+}
+message GetResultOutlineWritingResponse{
+  repeated OutlineWritingResponseAbs answers = 1;
+  int32 sectionBandScore = 2;
+}
+
+message OutlineWritingResponseAbs{
+  int32 taskNumber = 1;
+  string userAnswer = 2;
+  string question = 3;
+  string feedback = 4;
+  int32 coherenceScore = 5;
+  int32 grammarScore = 6;
+  int32 lexicalResourceScore = 7;
+  int32 taskAchievementScore = 8;
+  int32 taskBandScore = 9;
+  string crated_at = 10;
+}
+
+message UserAnswer{
+  string userAnswer = 1;
+  string trueAnswer = 2;
+  bool isTrue = 3;
+}
+
+message GetResultRequest{
+  string examId = 1;
+  string section = 2;
 }
 
 message CreateBookRequest {
@@ -56,8 +118,6 @@ message Result {
 message CreateExamResponse {
   string examId = 1;
 }
-
-
 
 message GetExamByUserIdResponse {
   repeated GetExamAbsResult results = 1;
@@ -132,6 +192,7 @@ message CreateOutlineAttemptRequestWriting {
   string examId = 1;
   repeated QuestionUserAnswerWriting Qua = 2;
 }
+
 message CreateOutlineAttemptRequestSpeaking{
   string examId = 1;
   string question = 2;

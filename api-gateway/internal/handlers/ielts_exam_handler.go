@@ -218,3 +218,71 @@ func CreateOutlineAttemptSpeaking(ctx *gin.Context) {
 	utils.RespondSuccess(ctx, resp.Status, resp.Message)
 	return
 }
+
+// GetResultsInlineBySection godoc
+// @Summary Get results by section
+// @Description Retrieves the inline results of a specific section in an IELTS exam
+// @Tags results
+// @Accept json
+// @Produce json
+// @Param sectionType path string true "Section Type"
+// @Param examId path string true "Exam ID"
+// @Success 200 {object} pb.GetResultResponse
+// @Failure 409 {object} utils.AbsResponse
+// @Security Bearer
+// @Router /api/ielts/exam/get-results-inline/{sectionType}/{examId} [get]
+func GetResultsInlineBySection(ctx *gin.Context) {
+	sectionType := ctx.Param("sectionType")
+	examId := ctx.Param("examId")
+	response, err := ieltsClient.GetResultsInlineBySection(sectionType, examId)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+	return
+}
+
+// GetResultsOutlineWriting godoc
+// @Summary Get outline of Writing results
+// @Description Retrieves the outline results of the Writing section in an IELTS exam
+// @Tags results
+// @Accept json
+// @Produce json
+// @Param examId path string true "Exam ID"
+// @Success 200 {object} pb.GetResultOutlineWritingResponse
+// @Failure 409 {object} utils.AbsResponse
+// @Security Bearer
+// @Router /api/ielts/exam/get-results-outline-writing/{examId} [get]
+func GetResultsOutlineWriting(ctx *gin.Context) {
+	examId := ctx.Param("examId")
+	response, err := ieltsClient.GetResultsOutlineWriting(examId)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+	return
+}
+
+// GetResultsOutlineSpeaking godoc
+// @Summary Get outline of Speaking results
+// @Description Retrieves the outline results of the Speaking section in an IELTS exam
+// @Tags results
+// @Accept json
+// @Produce json
+// @Param examId path string true "Exam ID"
+// @Success 200 {object} pb.GetResultOutlineSpeakingResponse
+// @Failure 409 {object} utils.AbsResponse
+// @Security Bearer
+// @Router /api/ielts/exam/get-results-outline-speaking/{examId} [get]
+func GetResultsOutlineSpeaking(ctx *gin.Context) {
+	examId := ctx.Param("examId")
+	response, err := ieltsClient.GetResultsOutlineSpeaking(examId)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+	return
+}

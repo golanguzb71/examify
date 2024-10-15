@@ -84,6 +84,29 @@ definitions:
       totalPageCount:
         type: integer
     type: object
+  pb.GetResultOutlineSpeakingResponse:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/pb.SpeakingPartAbsResponse'
+        type: array
+    type: object
+  pb.GetResultOutlineWritingResponse:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/pb.OutlineWritingResponseAbs'
+        type: array
+      sectionBandScore:
+        type: integer
+    type: object
+  pb.GetResultResponse:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/pb.UserAnswer'
+        type: array
+    type: object
   pb.GetTopExamResult:
     properties:
       results:
@@ -92,6 +115,29 @@ definitions:
         type: array
       totalPageCount:
         type: integer
+    type: object
+  pb.OutlineWritingResponseAbs:
+    properties:
+      coherenceScore:
+        type: integer
+      crated_at:
+        type: string
+      feedback:
+        type: string
+      grammarScore:
+        type: integer
+      lexicalResourceScore:
+        type: integer
+      question:
+        type: string
+      taskAchievementScore:
+        type: integer
+      taskBandScore:
+        type: integer
+      taskNumber:
+        type: integer
+      userAnswer:
+        type: string
     type: object
   pb.QuestionUserAnswerWriting:
     properties:
@@ -121,6 +167,38 @@ definitions:
       writing:
         type: string
     type: object
+  pb.SpeakingPartAbsResponse:
+    properties:
+      coherence_score:
+        type: number
+      fluency_score:
+        type: number
+      grammar_score:
+        type: number
+      part_band_score:
+        type: number
+      relevance_score:
+        type: number
+      topic_dev_score:
+        type: number
+      transcription:
+        $ref: '#/definitions/pb.Transcription'
+      vocabulary_score:
+        type: number
+      voiceUrl:
+        type: string
+      word_count:
+        type: integer
+    type: object
+  pb.Transcription:
+    properties:
+      feedback:
+        type: string
+      question:
+        type: string
+      transcription:
+        type: string
+    type: object
   pb.UpdateUserNameSurnameRequest:
     properties:
       name:
@@ -143,6 +221,15 @@ definitions:
       role:
         type: string
       surname:
+        type: string
+    type: object
+  pb.UserAnswer:
+    properties:
+      isTrue:
+        type: boolean
+      trueAnswer:
+        type: string
+      userAnswer:
         type: string
     type: object
   utils.AbsResponse:
@@ -569,6 +656,95 @@ paths:
       summary: USER
       tags:
       - ielts-exam
+  /api/ielts/exam/get-results-inline/{sectionType}/{examId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the inline results of a specific section in an IELTS
+        exam
+      parameters:
+      - description: Section Type
+        in: path
+        name: sectionType
+        required: true
+        type: string
+      - description: Exam ID
+        in: path
+        name: examId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.GetResultResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: Get results by section
+      tags:
+      - results
+  /api/ielts/exam/get-results-outline-speaking/{examId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the outline results of the Speaking section in an IELTS
+        exam
+      parameters:
+      - description: Exam ID
+        in: path
+        name: examId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.GetResultOutlineSpeakingResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: Get outline of Speaking results
+      tags:
+      - results
+  /api/ielts/exam/get-results-outline-writing/{examId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the outline results of the Writing section in an IELTS
+        exam
+      parameters:
+      - description: Exam ID
+        in: path
+        name: examId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.GetResultOutlineWritingResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: Get outline of Writing results
+      tags:
+      - results
   /api/ielts/exam/result/top-exam-result/{dataframe}:
     get:
       consumes:

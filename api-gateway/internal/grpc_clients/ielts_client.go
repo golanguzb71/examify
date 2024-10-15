@@ -186,3 +186,25 @@ func (c *IeltsClient) CreateOutlineSpeakingAttempt(req *pb.CreateOutlineAttemptR
 	}
 	return resp, nil
 }
+
+func (c *IeltsClient) GetResultsInlineBySection(sectionType string, examId string) (*pb.GetResultResponse, error) {
+	ctx := context.TODO()
+	return c.client.GetResultsInlineBySection(ctx, &pb.GetResultRequest{
+		ExamId:  examId,
+		Section: sectionType,
+	})
+}
+
+func (c *IeltsClient) GetResultsOutlineWriting(examId string) (*pb.GetResultOutlineWritingResponse, error) {
+	ctx := context.TODO()
+	return c.client.GetResultOutlineWriting(ctx, &pb.GetResultOutlineAbsRequest{
+		ExamId: examId,
+	})
+}
+
+func (c *IeltsClient) GetResultsOutlineSpeaking(examId string) (*pb.GetResultOutlineSpeakingResponse, error) {
+	ctx := context.TODO()
+	return c.client.GetResultOutlineSpeaking(ctx, &pb.GetResultOutlineAbsRequest{
+		ExamId: examId,
+	})
+}
