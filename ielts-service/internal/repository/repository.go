@@ -612,18 +612,18 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 		var part pb.SpeakingPartsResponse
 		var transcription []byte
 		var voiceUrls []string
-		var createdAt time.Time // Add this to capture the created_at column
+		var createdAt time.Time
 
 		err = rows.Scan(
 			&part.PartNumber, &part.FluencyScore, &part.GrammarScore, &part.VocabularyScore,
 			&part.CoherenceScore, &part.TopicDevScore, &part.RelevanceScore, &transcription,
-			pq.Array(&voiceUrls), &part.PartBandScore, &createdAt) // Add createdAt to Scan
+			pq.Array(&voiceUrls), &part.PartBandScore, &createdAt)
 		if err != nil {
 			return nil, err
 		}
 
-		// Unmarshal the transcription JSONB field
-		var transcriptionData struct {
+		// Unmarshal the transcription JSONB field as an array of objects
+		var transcriptionData []struct {
 			Question      string `json:"question"`
 			Feedback      string `json:"feedback"`
 			Transcription string `json:"transcription"`
@@ -632,12 +632,16 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 			return nil, err
 		}
 
-		part.Transcription = &pb.Transcription{
-			Question:      transcriptionData.Question,
-			Feedback:      transcriptionData.Feedback,
-			Transcription: transcriptionData.Transcription,
+		// Process transcription data (taking the first entry for simplicity)
+		if len(transcriptionData) > 0 {
+			part.Transcription = &pb.Transcription{
+				Question:      transcriptionData[0].Question,
+				Feedback:      transcriptionData[0].Feedback,
+				Transcription: transcriptionData[0].Transcription,
+			}
 		}
 
+		// Assign the first voice URL if available
 		if len(voiceUrls) > 0 {
 			part.VoiceUrl = voiceUrls[0]
 		}
