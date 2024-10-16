@@ -612,14 +612,17 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 		var part pb.SpeakingPartsResponse
 		var transcription []byte
 		var voiceUrls []string
+		var createdAt time.Time // Add this to capture the created_at column
 
 		err = rows.Scan(
 			&part.PartNumber, &part.FluencyScore, &part.GrammarScore, &part.VocabularyScore,
 			&part.CoherenceScore, &part.TopicDevScore, &part.RelevanceScore, &transcription,
-			pq.Array(&voiceUrls), &part.PartBandScore)
+			pq.Array(&voiceUrls), &part.PartBandScore, &createdAt) // Add createdAt to Scan
 		if err != nil {
 			return nil, err
 		}
+
+		// Unmarshal the transcription JSONB field
 		var transcriptionData struct {
 			Question      string `json:"question"`
 			Feedback      string `json:"feedback"`
@@ -638,6 +641,7 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 		if len(voiceUrls) > 0 {
 			part.VoiceUrl = voiceUrls[0]
 		}
+
 		answers = append(answers, &part)
 	}
 
