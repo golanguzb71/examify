@@ -62,24 +62,38 @@ func UpdateOverallScore(examID string, db *sql.DB) error {
                 COALESCE((SELECT band_score FROM listening_detail WHERE exam_id = $1), 0) as listening_score,
                 COALESCE((SELECT AVG(task_band_score) FROM writing_detail WHERE exam_id = $1), 0) as writing_score,
                 COALESCE((SELECT part_band_score FROM speaking_detail WHERE exam_id = $1), 0) as speaking_score
+        ),
+        total AS (
+            SELECT 
+                reading_score, 
+                listening_score, 
+                writing_score, 
+                speaking_score,
+                (reading_score + listening_score + writing_score + speaking_score) AS total_score
+            FROM scores
         )
         UPDATE exam
         SET over_all_band_score = (
             SELECT 
                 CASE 
-                    WHEN remainder >= 0.75 THEN whole + 1
-                    WHEN remainder >= 0.25 THEN whole + 0.5
-                    ELSE whole
+                    WHEN total_score >= 34.5 THEN 9.0
+                    WHEN total_score >= 32.5 THEN 8.5
+                    WHEN total_score >= 30.5 THEN 8.0
+                    WHEN total_score >= 28.5 THEN 7.5
+                    WHEN total_score >= 26.5 THEN 7.0
+                    WHEN total_score >= 24.5 THEN 6.5
+                    WHEN total_score >= 22.5 THEN 6.0
+                    WHEN total_score >= 20.5 THEN 5.5
+                    WHEN total_score >= 18.5 THEN 5.0
+                    WHEN total_score >= 16.5 THEN 4.5
+                    WHEN total_score >= 14.5 THEN 4.0
+                    WHEN total_score >= 12.5 THEN 3.5
+                    WHEN total_score >= 10.5 THEN 3.0
+                    ELSE 0
                 END
-            FROM (
-                SELECT 
-                    FLOOR((reading_score + listening_score + writing_score + speaking_score) / 4.0) as whole,
-                    ((reading_score + listening_score + writing_score + speaking_score) / 4.0) - FLOOR((reading_score + listening_score + writing_score + speaking_score) / 4.0) as remainder
-                FROM scores
-            ) subquery
+            FROM total
         )
-        FROM scores
-        WHERE exam.id = $1
+        WHERE id = $1
     `
 
 	_, err := db.Exec(query, examID)

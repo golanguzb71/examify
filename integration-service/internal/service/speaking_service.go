@@ -9,79 +9,12 @@ import (
 	"google.golang.org/api/option"
 	"integration-service/proto/pb"
 	"io"
-	"log"
 	"os"
-	"strings"
-	"sync"
-	"time"
 )
-
-var (
-	apiKeys    = []string{"AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E", "AIzaSyBeQQyXZL0Duo-K36pDbTRM4EDi6thAMjo", "AIzaSyDjTPlLAl37RIldSHzyQ7-uXOUzP9dPu6c", "AIzaSyCKfG7E18HhebXP7ZmsXRhHOkjJv8kXQfI", "AIzaSyCXNsCIRIDeJ2AYZpP5MeE33nskRnGLJ0o", "AIzaSyDB8L-_9taWaKgeLcB7FyHzTxDlyERMchg", "AIzaSyC-FF5_wlHRxxRP32LmBG827zfM0r6z07w", "AIzaSyDK3ECVK2vv3pfR2OpAEBTdA5GsCytqRRE", "AIzaSyCLEkxjdWCh_fuBqPSjAVUzBWU5pzAHGFk"}
-	keyIndex   = 0
-	maxRetries = 5
-	baseDelay  = 2 * time.Second
-	apiTimeout = 10 * time.Second
-	keyLock    sync.Mutex
-)
-
-func getNextAPIKey() string {
-	keyLock.Lock()
-	defer keyLock.Unlock()
-	keyIndex = (keyIndex + 1) % len(apiKeys)
-	return apiKeys[keyIndex]
-}
-
-func uploadToGemini(ctx context.Context, client *genai.Client, path, mimeType string) (string, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return "", fmt.Errorf("error opening file: %v", err)
-	}
-	defer file.Close()
-
-	fileContent, err := io.ReadAll(file)
-	if err != nil {
-		return "", fmt.Errorf("error reading file: %v", err)
-	}
-
-	options := &genai.UploadFileOptions{
-		DisplayName: path,
-		MIMEType:    mimeType,
-	}
-
-	var fileURI string
-	for attempt := 0; attempt < maxRetries; attempt++ {
-		resp, err := client.UploadFile(ctx, "", bytes.NewReader(fileContent), options)
-		if err == nil {
-			fileURI = resp.URI
-			break
-		}
-		if !strings.Contains(err.Error(), "429") {
-			return "", fmt.Errorf("error uploading file: %v", err)
-		}
-		delay := baseDelay * time.Duration(1<<uint(attempt))
-		log.Printf("Received 429 error, retrying upload with a new key in %v...", delay)
-		time.Sleep(delay)
-		apiKey := getNextAPIKey()
-		client, err = genai.NewClient(ctx, option.WithAPIKey(apiKey))
-		if err != nil {
-			return "", fmt.Errorf("error creating new client with new API key: %v", err)
-		}
-	}
-	if fileURI == "" {
-		return "", fmt.Errorf("max retries reached, failed to upload file")
-	}
-
-	log.Printf("Uploaded file %s as: %s", path, fileURI)
-	return fileURI, nil
-}
 
 func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
-	defer cancel()
-
-	apiKey := apiKeys[keyIndex]
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	ctx := context.Background()
+	client, err := genai.NewClient(ctx, option.WithAPIKey(ApiKey))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %v", err)
 	}
@@ -122,6 +55,7 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 		},
 	}
 
+	// Create a temporary file to write the audio message
 	tempFile, err := os.CreateTemp("", "audio_*.mp3")
 	if err != nil {
 		return nil, fmt.Errorf("error creating temp file: %v", err)
@@ -133,43 +67,27 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 		return nil, fmt.Errorf("error writing to temp file: %v", err)
 	}
 
+	// Upload the audio file to Gemini
 	fileURI, err := uploadToGemini(ctx, client, tempFile.Name(), "audio/mpeg")
 	if err != nil {
 		return nil, err
 	}
 
+	// Send the message with the audio file and question
 	session := model.StartChat()
 	session.History = []*genai.Content{
 		{
 			Role: "user",
 			Parts: []genai.Part{
 				genai.FileData{URI: fileURI},
-				genai.Text(fmt.Sprintf("Analyze the audio for the following question: %s. Provide a detailed analysis, including fluency_score, grammar_score, vocabulary_score, coherence_score, topic_dev_score, relevance_score, word_count, transcription, part_band_score, in valid JSON format. All scores should be between 1 and 8 and you should give feedback for giving answer more better. Do not leave any field null.", question)),
+				genai.Text(fmt.Sprintf("Analyze the audio for the following question: %s.", question)),
 			},
 		},
 	}
 
-	var resp *genai.GenerateContentResponse
-	for attempt := 0; attempt < maxRetries; attempt++ {
-		resp, err = session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields."))
-		if err == nil {
-			break
-		}
-		if !strings.Contains(err.Error(), "429") {
-			return nil, fmt.Errorf("error sending message: %v", err)
-		}
-		delay := baseDelay * time.Duration(1<<uint(attempt))
-		log.Printf("Received 429 error, retrying message send with a new key in %v...", delay)
-
-		time.Sleep(delay)
-		apiKey = getNextAPIKey()                                      // Get the next key
-		client, err = genai.NewClient(ctx, option.WithAPIKey(apiKey)) // Reset client with new key
-		if err != nil {
-			return nil, fmt.Errorf("error creating new client with new API key: %v", err)
-		}
-	}
+	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields."))
 	if err != nil {
-		return nil, fmt.Errorf("max retries reached, error sending message: %v", err)
+		return nil, fmt.Errorf("error sending message: %v", err)
 	}
 
 	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
@@ -180,14 +98,7 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 
 	for _, part := range resp.Candidates[0].Content.Parts {
 		if text, ok := part.(genai.Text); ok {
-			jsonStr := strings.TrimSpace(string(text))
-			if jsonStr == "" {
-				return nil, fmt.Errorf("received empty or invalid JSON response")
-			}
-
-			jsonStr = strings.TrimPrefix(strings.TrimPrefix(jsonStr, "```json"), "```")
-			jsonStr = strings.TrimSuffix(jsonStr, "```")
-			jsonStr = strings.TrimSpace(jsonStr)
+			jsonStr := string(text)
 
 			var parsedResult struct {
 				Response struct {
@@ -206,32 +117,51 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 				} `json:"response"`
 			}
 
-			if err := json.Unmarshal([]byte(jsonStr), &parsedResult); err != nil {
-				return nil, fmt.Errorf("error unmarshaling JSON: %v, received: %s", err, jsonStr)
+			if err := json.Unmarshal([]byte(jsonStr), &parsedResult); err == nil {
+				result = pb.SpeakingPartAbsResponse{
+					FluencyScore:    parsedResult.Response.FluencyScore,
+					GrammarScore:    parsedResult.Response.GrammarScore,
+					VocabularyScore: parsedResult.Response.VocabularyScore,
+					CoherenceScore:  parsedResult.Response.CoherenceScore,
+					TopicDevScore:   parsedResult.Response.TopicDevScore,
+					RelevanceScore:  parsedResult.Response.RelevanceScore,
+					WordCount:       parsedResult.Response.WordCount,
+					PartBandScore:   parsedResult.Response.PartBandScore,
+					Transcription: &pb.Transcription{
+						Question:      question,
+						Feedback:      parsedResult.Response.Transcription.Feedback,
+						Transcription: parsedResult.Response.Transcription.Transcription,
+					},
+				}
+				break
 			}
-
-			result = pb.SpeakingPartAbsResponse{
-				FluencyScore:    parsedResult.Response.FluencyScore,
-				GrammarScore:    parsedResult.Response.GrammarScore,
-				VocabularyScore: parsedResult.Response.VocabularyScore,
-				CoherenceScore:  parsedResult.Response.CoherenceScore,
-				TopicDevScore:   parsedResult.Response.TopicDevScore,
-				RelevanceScore:  parsedResult.Response.RelevanceScore,
-				WordCount:       parsedResult.Response.WordCount,
-				PartBandScore:   parsedResult.Response.PartBandScore,
-				Transcription: &pb.Transcription{
-					Question:      question,
-					Feedback:      parsedResult.Response.Transcription.Feedback,
-					Transcription: parsedResult.Response.Transcription.Transcription,
-				},
-			}
-			break
 		}
 	}
 
-	if result.Transcription == nil || result.Transcription.Transcription == "" {
-		result.Transcription.Transcription = ""
-		result.Transcription.Feedback = "Please speak english clearly and fluently. The AI couldn't understand your speech"
-	}
 	return &result, nil
+}
+
+func uploadToGemini(ctx context.Context, client *genai.Client, path, mimeType string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", fmt.Errorf("error opening file: %v", err)
+	}
+	defer file.Close()
+
+	fileContent, err := io.ReadAll(file)
+	if err != nil {
+		return "", fmt.Errorf("error reading file: %v", err)
+	}
+
+	options := &genai.UploadFileOptions{
+		DisplayName: path,
+		MIMEType:    mimeType,
+	}
+
+	resp, err := client.UploadFile(ctx, "", bytes.NewReader(fileContent), options)
+	if err != nil {
+		return "", fmt.Errorf("error uploading file: %v", err)
+	}
+
+	return resp.URI, nil
 }
