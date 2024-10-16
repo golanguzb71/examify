@@ -557,24 +557,32 @@ func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineA
 }
 
 func (r *PostgresRepository) GetResultsInlineBySection(section string, examId string) (*pb.GetResultResponse, error) {
-	query := "SELECT id , band_score, user_answer , created_at FROM "
+	query := "SELECT id, band_score, user_answer, created_at FROM "
 	switch section {
 	case "LISTENING":
-		query += " listening_detail"
+		query += "listening_detail"
 	case "READING":
-		query += " reading_detail"
+		query += "reading_detail"
 	default:
-		return nil, errors.New("invalid section format. Only LISTENING , READING approved")
+		return nil, errors.New("invalid section format. Only LISTENING, READING approved")
 	}
-	query += " where exam_id=$1"
+	query += " WHERE exam_id=$1"
+
 	var result pb.GetResultResponse
-	err := r.db.QueryRow(query, examId).Scan(&result.Id, &result.BandScore, &result.Answers, &result.CreatedAt)
+	var userAnswerRaw []byte
+
+	err := r.db.QueryRow(query, examId).Scan(&result.Id, &result.BandScore, &userAnswerRaw, &result.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
+
+	err = json.Unmarshal(userAnswerRaw, &result.Answers)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling user_answer: %w", err)
+	}
+
 	return &result, nil
 }
-
 func validateIELTSBandScores(scores ...float32) error {
 	validScores := map[float32]bool{
 		1:   true,
