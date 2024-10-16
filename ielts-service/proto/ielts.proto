@@ -41,10 +41,6 @@ message GetResultOutlineSpeakingRequest{
 }
 
 message GetResultOutlineSpeakingResponse{
-  repeated SpeakingPartsResponse answers = 1;
-}
-
-message SpeakingPartsResponse {
   int32 part_number = 11;
   float fluency_score = 1;
   float grammar_score = 2;
@@ -53,7 +49,7 @@ message SpeakingPartsResponse {
   float topic_dev_score = 5;
   float relevance_score = 6;
   int32 word_count = 7;
-  common.Transcription transcription = 8;
+  repeated  common.Transcription transcription = 8;
   float part_band_score = 9;
 }
 

@@ -86,10 +86,28 @@ definitions:
     type: object
   pb.GetResultOutlineSpeakingResponse:
     properties:
-      answers:
+      coherence_score:
+        type: number
+      fluency_score:
+        type: number
+      grammar_score:
+        type: number
+      part_band_score:
+        type: number
+      part_number:
+        type: integer
+      relevance_score:
+        type: number
+      topic_dev_score:
+        type: number
+      transcription:
         items:
-          $ref: '#/definitions/pb.SpeakingPartsResponse'
+          $ref: '#/definitions/pb.Transcription'
         type: array
+      vocabulary_score:
+        type: number
+      word_count:
+        type: integer
     type: object
   pb.GetResultOutlineWritingResponse:
     properties:
@@ -172,29 +190,6 @@ definitions:
         $ref: '#/definitions/pb.User'
       writing:
         type: string
-    type: object
-  pb.SpeakingPartsResponse:
-    properties:
-      coherence_score:
-        type: number
-      fluency_score:
-        type: number
-      grammar_score:
-        type: number
-      part_band_score:
-        type: number
-      part_number:
-        type: integer
-      relevance_score:
-        type: number
-      topic_dev_score:
-        type: number
-      transcription:
-        $ref: '#/definitions/pb.Transcription'
-      vocabulary_score:
-        type: number
-      word_count:
-        type: integer
     type: object
   pb.Transcription:
     properties:

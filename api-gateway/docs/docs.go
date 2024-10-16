@@ -1173,11 +1173,38 @@ const docTemplate = `{
         "pb.GetResultOutlineSpeakingResponse": {
             "type": "object",
             "properties": {
-                "answers": {
+                "coherence_score": {
+                    "type": "number"
+                },
+                "fluency_score": {
+                    "type": "number"
+                },
+                "grammar_score": {
+                    "type": "number"
+                },
+                "part_band_score": {
+                    "type": "number"
+                },
+                "part_number": {
+                    "type": "integer"
+                },
+                "relevance_score": {
+                    "type": "number"
+                },
+                "topic_dev_score": {
+                    "type": "number"
+                },
+                "transcription": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pb.SpeakingPartsResponse"
+                        "$ref": "#/definitions/pb.Transcription"
                     }
+                },
+                "vocabulary_score": {
+                    "type": "number"
+                },
+                "word_count": {
+                    "type": "integer"
                 }
             }
         },
@@ -1304,41 +1331,6 @@ const docTemplate = `{
                 },
                 "writing": {
                     "type": "string"
-                }
-            }
-        },
-        "pb.SpeakingPartsResponse": {
-            "type": "object",
-            "properties": {
-                "coherence_score": {
-                    "type": "number"
-                },
-                "fluency_score": {
-                    "type": "number"
-                },
-                "grammar_score": {
-                    "type": "number"
-                },
-                "part_band_score": {
-                    "type": "number"
-                },
-                "part_number": {
-                    "type": "integer"
-                },
-                "relevance_score": {
-                    "type": "number"
-                },
-                "topic_dev_score": {
-                    "type": "number"
-                },
-                "transcription": {
-                    "$ref": "#/definitions/pb.Transcription"
-                },
-                "vocabulary_score": {
-                    "type": "number"
-                },
-                "word_count": {
-                    "type": "integer"
                 }
             }
         },

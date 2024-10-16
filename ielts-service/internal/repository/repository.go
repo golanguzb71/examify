@@ -595,32 +595,28 @@ func (r *PostgresRepository) GetResultsInlineBySection(section string, examId st
 func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSpeakingRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
 	rows, err := r.db.Query(`
 		SELECT part_number, fluency_score, grammar_score, vocabulary_score, coherence_score, 
-		       topic_dev_score, relevance_score, transcription, voice_url, part_band_score, created_at 
+		       topic_dev_score, relevance_score, transcription, voice_url, part_band_score 
 		FROM speaking_detail 
-		WHERE exam_id=$1 and part_number=$2`, req.ExamId, req.PartNumber)
+		WHERE exam_id=$1 AND part_number=$2`, req.ExamId, req.PartNumber)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	result := &pb.GetResultOutlineSpeakingResponse{}
-	var answers []*pb.SpeakingPartsResponse
 
 	for rows.Next() {
-		var part pb.SpeakingPartsResponse
 		var transcription []byte
 		var voiceUrls []string
-		var createdAt time.Time
 
 		err = rows.Scan(
-			&part.PartNumber, &part.FluencyScore, &part.GrammarScore, &part.VocabularyScore,
-			&part.CoherenceScore, &part.TopicDevScore, &part.RelevanceScore, &transcription,
-			pq.Array(&voiceUrls), &part.PartBandScore, &createdAt)
+			&result.PartNumber, &result.FluencyScore, &result.GrammarScore, &result.VocabularyScore,
+			&result.CoherenceScore, &result.TopicDevScore, &result.RelevanceScore, &transcription,
+			pq.Array(&voiceUrls), &result.PartBandScore)
 		if err != nil {
 			return nil, err
 		}
 
-		// Unmarshal transcription data from JSON
 		var transcriptionData []struct {
 			Question      string `json:"question"`
 			Feedback      string `json:"feedback"`
@@ -641,19 +637,14 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSp
 				transcriptionEntry.VoiceUrl = voiceUrls[i]
 			}
 
-			if i == 0 {
-				part.Transcription = transcriptionEntry
-			}
+			result.Transcription = append(result.Transcription, transcriptionEntry)
 		}
-
-		answers = append(answers, &part)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
-	result.Answers = answers
 	return result, nil
 }
 
