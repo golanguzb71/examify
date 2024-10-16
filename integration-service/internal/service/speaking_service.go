@@ -12,8 +12,25 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
+
+var (
+	apiKeys    = []string{"AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E", "AIzaSyBeQQyXZL0Duo-K36pDbTRM4EDi6thAMjo", "AIzaSyDjTPlLAl37RIldSHzyQ7-uXOUzP9dPu6c", "AIzaSyCKfG7E18HhebXP7ZmsXRhHOkjJv8kXQfI", "AIzaSyCXNsCIRIDeJ2AYZpP5MeE33nskRnGLJ0o", "AIzaSyDB8L-_9taWaKgeLcB7FyHzTxDlyERMchg", "AIzaSyC-FF5_wlHRxxRP32LmBG827zfM0r6z07w", "AIzaSyDK3ECVK2vv3pfR2OpAEBTdA5GsCytqRRE", "AIzaSyCLEkxjdWCh_fuBqPSjAVUzBWU5pzAHGFk"}
+	keyIndex   = 0
+	maxRetries = 5
+	baseDelay  = 2 * time.Second
+	apiTimeout = 10 * time.Second
+	keyLock    sync.Mutex
+)
+
+func getNextAPIKey() string {
+	keyLock.Lock()
+	defer keyLock.Unlock()
+	keyIndex = (keyIndex + 1) % len(apiKeys)
+	return apiKeys[keyIndex]
+}
 
 func uploadToGemini(ctx context.Context, client *genai.Client, path, mimeType string) (string, error) {
 	file, err := os.Open(path)
@@ -43,8 +60,13 @@ func uploadToGemini(ctx context.Context, client *genai.Client, path, mimeType st
 			return "", fmt.Errorf("error uploading file: %v", err)
 		}
 		delay := baseDelay * time.Duration(1<<uint(attempt))
-		log.Printf("Received 429 error, retrying upload in %v...", delay)
+		log.Printf("Received 429 error, retrying upload with a new key in %v...", delay)
 		time.Sleep(delay)
+		apiKey := getNextAPIKey()
+		client, err = genai.NewClient(ctx, option.WithAPIKey(apiKey))
+		if err != nil {
+			return "", fmt.Errorf("error creating new client with new API key: %v", err)
+		}
 	}
 	if fileURI == "" {
 		return "", fmt.Errorf("max retries reached, failed to upload file")
@@ -58,8 +80,7 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
 	defer cancel()
 
-	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E"
-
+	apiKey := apiKeys[keyIndex]
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %v", err)
@@ -138,8 +159,14 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			return nil, fmt.Errorf("error sending message: %v", err)
 		}
 		delay := baseDelay * time.Duration(1<<uint(attempt))
-		log.Printf("Received 429 error, retrying message send in %v...", delay)
+		log.Printf("Received 429 error, retrying message send with a new key in %v...", delay)
+
 		time.Sleep(delay)
+		apiKey = getNextAPIKey()                                      // Get the next key
+		client, err = genai.NewClient(ctx, option.WithAPIKey(apiKey)) // Reset client with new key
+		if err != nil {
+			return nil, fmt.Errorf("error creating new client with new API key: %v", err)
+		}
 	}
 	if err != nil {
 		return nil, fmt.Errorf("max retries reached, error sending message: %v", err)

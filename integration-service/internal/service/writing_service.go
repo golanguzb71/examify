@@ -16,12 +16,6 @@ import (
 	"integration-service/proto/pb"
 )
 
-const (
-	maxRetries = 5
-	baseDelay  = 1 * time.Second
-	apiTimeout = 120 * time.Second
-)
-
 func processEssayWithRetry(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	for attempt := 0; attempt < maxRetries; attempt++ {
 		response, err := processEssay(essayText)
@@ -54,8 +48,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), apiTimeout)
 	defer cancel()
 
-	apiKey := "AIzaSyCDa-dcBGtOVdh4ClJuJg8jK4pvTP03T-E"
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	client, err := getClientWithRetry(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %w", err)
 	}
@@ -69,8 +62,8 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 
 	resp, err := session.SendMessage(ctx, genai.Text(essayText))
 	if err != nil {
-		if apiErr, ok := err.(*googleapi.Error); ok && apiErr.Code == 429 {
-			return nil, fmt.Errorf("rate limit exceeded: %w", err)
+		if shouldRetry(err) {
+			return nil, fmt.Errorf("rate limit or server error: %w", err)
 		}
 		return nil, fmt.Errorf("error sending message: %w", err)
 	}
@@ -181,4 +174,25 @@ func clampScore(score float64) float64 {
 		return 7.5
 	}
 	return score
+}
+
+func getClientWithRetry(ctx context.Context) (*genai.Client, error) {
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		apiKey := getNextAPIKey()
+
+		client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+		if err == nil {
+			return client, nil
+		}
+
+		if !shouldRetry(err) {
+			return nil, fmt.Errorf("error creating client with API key: %w", err)
+		}
+
+		delay := time.Duration(math.Pow(2, float64(attempt))) * baseDelay
+		log.Printf("Attempt %d to create client failed, retrying in %v: %v", attempt+1, delay, err)
+		time.Sleep(delay)
+	}
+
+	return nil, fmt.Errorf("max retries reached for creating client")
 }
