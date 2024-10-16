@@ -1126,7 +1126,7 @@ const docTemplate = `{
                 "answers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pb.SpeakingPartAbsResponse"
+                        "$ref": "#/definitions/pb.SpeakingPartsResponse"
                     }
                 }
             }
@@ -1153,6 +1153,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/pb.UserAnswer"
                     }
+                },
+                "bandScore": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },
@@ -1248,7 +1257,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.SpeakingPartAbsResponse": {
+        "pb.SpeakingPartsResponse": {
             "type": "object",
             "properties": {
                 "coherence_score": {
@@ -1262,6 +1271,9 @@ const docTemplate = `{
                 },
                 "part_band_score": {
                     "type": "number"
+                },
+                "part_number": {
+                    "type": "integer"
                 },
                 "relevance_score": {
                     "type": "number"

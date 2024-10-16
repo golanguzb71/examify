@@ -18,21 +18,45 @@ service IeltsService {
   rpc CreateExam(CreateExamRequest) returns (CreateExamResponse);
   rpc GetExamByUserId(GetExamByUserIdRequest) returns (GetExamByUserIdResponse);
   rpc GetResultsInlineBySection(GetResultRequest) returns(GetResultResponse);
-  rpc GetResultOutlineWriting(GetResultOutlineWritingRequest) returns(GetResultOutlineWritingResponse);
+  rpc GetResultOutlineWriting(GetResultOutlineAbsRequest) returns(GetResultOutlineWritingResponse);
+  rpc GetResultOutlineSpeaking(GetResultOutlineAbsRequest) returns(GetResultOutlineSpeakingResponse);
   rpc GetTopExamResultList(GetTopExamRequest) returns (GetTopExamResult);
   rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
   rpc CreateAttemptOutlineWriting(CreateOutlineAttemptRequestWriting) returns (common.AbsResponse);
   rpc CreateAttemptOutlineSpeaking(CreateOutlineAttemptRequestSpeaking) returns (common.AbsResponse);
 }
+
+message GetResultOutlineSpeakingResponse{
+  repeated SpeakingPartsResponse answers = 1;
+}
+
+message SpeakingPartsResponse {
+  int32 part_number = 11;
+  float fluency_score = 1;
+  float grammar_score = 2;
+  float vocabulary_score = 3;
+  float coherence_score = 4;
+  float topic_dev_score = 5;
+  float relevance_score = 6;
+  int32 word_count = 7;
+  common.Transcription transcription = 8;
+  float part_band_score = 9;
+  string voiceUrl = 10;
+}
+
 message UpdateBookRequest{
   string id = 1;
   string name = 2;
 }
 
 message GetResultResponse{
-  repeated UserAnswer answers = 1;
+  string id = 1;
+  float bandScore = 2;
+  repeated UserAnswer answers = 3;
+  string createdAt = 4;
 }
-message GetResultOutlineWritingRequest{
+
+message GetResultOutlineAbsRequest{
   string examId = 1;
 }
 message GetResultOutlineWritingResponse{

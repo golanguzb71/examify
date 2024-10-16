@@ -27,10 +27,11 @@ service IeltsService {
 }
 
 message GetResultOutlineSpeakingResponse{
-  repeated SpeakingPartAbsResponse answers = 1;
+  repeated SpeakingPartsResponse answers = 1;
 }
 
-message SpeakingPartAbsResponse {
+message SpeakingPartsResponse {
+  int32 part_number = 11;
   float fluency_score = 1;
   float grammar_score = 2;
   float vocabulary_score = 3;
@@ -55,8 +56,12 @@ message UpdateBookRequest{
 }
 
 message GetResultResponse{
-  repeated UserAnswer answers = 1;
+  string id = 1;
+  float bandScore = 2;
+  repeated UserAnswer answers = 3;
+  string createdAt = 4;
 }
+
 message GetResultOutlineAbsRequest{
   string examId = 1;
 }

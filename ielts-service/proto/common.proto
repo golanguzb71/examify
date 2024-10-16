@@ -22,3 +22,9 @@ message User {
   string role = 5;
   string chatId = 6;
 }
+
+message Transcription {
+  string question = 1;
+  string feedback = 2;
+  string transcription = 3;
+}

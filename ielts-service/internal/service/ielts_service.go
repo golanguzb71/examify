@@ -171,3 +171,7 @@ func (s *IeltsService) CreateAttemptOutlineSpeaking(ctx context.Context, req *pb
 		Message: "Speaking saved",
 	}, nil
 }
+
+func (s *IeltsService) GetResultsInlineBySection(ctx context.Context, req *pb.GetResultRequest) (*pb.GetResultResponse, error) {
+	return s.repo.GetResultsInlineBySection(req.Section, req.ExamId)
+}

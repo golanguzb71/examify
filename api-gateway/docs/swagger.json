@@ -1116,7 +1116,7 @@
                 "answers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pb.SpeakingPartAbsResponse"
+                        "$ref": "#/definitions/pb.SpeakingPartsResponse"
                     }
                 }
             }
@@ -1143,6 +1143,15 @@
                     "items": {
                         "$ref": "#/definitions/pb.UserAnswer"
                     }
+                },
+                "bandScore": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },
@@ -1238,7 +1247,7 @@
                 }
             }
         },
-        "pb.SpeakingPartAbsResponse": {
+        "pb.SpeakingPartsResponse": {
             "type": "object",
             "properties": {
                 "coherence_score": {
@@ -1252,6 +1261,9 @@
                 },
                 "part_band_score": {
                     "type": "number"
+                },
+                "part_number": {
+                    "type": "integer"
                 },
                 "relevance_score": {
                     "type": "number"

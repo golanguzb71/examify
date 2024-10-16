@@ -88,7 +88,7 @@ definitions:
     properties:
       answers:
         items:
-          $ref: '#/definitions/pb.SpeakingPartAbsResponse'
+          $ref: '#/definitions/pb.SpeakingPartsResponse'
         type: array
     type: object
   pb.GetResultOutlineWritingResponse:
@@ -106,6 +106,12 @@ definitions:
         items:
           $ref: '#/definitions/pb.UserAnswer'
         type: array
+      bandScore:
+        type: number
+      createdAt:
+        type: string
+      id:
+        type: string
     type: object
   pb.GetTopExamResult:
     properties:
@@ -167,7 +173,7 @@ definitions:
       writing:
         type: string
     type: object
-  pb.SpeakingPartAbsResponse:
+  pb.SpeakingPartsResponse:
     properties:
       coherence_score:
         type: number
@@ -177,6 +183,8 @@ definitions:
         type: number
       part_band_score:
         type: number
+      part_number:
+        type: integer
       relevance_score:
         type: number
       topic_dev_score:
