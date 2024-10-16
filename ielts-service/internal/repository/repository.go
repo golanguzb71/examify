@@ -575,14 +575,25 @@ func (r *PostgresRepository) GetResultsInlineBySection(section string, examId st
 	if err != nil {
 		return nil, err
 	}
-
-	err = json.Unmarshal(userAnswerRaw, &result.Answers)
-	if err != nil {
-		return nil, fmt.Errorf("error unmarshaling user_answer: %w", err)
+	var userAnswers []struct {
+		IsTrue     bool   `json:"is_true"`
+		TrueAnswer string `json:"true_answer"`
+		UserAnswer string `json:"user_answer"`
 	}
-
+	if err = json.Unmarshal(userAnswerRaw, &userAnswers); err != nil {
+		return nil, err
+	}
+	result.Answers = make([]*pb.UserAnswer, len(userAnswers))
+	for i, answer := range userAnswers {
+		result.Answers[i] = &pb.UserAnswer{
+			UserAnswer: answer.UserAnswer,
+			TrueAnswer: answer.TrueAnswer,
+			IsTrue:     answer.IsTrue,
+		}
+	}
 	return &result, nil
 }
+
 func validateIELTSBandScores(scores ...float32) error {
 	validScores := map[float32]bool{
 		1:   true,
