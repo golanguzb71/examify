@@ -2,10 +2,14 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"ielts-service/internal/repository"
 	"ielts-service/proto/pb"
+	"io/ioutil"
 	"log"
+	"mime"
 	"net/http"
+	"path/filepath"
 )
 
 type IeltsService struct {
@@ -181,4 +185,28 @@ func (s *IeltsService) GetResultOutlineSpeaking(ctx context.Context, req *pb.Get
 }
 func (s *IeltsService) GetResultOutlineWriting(ctx context.Context, req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineWritingResponse, error) {
 	return s.repo.GetResultOutlineWriting(req)
+}
+
+func (s *IeltsService) GetVoiceRecordsSpeaking(ctx context.Context, req *pb.GetVoiceRecordsSpeakingRequest) (*pb.GetVoiceRecordsSpeakingResponse, error) {
+	voiceDirectory := "voice_answers"
+
+	filePath := filepath.Join(voiceDirectory, req.NameVoiceUrl)
+
+	voiceData, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read voice file: %w", err)
+	}
+
+	ext := filepath.Ext(filePath)
+	contentType := mime.TypeByExtension(ext)
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+
+	response := &pb.GetVoiceRecordsSpeakingResponse{
+		VoiceData:   voiceData,
+		ContentType: contentType,
+	}
+
+	return response, nil
 }

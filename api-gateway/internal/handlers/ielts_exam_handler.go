@@ -292,3 +292,33 @@ func GetResultsOutlineSpeaking(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 	return
 }
+
+// GetVoiceRecord godoc
+// @Summary Get a voice record
+// @Description Retrieves the voice record for a given name from the IELTS speaking test
+// @Tags voice
+// @Accept json
+// @Produce audio/wav
+// @Param voiceName path string true "Voice Record Name"
+// @Success 200 {file} file "Returns the requested voice file in audio/wav format"
+// @Failure 409 {object} utils.AbsResponse
+// @Security Bearer
+// @Router /api/ielts/exam/result/get-results-speaking-voice/{voiceName} [get]
+func GetVoiceRecord(ctx *gin.Context) {
+	voiceName := ctx.Param("voiceName")
+
+	record, err := ieltsClient.GetVoiceRecord(voiceName)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusConflict, err.Error())
+		return
+	}
+
+	if record == nil || len(record.VoiceData) == 0 {
+		utils.RespondError(ctx, http.StatusNotFound, "Voice record not found")
+		return
+	}
+
+	ctx.Header("Content-Type", record.ContentType)
+
+	ctx.Writer.Write(record.VoiceData)
+}

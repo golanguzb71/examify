@@ -758,6 +758,34 @@ paths:
       summary: Get outline of Writing results
       tags:
       - results
+  /api/ielts/exam/result/get-results-speaking-voice/{voiceName}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the voice record for a given name from the IELTS speaking
+        test
+      parameters:
+      - description: Voice Record Name
+        in: path
+        name: voiceName
+        required: true
+        type: string
+      produces:
+      - audio/wav
+      responses:
+        "200":
+          description: Returns the requested voice file in audio/wav format
+          schema:
+            type: file
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.AbsResponse'
+      security:
+      - Bearer: []
+      summary: Get a voice record
+      tags:
+      - voice
   /api/ielts/exam/result/top-exam-result/{dataframe}:
     get:
       consumes:

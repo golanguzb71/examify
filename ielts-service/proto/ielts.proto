@@ -24,7 +24,17 @@ service IeltsService {
   rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
   rpc CreateAttemptOutlineWriting(CreateOutlineAttemptRequestWriting) returns (common.AbsResponse);
   rpc CreateAttemptOutlineSpeaking(CreateOutlineAttemptRequestSpeaking) returns (common.AbsResponse);
+  rpc GetVoiceRecordsSpeaking(GetVoiceRecordsSpeakingRequest)returns(GetVoiceRecordsSpeakingResponse);
 }
+message GetVoiceRecordsSpeakingRequest{
+  string nameVoiceUrl = 1;
+}
+
+message GetVoiceRecordsSpeakingResponse {
+  bytes voiceData = 1;
+  string contentType = 2;
+}
+
 message GetResultOutlineSpeakingRequest{
   string examId = 1;
   int32 partNumber = 2;

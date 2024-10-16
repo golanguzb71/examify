@@ -35,6 +35,7 @@ const (
 	IeltsService_CreateAttemptInline_FullMethodName          = "/ielts.IeltsService/CreateAttemptInline"
 	IeltsService_CreateAttemptOutlineWriting_FullMethodName  = "/ielts.IeltsService/CreateAttemptOutlineWriting"
 	IeltsService_CreateAttemptOutlineSpeaking_FullMethodName = "/ielts.IeltsService/CreateAttemptOutlineSpeaking"
+	IeltsService_GetVoiceRecordsSpeaking_FullMethodName      = "/ielts.IeltsService/GetVoiceRecordsSpeaking"
 )
 
 // IeltsServiceClient is the client API for IeltsService service.
@@ -57,6 +58,7 @@ type IeltsServiceClient interface {
 	CreateAttemptInline(ctx context.Context, in *CreateInlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	CreateAttemptOutlineWriting(ctx context.Context, in *CreateOutlineAttemptRequestWriting, opts ...grpc.CallOption) (*AbsResponse, error)
 	CreateAttemptOutlineSpeaking(ctx context.Context, in *CreateOutlineAttemptRequestSpeaking, opts ...grpc.CallOption) (*AbsResponse, error)
+	GetVoiceRecordsSpeaking(ctx context.Context, in *GetVoiceRecordsSpeakingRequest, opts ...grpc.CallOption) (*GetVoiceRecordsSpeakingResponse, error)
 }
 
 type ieltsServiceClient struct {
@@ -227,6 +229,16 @@ func (c *ieltsServiceClient) CreateAttemptOutlineSpeaking(ctx context.Context, i
 	return out, nil
 }
 
+func (c *ieltsServiceClient) GetVoiceRecordsSpeaking(ctx context.Context, in *GetVoiceRecordsSpeakingRequest, opts ...grpc.CallOption) (*GetVoiceRecordsSpeakingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetVoiceRecordsSpeakingResponse)
+	err := c.cc.Invoke(ctx, IeltsService_GetVoiceRecordsSpeaking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IeltsServiceServer is the server API for IeltsService service.
 // All implementations must embed UnimplementedIeltsServiceServer
 // for forward compatibility.
@@ -247,6 +259,7 @@ type IeltsServiceServer interface {
 	CreateAttemptInline(context.Context, *CreateInlineAttemptRequest) (*AbsResponse, error)
 	CreateAttemptOutlineWriting(context.Context, *CreateOutlineAttemptRequestWriting) (*AbsResponse, error)
 	CreateAttemptOutlineSpeaking(context.Context, *CreateOutlineAttemptRequestSpeaking) (*AbsResponse, error)
+	GetVoiceRecordsSpeaking(context.Context, *GetVoiceRecordsSpeakingRequest) (*GetVoiceRecordsSpeakingResponse, error)
 	mustEmbedUnimplementedIeltsServiceServer()
 }
 
@@ -304,6 +317,9 @@ func (UnimplementedIeltsServiceServer) CreateAttemptOutlineWriting(context.Conte
 }
 func (UnimplementedIeltsServiceServer) CreateAttemptOutlineSpeaking(context.Context, *CreateOutlineAttemptRequestSpeaking) (*AbsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAttemptOutlineSpeaking not implemented")
+}
+func (UnimplementedIeltsServiceServer) GetVoiceRecordsSpeaking(context.Context, *GetVoiceRecordsSpeakingRequest) (*GetVoiceRecordsSpeakingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVoiceRecordsSpeaking not implemented")
 }
 func (UnimplementedIeltsServiceServer) mustEmbedUnimplementedIeltsServiceServer() {}
 func (UnimplementedIeltsServiceServer) testEmbeddedByValue()                      {}
@@ -614,6 +630,24 @@ func _IeltsService_CreateAttemptOutlineSpeaking_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IeltsService_GetVoiceRecordsSpeaking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetVoiceRecordsSpeakingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).GetVoiceRecordsSpeaking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_GetVoiceRecordsSpeaking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).GetVoiceRecordsSpeaking(ctx, req.(*GetVoiceRecordsSpeakingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IeltsService_ServiceDesc is the grpc.ServiceDesc for IeltsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -684,6 +718,10 @@ var IeltsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAttemptOutlineSpeaking",
 			Handler:    _IeltsService_CreateAttemptOutlineSpeaking_Handler,
+		},
+		{
+			MethodName: "GetVoiceRecordsSpeaking",
+			Handler:    _IeltsService_GetVoiceRecordsSpeaking_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

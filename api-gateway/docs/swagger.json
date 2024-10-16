@@ -794,6 +794,49 @@
                 }
             }
         },
+        "/api/ielts/exam/result/get-results-speaking-voice/{voiceName}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves the voice record for a given name from the IELTS speaking test",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "audio/wav"
+                ],
+                "tags": [
+                    "voice"
+                ],
+                "summary": "Get a voice record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Voice Record Name",
+                        "name": "voiceName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the requested voice file in audio/wav format",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.AbsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ielts/exam/result/top-exam-result/{dataframe}": {
             "get": {
                 "description": "Retrieve top exam results based on the specified dataframe (MONTHLY, DAILY, or WEEKLY)",

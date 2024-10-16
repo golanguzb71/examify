@@ -492,8 +492,6 @@ func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineA
 		return fmt.Errorf("error writing voice answer to file: %v", err)
 	}
 
-	voiceURL := fmt.Sprintf("/voice_answers/%s", fileName)
-
 	resp, err := r.integrationClient.GetResultSpeakingPart(req)
 	if err != nil {
 		return fmt.Errorf("error getting result from integration client: %v", err)
@@ -542,7 +540,7 @@ func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineA
 		voice_url = array_append(speaking_detail.voice_url, EXCLUDED.voice_url[1])
 `,
 		uuid.New(), req.ExamId, req.PartNumber, resp.FluencyScore, resp.GrammarScore, resp.VocabularyScore,
-		resp.CoherenceScore, resp.TopicDevScore, resp.RelevanceScore, transcriptionJSON, voiceURL, resp.PartBandScore, resp.WordCount,
+		resp.CoherenceScore, resp.TopicDevScore, resp.RelevanceScore, transcriptionJSON, fileName, resp.PartBandScore, resp.WordCount,
 	)
 	if err != nil {
 		return fmt.Errorf("error executing insert/update query: %v", err)

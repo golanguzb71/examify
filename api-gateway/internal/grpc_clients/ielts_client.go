@@ -209,3 +209,7 @@ func (c *IeltsClient) GetResultsOutlineSpeaking(examId string, partNumber int64)
 		PartNumber: int32(partNumber),
 	})
 }
+
+func (c *IeltsClient) GetVoiceRecord(name string) (*pb.GetVoiceRecordsSpeakingResponse, error) {
+	return c.client.GetVoiceRecordsSpeaking(context.TODO(), &pb.GetVoiceRecordsSpeakingRequest{NameVoiceUrl: name})
+}
