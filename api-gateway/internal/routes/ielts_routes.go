@@ -35,7 +35,7 @@ func IELTSRoutes(r *gin.RouterGroup, authClient *client.AuthClient) {
 			result.GET("/top-exam-result/:dataframe", handlers.GetTopExamResult)
 			result.GET("/get-results-inline/:sectionType/:examId", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.GetResultsInlineBySection)
 			result.GET("/get-results-outline-writing/:examId", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.GetResultsOutlineWriting)
-			result.GET("/get-results-outline-speaking/:examId", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.GetResultsOutlineSpeaking)
+			result.GET("/get-results-outline-speaking/:examId/:partNumber", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.GetResultsOutlineSpeaking)
 		}
 		attempt := exam.Group("/attempt")
 		{

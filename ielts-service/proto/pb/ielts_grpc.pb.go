@@ -52,7 +52,7 @@ type IeltsServiceClient interface {
 	GetExamByUserId(ctx context.Context, in *GetExamByUserIdRequest, opts ...grpc.CallOption) (*GetExamByUserIdResponse, error)
 	GetResultsInlineBySection(ctx context.Context, in *GetResultRequest, opts ...grpc.CallOption) (*GetResultResponse, error)
 	GetResultOutlineWriting(ctx context.Context, in *GetResultOutlineAbsRequest, opts ...grpc.CallOption) (*GetResultOutlineWritingResponse, error)
-	GetResultOutlineSpeaking(ctx context.Context, in *GetResultOutlineAbsRequest, opts ...grpc.CallOption) (*GetResultOutlineSpeakingResponse, error)
+	GetResultOutlineSpeaking(ctx context.Context, in *GetResultOutlineSpeakingRequest, opts ...grpc.CallOption) (*GetResultOutlineSpeakingResponse, error)
 	GetTopExamResultList(ctx context.Context, in *GetTopExamRequest, opts ...grpc.CallOption) (*GetTopExamResult, error)
 	CreateAttemptInline(ctx context.Context, in *CreateInlineAttemptRequest, opts ...grpc.CallOption) (*AbsResponse, error)
 	CreateAttemptOutlineWriting(ctx context.Context, in *CreateOutlineAttemptRequestWriting, opts ...grpc.CallOption) (*AbsResponse, error)
@@ -177,7 +177,7 @@ func (c *ieltsServiceClient) GetResultOutlineWriting(ctx context.Context, in *Ge
 	return out, nil
 }
 
-func (c *ieltsServiceClient) GetResultOutlineSpeaking(ctx context.Context, in *GetResultOutlineAbsRequest, opts ...grpc.CallOption) (*GetResultOutlineSpeakingResponse, error) {
+func (c *ieltsServiceClient) GetResultOutlineSpeaking(ctx context.Context, in *GetResultOutlineSpeakingRequest, opts ...grpc.CallOption) (*GetResultOutlineSpeakingResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetResultOutlineSpeakingResponse)
 	err := c.cc.Invoke(ctx, IeltsService_GetResultOutlineSpeaking_FullMethodName, in, out, cOpts...)
@@ -242,7 +242,7 @@ type IeltsServiceServer interface {
 	GetExamByUserId(context.Context, *GetExamByUserIdRequest) (*GetExamByUserIdResponse, error)
 	GetResultsInlineBySection(context.Context, *GetResultRequest) (*GetResultResponse, error)
 	GetResultOutlineWriting(context.Context, *GetResultOutlineAbsRequest) (*GetResultOutlineWritingResponse, error)
-	GetResultOutlineSpeaking(context.Context, *GetResultOutlineAbsRequest) (*GetResultOutlineSpeakingResponse, error)
+	GetResultOutlineSpeaking(context.Context, *GetResultOutlineSpeakingRequest) (*GetResultOutlineSpeakingResponse, error)
 	GetTopExamResultList(context.Context, *GetTopExamRequest) (*GetTopExamResult, error)
 	CreateAttemptInline(context.Context, *CreateInlineAttemptRequest) (*AbsResponse, error)
 	CreateAttemptOutlineWriting(context.Context, *CreateOutlineAttemptRequestWriting) (*AbsResponse, error)
@@ -290,7 +290,7 @@ func (UnimplementedIeltsServiceServer) GetResultsInlineBySection(context.Context
 func (UnimplementedIeltsServiceServer) GetResultOutlineWriting(context.Context, *GetResultOutlineAbsRequest) (*GetResultOutlineWritingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetResultOutlineWriting not implemented")
 }
-func (UnimplementedIeltsServiceServer) GetResultOutlineSpeaking(context.Context, *GetResultOutlineAbsRequest) (*GetResultOutlineSpeakingResponse, error) {
+func (UnimplementedIeltsServiceServer) GetResultOutlineSpeaking(context.Context, *GetResultOutlineSpeakingRequest) (*GetResultOutlineSpeakingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetResultOutlineSpeaking not implemented")
 }
 func (UnimplementedIeltsServiceServer) GetTopExamResultList(context.Context, *GetTopExamRequest) (*GetTopExamResult, error) {
@@ -525,7 +525,7 @@ func _IeltsService_GetResultOutlineWriting_Handler(srv interface{}, ctx context.
 }
 
 func _IeltsService_GetResultOutlineSpeaking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetResultOutlineAbsRequest)
+	in := new(GetResultOutlineSpeakingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -537,7 +537,7 @@ func _IeltsService_GetResultOutlineSpeaking_Handler(srv interface{}, ctx context
 		FullMethod: IeltsService_GetResultOutlineSpeaking_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IeltsServiceServer).GetResultOutlineSpeaking(ctx, req.(*GetResultOutlineAbsRequest))
+		return srv.(IeltsServiceServer).GetResultOutlineSpeaking(ctx, req.(*GetResultOutlineSpeakingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

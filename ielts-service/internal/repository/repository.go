@@ -594,12 +594,12 @@ func (r *PostgresRepository) GetResultsInlineBySection(section string, examId st
 	return &result, nil
 }
 
-func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
+func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSpeakingRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
 	rows, err := r.db.Query(`
 		SELECT part_number, fluency_score, grammar_score, vocabulary_score, coherence_score, 
 		       topic_dev_score, relevance_score, transcription, voice_url, part_band_score, created_at 
 		FROM speaking_detail 
-		WHERE exam_id=$1`, req.ExamId)
+		WHERE exam_id=$1 and part_number=$2`, req.ExamId, req.PartNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -622,7 +622,6 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 			return nil, err
 		}
 
-		// Unmarshal the transcription JSONB field as an array of objects
 		var transcriptionData []struct {
 			Question      string `json:"question"`
 			Feedback      string `json:"feedback"`
@@ -632,7 +631,6 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 			return nil, err
 		}
 
-		// Process transcription data (taking the first entry for simplicity)
 		if len(transcriptionData) > 0 {
 			part.Transcription = &pb.Transcription{
 				Question:      transcriptionData[0].Question,
@@ -641,7 +639,6 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAb
 			}
 		}
 
-		// Assign the first voice URL if available
 		if len(voiceUrls) > 0 {
 			part.VoiceUrl = voiceUrls[0]
 		}

@@ -711,7 +711,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ielts/exam/result/get-results-outline-speaking/{examId}": {
+        "/api/ielts/exam/result/get-results-outline-speaking/{examId}/{partNumber}": {
             "get": {
                 "security": [
                     {
@@ -734,6 +734,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Exam ID",
                         "name": "examId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Part Number",
+                        "name": "partNumber",
                         "in": "path",
                         "required": true
                     }

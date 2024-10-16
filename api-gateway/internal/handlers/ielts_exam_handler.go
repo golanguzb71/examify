@@ -272,13 +272,19 @@ func GetResultsOutlineWriting(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param examId path string true "Exam ID"
+// @Param partNumber path string true "Part Number"
 // @Success 200 {object} pb.GetResultOutlineSpeakingResponse
 // @Failure 409 {object} utils.AbsResponse
 // @Security Bearer
-// @Router /api/ielts/exam/result/get-results-outline-speaking/{examId} [get]
+// @Router /api/ielts/exam/result/get-results-outline-speaking/{examId}/{partNumber} [get]
 func GetResultsOutlineSpeaking(ctx *gin.Context) {
 	examId := ctx.Param("examId")
-	response, err := ieltsClient.GetResultsOutlineSpeaking(examId)
+	partNumber, err := strconv.ParseInt(ctx.Param("partNumber"), 10, 32)
+	if err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Invalid part number")
+		return
+	}
+	response, err := ieltsClient.GetResultsOutlineSpeaking(examId, partNumber)
 	if err != nil {
 		utils.RespondError(ctx, http.StatusConflict, err.Error())
 		return

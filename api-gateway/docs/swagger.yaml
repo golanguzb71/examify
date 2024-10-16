@@ -697,7 +697,7 @@ paths:
       summary: Get results by section
       tags:
       - results
-  /api/ielts/exam/result/get-results-outline-speaking/{examId}:
+  /api/ielts/exam/result/get-results-outline-speaking/{examId}/{partNumber}:
     get:
       consumes:
       - application/json
@@ -707,6 +707,11 @@ paths:
       - description: Exam ID
         in: path
         name: examId
+        required: true
+        type: string
+      - description: Part Number
+        in: path
+        name: partNumber
         required: true
         type: string
       produces:

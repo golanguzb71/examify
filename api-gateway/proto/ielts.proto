@@ -19,11 +19,15 @@ service IeltsService {
   rpc GetExamByUserId(GetExamByUserIdRequest) returns (GetExamByUserIdResponse);
   rpc GetResultsInlineBySection(GetResultRequest) returns(GetResultResponse);
   rpc GetResultOutlineWriting(GetResultOutlineAbsRequest) returns(GetResultOutlineWritingResponse);
-  rpc GetResultOutlineSpeaking(GetResultOutlineAbsRequest) returns(GetResultOutlineSpeakingResponse);
+  rpc GetResultOutlineSpeaking(GetResultOutlineSpeakingRequest) returns(GetResultOutlineSpeakingResponse);
   rpc GetTopExamResultList(GetTopExamRequest) returns (GetTopExamResult);
   rpc CreateAttemptInline(CreateInlineAttemptRequest) returns (common.AbsResponse);
   rpc CreateAttemptOutlineWriting(CreateOutlineAttemptRequestWriting) returns (common.AbsResponse);
   rpc CreateAttemptOutlineSpeaking(CreateOutlineAttemptRequestSpeaking) returns (common.AbsResponse);
+}
+message GetResultOutlineSpeakingRequest{
+  string examId = 1;
+  int32 partNumber = 2;
 }
 
 message GetResultOutlineSpeakingResponse{

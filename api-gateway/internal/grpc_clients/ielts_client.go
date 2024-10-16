@@ -202,9 +202,10 @@ func (c *IeltsClient) GetResultsOutlineWriting(examId string) (*pb.GetResultOutl
 	})
 }
 
-func (c *IeltsClient) GetResultsOutlineSpeaking(examId string) (*pb.GetResultOutlineSpeakingResponse, error) {
+func (c *IeltsClient) GetResultsOutlineSpeaking(examId string, partNumber int64) (*pb.GetResultOutlineSpeakingResponse, error) {
 	ctx := context.TODO()
-	return c.client.GetResultOutlineSpeaking(ctx, &pb.GetResultOutlineAbsRequest{
-		ExamId: examId,
+	return c.client.GetResultOutlineSpeaking(ctx, &pb.GetResultOutlineSpeakingRequest{
+		ExamId:     examId,
+		PartNumber: int32(partNumber),
 	})
 }

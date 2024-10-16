@@ -176,7 +176,7 @@ func (s *IeltsService) GetResultsInlineBySection(ctx context.Context, req *pb.Ge
 	return s.repo.GetResultsInlineBySection(req.Section, req.ExamId)
 }
 
-func (s *IeltsService) GetResultOutlineSpeaking(ctx context.Context, req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
+func (s *IeltsService) GetResultOutlineSpeaking(ctx context.Context, req *pb.GetResultOutlineSpeakingRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
 	return s.repo.GetResultOutlineSpeaking(req)
 }
 func (s *IeltsService) GetResultOutlineWriting(ctx context.Context, req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineWritingResponse, error) {
