@@ -1327,9 +1327,6 @@
                 "vocabulary_score": {
                     "type": "number"
                 },
-                "voiceUrl": {
-                    "type": "string"
-                },
                 "word_count": {
                     "type": "integer"
                 }
@@ -1345,6 +1342,9 @@
                     "type": "string"
                 },
                 "transcription": {
+                    "type": "string"
+                },
+                "voiceUrl": {
                     "type": "string"
                 }
             }

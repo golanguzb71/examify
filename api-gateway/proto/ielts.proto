@@ -54,13 +54,13 @@ message SpeakingPartsResponse {
   int32 word_count = 7;
   Transcription transcription = 8;
   float part_band_score = 9;
-  string voiceUrl = 10;
 }
 
 message Transcription {
   string question = 1;
   string feedback = 2;
   string transcription = 3;
+  string voiceUrl = 10;
 }
 
 message UpdateBookRequest{

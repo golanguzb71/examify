@@ -1337,9 +1337,6 @@ const docTemplate = `{
                 "vocabulary_score": {
                     "type": "number"
                 },
-                "voiceUrl": {
-                    "type": "string"
-                },
                 "word_count": {
                     "type": "integer"
                 }
@@ -1355,6 +1352,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transcription": {
+                    "type": "string"
+                },
+                "voiceUrl": {
                     "type": "string"
                 }
             }

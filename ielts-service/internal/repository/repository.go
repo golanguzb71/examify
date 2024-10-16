@@ -620,6 +620,7 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSp
 			return nil, err
 		}
 
+		// Unmarshal transcription data from JSON
 		var transcriptionData []struct {
 			Question      string `json:"question"`
 			Feedback      string `json:"feedback"`
@@ -629,16 +630,20 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSp
 			return nil, err
 		}
 
-		if len(transcriptionData) > 0 {
-			part.Transcription = &pb.Transcription{
-				Question:      transcriptionData[0].Question,
-				Feedback:      transcriptionData[0].Feedback,
-				Transcription: transcriptionData[0].Transcription,
+		for i, tData := range transcriptionData {
+			transcriptionEntry := &pb.Transcription{
+				Question:      tData.Question,
+				Feedback:      tData.Feedback,
+				Transcription: tData.Transcription,
 			}
-		}
 
-		if len(voiceUrls) > 0 {
-			part.VoiceUrl = voiceUrls[0]
+			if i < len(voiceUrls) {
+				transcriptionEntry.VoiceUrl = voiceUrls[i]
+			}
+
+			if i == 0 {
+				part.Transcription = transcriptionEntry
+			}
 		}
 
 		answers = append(answers, &part)

@@ -55,7 +55,6 @@ message SpeakingPartsResponse {
   int32 word_count = 7;
   common.Transcription transcription = 8;
   float part_band_score = 9;
-  string voiceUrl = 10;
 }
 
 message UpdateBookRequest{

@@ -193,8 +193,6 @@ definitions:
         $ref: '#/definitions/pb.Transcription'
       vocabulary_score:
         type: number
-      voiceUrl:
-        type: string
       word_count:
         type: integer
     type: object
@@ -205,6 +203,8 @@ definitions:
       question:
         type: string
       transcription:
+        type: string
+      voiceUrl:
         type: string
     type: object
   pb.UpdateUserNameSurnameRequest:

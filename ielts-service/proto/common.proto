@@ -27,4 +27,5 @@ message Transcription {
   string question = 1;
   string feedback = 2;
   string transcription = 3;
+  string voiceUrl = 10;
 }
