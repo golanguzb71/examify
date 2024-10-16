@@ -595,7 +595,58 @@ func (r *PostgresRepository) GetResultsInlineBySection(section string, examId st
 }
 
 func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
-	return nil, nil
+	rows, err := r.db.Query(`
+		SELECT part_number, fluency_score, grammar_score, vocabulary_score, coherence_score, 
+		       topic_dev_score, relevance_score, transcription, voice_url, part_band_score, created_at 
+		FROM speaking_detail 
+		WHERE exam_id=$1`, req.ExamId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := &pb.GetResultOutlineSpeakingResponse{}
+	var answers []*pb.SpeakingPartsResponse
+
+	for rows.Next() {
+		var part pb.SpeakingPartsResponse
+		var transcription []byte
+		var voiceUrls []string
+
+		err = rows.Scan(
+			&part.PartNumber, &part.FluencyScore, &part.GrammarScore, &part.VocabularyScore,
+			&part.CoherenceScore, &part.TopicDevScore, &part.RelevanceScore, &transcription,
+			pq.Array(&voiceUrls), &part.PartBandScore)
+		if err != nil {
+			return nil, err
+		}
+		var transcriptionData struct {
+			Question      string `json:"question"`
+			Feedback      string `json:"feedback"`
+			Transcription string `json:"transcription"`
+		}
+		if err = json.Unmarshal(transcription, &transcriptionData); err != nil {
+			return nil, err
+		}
+
+		part.Transcription = &pb.Transcription{
+			Question:      transcriptionData.Question,
+			Feedback:      transcriptionData.Feedback,
+			Transcription: transcriptionData.Transcription,
+		}
+
+		if len(voiceUrls) > 0 {
+			part.VoiceUrl = voiceUrls[0]
+		}
+		answers = append(answers, &part)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	result.Answers = answers
+	return result, nil
 }
 
 func (r *PostgresRepository) GetResultOutlineWriting(req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineWritingResponse, error) {
