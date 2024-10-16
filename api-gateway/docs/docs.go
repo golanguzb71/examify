@@ -1185,7 +1185,7 @@ const docTemplate = `{
                 "coherenceScore": {
                     "type": "integer"
                 },
-                "crated_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "feedback": {

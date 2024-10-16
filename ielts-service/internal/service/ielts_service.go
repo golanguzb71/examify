@@ -175,3 +175,10 @@ func (s *IeltsService) CreateAttemptOutlineSpeaking(ctx context.Context, req *pb
 func (s *IeltsService) GetResultsInlineBySection(ctx context.Context, req *pb.GetResultRequest) (*pb.GetResultResponse, error) {
 	return s.repo.GetResultsInlineBySection(req.Section, req.ExamId)
 }
+
+func (s *IeltsService) GetResultOutlineSpeaking(ctx context.Context, req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
+	return s.repo.GetResultOutlineSpeaking(req)
+}
+func (s *IeltsService) GetResultOutlineWriting(ctx context.Context, req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineWritingResponse, error) {
+	return s.repo.GetResultOutlineWriting(req)
+}

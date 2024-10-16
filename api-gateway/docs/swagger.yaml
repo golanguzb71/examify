@@ -126,7 +126,7 @@ definitions:
     properties:
       coherenceScore:
         type: integer
-      crated_at:
+      createdAt:
         type: string
       feedback:
         type: string

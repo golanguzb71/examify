@@ -80,7 +80,7 @@ message OutlineWritingResponseAbs{
   int32 lexicalResourceScore = 7;
   int32 taskAchievementScore = 8;
   int32 taskBandScore = 9;
-  string crated_at = 10;
+  string createdAt = 10;
 }
 
 message UserAnswer{

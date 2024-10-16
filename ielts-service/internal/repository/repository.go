@@ -594,6 +594,39 @@ func (r *PostgresRepository) GetResultsInlineBySection(section string, examId st
 	return &result, nil
 }
 
+func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
+	return nil, nil
+}
+
+func (r *PostgresRepository) GetResultOutlineWriting(req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineWritingResponse, error) {
+	rows, err := r.db.Query(`SELECT  task_number, response, feedback, coherence_score, grammar_score, lexical_resource_score, task_achievement_score, task_band_score, created_at FROM writing_detail where exam_id=$1`, req.ExamId)
+	if err != nil {
+		return nil, err
+	}
+	var result *pb.GetResultOutlineWritingResponse
+	var answer []*pb.OutlineWritingResponseAbs
+	var response []byte
+	for rows.Next() {
+		var ans pb.OutlineWritingResponseAbs
+		err = rows.Scan(&ans.TaskNumber, &response, &ans.Feedback, &ans.CoherenceScore, &ans.GrammarScore, &ans.LexicalResourceScore, &ans.TaskAchievementScore, &ans.TaskBandScore, &ans.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		var userResponse struct {
+			Question   string `json:"question"`
+			UserAnswer string `json:"user_answer"`
+		}
+		if err = json.Unmarshal(response, &userResponse); err != nil {
+			return nil, err
+		}
+		ans.Question = userResponse.Question
+		ans.UserAnswer = userResponse.UserAnswer
+		answer = append(answer, &ans)
+	}
+	result.Answers = answer
+	return result, nil
+}
+
 func validateIELTSBandScores(scores ...float32) error {
 	validScores := map[float32]bool{
 		1:   true,
