@@ -19,7 +19,10 @@ func RunServer() {
 	if err != nil {
 		log.Fatalf("Failed to listen port %v ,  %v", cfg.Server.Port, err)
 	}
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.MaxRecvMsgSize(10*1024*1024), // 10 MB
+		grpc.MaxSendMsgSize(10*1024*1024), // 10 MB
+	)
 	pb.RegisterIntegrationServiceServer(grpcServer, integrationService)
 	log.Printf("Server listening on port %v", cfg.Server.Port)
 	if err = grpcServer.Serve(listen); err != nil {

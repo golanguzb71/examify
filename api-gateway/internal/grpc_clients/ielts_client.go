@@ -13,7 +13,7 @@ type IeltsClient struct {
 }
 
 func NewIeltsClient(addr string) (*IeltsClient, error) {
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock(), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(10*1024*1024)))
 	if err != nil {
 		return nil, err
 	}

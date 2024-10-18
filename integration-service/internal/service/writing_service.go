@@ -8,13 +8,12 @@ import (
 	"google.golang.org/api/option"
 	"integration-service/proto/pb"
 	"log"
-	"strings"
 )
 
-const ApiKey = "AIzaSyBeQQyXZL0Duo-K36pDbTRM4EDi6thAMjo"
+const ApiKey = "AIzaSyBKuxWI1SxM0MXDjFCDWbCyj662-ydmHiE"
 
 func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
-	ctx := context.TODO()
+	ctx := context.Background()
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(ApiKey))
 	if err != nil {
@@ -26,6 +25,21 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	configureModel(model)
 
 	session := model.StartChat()
+	session.History = []*genai.Content{
+		{
+			Role: "user",
+			Parts: []genai.Part{
+				genai.Text("Some people think that parents should teach their children how to be good members of society. Others, however, believe that school is the best place to learn this. Discuss both views and give your own opinion.\n\n[Sample essay content...]"),
+			},
+		},
+		{
+			Role: "model",
+			Parts: []genai.Part{
+				genai.Text(`{"coherence_score": 6, "feedback": "The essay has a clear structure and a well-defined thesis statement. The examples used to support the arguments are relevant and well-chosen. However, the essay could be improved by providing more specific examples and further developing the arguments. ", "grammar_score": 6, "lexical_resource_score": 6.5, "task_achievement_score": 6.5, "task_band_score": 6.5}`),
+			},
+		},
+	}
+
 	resp, err := session.SendMessage(ctx, genai.Text(essayText))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %w", err)
@@ -35,7 +49,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 }
 
 func configureModel(model *genai.GenerativeModel) {
-	model.SetTemperature(0.7)
+	model.SetTemperature(1)
 	model.SetTopK(64)
 	model.SetTopP(0.95)
 	model.SetMaxOutputTokens(8192)
@@ -65,28 +79,12 @@ func parseResponse(resp *genai.GenerateContentResponse) (*pb.WritingTaskAbsRespo
 
 	log.Printf("Received response: %s", text)
 
-	jsonStr := extractJSON(string(text))
-	if jsonStr == "" {
-		return nil, fmt.Errorf("no valid JSON found in response")
-	}
-
-	log.Printf("Extracted JSON: %s", jsonStr)
-
 	var rawData map[string]interface{}
-	if err := json.Unmarshal([]byte(jsonStr), &rawData); err != nil {
+	if err := json.Unmarshal([]byte(text), &rawData); err != nil {
 		return nil, fmt.Errorf("error parsing response: %w", err)
 	}
 
 	return createResponseData(rawData)
-}
-
-func extractJSON(text string) string {
-	jsonStart := strings.Index(text, "{")
-	jsonEnd := strings.LastIndex(text, "}") + 1
-	if jsonStart < 0 || jsonEnd <= jsonStart {
-		return ""
-	}
-	return text[jsonStart:jsonEnd]
 }
 
 func createResponseData(rawData map[string]interface{}) (*pb.WritingTaskAbsResponse, error) {

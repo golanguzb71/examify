@@ -11,7 +11,7 @@ type IntegrationClient struct {
 }
 
 func NewIntegrationClient(address string) (*IntegrationClient, error) {
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock(), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(10*1024*1024)))
 	if err != nil {
 		return nil, err
 	}

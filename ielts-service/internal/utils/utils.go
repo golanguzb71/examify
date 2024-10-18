@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"math"
 )
 
 func OffSetGenerator(page, size *int32) int {
@@ -56,51 +57,23 @@ func CalculateBandScore(correctCount int) float64 {
 
 func UpdateOverallScore(examID string, db *sql.DB) error {
 	query := `
-        WITH scores AS (
-            SELECT 
-                COALESCE((SELECT band_score FROM reading_detail WHERE exam_id = $1), 0) as reading_score,
-                COALESCE((SELECT band_score FROM listening_detail WHERE exam_id = $1), 0) as listening_score,
-                COALESCE((SELECT AVG(task_band_score) FROM writing_detail WHERE exam_id = $1), 0) as writing_score,
-                COALESCE((SELECT part_band_score FROM speaking_detail WHERE exam_id = $1), 0) as speaking_score
-        ),
-        total AS (
-            SELECT 
-                reading_score, 
-                listening_score, 
-                writing_score, 
-                speaking_score,
-                (reading_score + listening_score + writing_score + speaking_score) AS total_score
-            FROM scores
-        )
-        UPDATE exam
-        SET over_all_band_score = (
-            SELECT 
-                CASE 
-                    WHEN total_score >= 34.5 THEN 9.0
-                    WHEN total_score >= 32.5 THEN 8.5
-                    WHEN total_score >= 30.5 THEN 8.0
-                    WHEN total_score >= 28.5 THEN 7.5
-                    WHEN total_score >= 26.5 THEN 7.0
-                    WHEN total_score >= 24.5 THEN 6.5
-                    WHEN total_score >= 22.5 THEN 6.0
-                    WHEN total_score >= 20.5 THEN 5.5
-                    WHEN total_score >= 18.5 THEN 5.0
-                    WHEN total_score >= 16.5 THEN 4.5
-                    WHEN total_score >= 14.5 THEN 4.0
-                    WHEN total_score >= 12.5 THEN 3.5
-                    WHEN total_score >= 10.5 THEN 3.0
-                    ELSE 0
-                END
-            FROM total
-        )
-        WHERE id = $1
+    SELECT 
+        COALESCE((SELECT band_score FROM reading_detail WHERE exam_id = $1 LIMIT 1), 0) AS reading_score,
+        COALESCE((SELECT band_score FROM listening_detail WHERE exam_id = $1 LIMIT 1), 0) AS listening_score,
+        COALESCE((SELECT AVG(task_band_score) FROM writing_detail WHERE exam_id = $1), 0) AS writing_score,
+        COALESCE((SELECT AVG(part_band_score) FROM speaking_detail WHERE exam_id = $1), 0) AS speaking_score
     `
-
-	_, err := db.Exec(query, examID)
+	var readingScore, listeningScore, writingScore, speakingScore float64
+	err := db.QueryRow(query, examID).Scan(&readingScore, &listeningScore, &writingScore, &speakingScore)
 	if err != nil {
-		return fmt.Errorf("failed to update overall score for exam %s: %w", examID, err)
+		return err
 	}
-
+	overallScore := (readingScore + listeningScore + writingScore + speakingScore) / 4
+	overallScore = math.Round(overallScore*2) / 2
+	_, err = db.Exec(`UPDATE exam SET over_all_band_score=$1 where id=$2`, overallScore, examID)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

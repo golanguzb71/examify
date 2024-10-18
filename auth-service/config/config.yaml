@@ -6,7 +6,7 @@ redis:
   port: 6379
 
 telegram:
-  bot_token: "7629206943:AAGN_dK0E4ZrpqIbwRefKqPvbGAvLcggCak"
+  bot_token: "7223682774:AAFAabANpwopxAQs3BHo2kvtGMr8x9heJcc"
 
 grpc:
   userService:

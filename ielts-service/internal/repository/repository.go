@@ -444,6 +444,7 @@ func (r *PostgresRepository) CreateAttemptOutlineWriting(req *pb.CreateOutlineAt
 		if err != nil {
 			return err
 		}
+		adjustIELTSScores(&resp.LexicalResourceScore, &resp.TaskBandScore, &resp.TaskAchievementScore, &resp.CoherenceScore, &resp.GrammarScore)
 		_, err = r.db.Exec(`INSERT INTO writing_detail(id, exam_id, task_number, response, feedback, coherence_score, grammar_score, lexical_resource_score, task_achievement_score, task_band_score) 
 		values ($1 , $2 , $3 , $4 , $5 , $6 , $7,$8,$9,$10)`, uuid.New(), parsedUUID, i+1, response, resp.Feedback, resp.CoherenceScore, resp.GrammarScore, resp.LexicalResourceScore, resp.TaskAchievementScore, resp.TaskBandScore)
 		if err != nil {
@@ -451,10 +452,29 @@ func (r *PostgresRepository) CreateAttemptOutlineWriting(req *pb.CreateOutlineAt
 		}
 	}
 	err = utils.UpdateOverallScore(id, r.db)
+	_, err = r.db.Exec(`UPDATE exam SET status='FINISHED' where id=$1`, id)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func adjustIELTSScores(scores ...*float32) {
+	validScores := []float32{1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9}
+
+	closestValidScore := func(score float32) float32 {
+		closest := validScores[0]
+		for _, validScore := range validScores {
+			if math.Abs(float64(score-validScore)) < math.Abs(float64(score-closest)) {
+				closest = validScore
+			}
+		}
+		return closest
+	}
+
+	for _, score := range scores {
+		*score = closestValidScore(*score)
+	}
 }
 
 func (r *PostgresRepository) UpdateBook(id string, name string) error {
@@ -508,17 +528,15 @@ func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineA
 		return fmt.Errorf("error marshaling transcription to JSON: %v", err)
 	}
 
-	if err := validateIELTSBandScores(
-		resp.FluencyScore,
-		resp.GrammarScore,
-		resp.VocabularyScore,
-		resp.CoherenceScore,
-		resp.TopicDevScore,
-		resp.RelevanceScore,
-		resp.PartBandScore,
-	); err != nil {
-		return err
-	}
+	validateIELTSBandScores(
+		&resp.FluencyScore,
+		&resp.GrammarScore,
+		&resp.VocabularyScore,
+		&resp.CoherenceScore,
+		&resp.TopicDevScore,
+		&resp.RelevanceScore,
+		&resp.PartBandScore,
+	)
 
 	_, err = r.db.Exec(`
 	INSERT INTO speaking_detail (
@@ -552,6 +570,33 @@ func (r *PostgresRepository) CreateAttemptOutlineSpeaking(req *pb.CreateOutlineA
 	}
 
 	return nil
+}
+
+func validateIELTSBandScores(scores ...*float32) {
+	for _, score := range scores {
+		if score == nil {
+			continue
+		}
+
+		validScore := getNearestIELTSBand(*score)
+		*score = validScore
+	}
+}
+
+func getNearestIELTSBand(score float32) float32 {
+	validBands := []float32{1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9}
+	nearest := validBands[0]
+	minDiff := math.Abs(float64(score - nearest))
+
+	for _, band := range validBands {
+		diff := math.Abs(float64(score - band))
+		if diff < minDiff {
+			minDiff = diff
+			nearest = band
+		}
+	}
+
+	return nearest
 }
 
 func (r *PostgresRepository) GetResultsInlineBySection(section string, examId string) (*pb.GetResultResponse, error) {
@@ -602,7 +647,6 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSp
 		return nil, err
 	}
 	defer rows.Close()
-
 	result := &pb.GetResultOutlineSpeakingResponse{}
 
 	for rows.Next() {
@@ -622,6 +666,7 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSp
 			Feedback      string `json:"feedback"`
 			Transcription string `json:"transcription"`
 		}
+
 		if err = json.Unmarshal(transcription, &transcriptionData); err != nil {
 			return nil, err
 		}
@@ -692,34 +737,6 @@ func (r *PostgresRepository) GetResultOutlineWriting(req *pb.GetResultOutlineAbs
 
 	result.Answers = answer
 	return result, nil
-}
-
-func validateIELTSBandScores(scores ...float32) error {
-	validScores := map[float32]bool{
-		1:   true,
-		1.5: true,
-		2:   true,
-		2.5: true,
-		3:   true,
-		3.5: true,
-		4:   true,
-		4.5: true,
-		5:   true,
-		5.5: true,
-		6:   true,
-		6.5: true,
-		7:   true,
-		7.5: true,
-		8:   true,
-		8.5: true,
-	}
-
-	for _, score := range scores {
-		if !validScores[score] {
-			return fmt.Errorf("invalid score: %.2f; valid scores are 1, 1.5, ..., 8, 8.5", score)
-		}
-	}
-	return nil
 }
 
 func checkIsHaveRemainSection(remainSection *string, db *sql.DB, examId string) {

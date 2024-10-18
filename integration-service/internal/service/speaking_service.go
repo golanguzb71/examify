@@ -55,7 +55,6 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 		},
 	}
 
-	// Create a temporary file to write the audio message
 	tempFile, err := os.CreateTemp("", "audio_*.mp3")
 	if err != nil {
 		return nil, fmt.Errorf("error creating temp file: %v", err)
@@ -67,13 +66,11 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 		return nil, fmt.Errorf("error writing to temp file: %v", err)
 	}
 
-	// Upload the audio file to Gemini
 	fileURI, err := uploadToGemini(ctx, client, tempFile.Name(), "audio/mpeg")
 	if err != nil {
 		return nil, err
 	}
 
-	// Send the message with the audio file and question
 	session := model.StartChat()
 	session.History = []*genai.Content{
 		{
@@ -83,9 +80,15 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 				genai.Text(fmt.Sprintf("Analyze the audio for the following question: %s.", question)),
 			},
 		},
+		{
+			Role: "model",
+			Parts: []genai.Part{
+				genai.Text("```json\n{\"response\": {\"coherence_score\": 6.0, \"fluency_score\": 6.5, \"grammar_score\": 6.0, \"part_band_score\": 6.0, \"relevance_score\": 7.0, \"topic_dev_score\": 6.5, \"transcription\": {\"feedback\": \"The speaker's response is coherent and relevant. The speaker uses a variety of grammatical structures and vocabulary to express their ideas.\", \"transcription\": \"Yes, both. I'm studying and working at my university. It is a great chance to improve my future career. After graduation, I'm going to study abroad.\"}, \"vocabulary_score\": 6.5, \"word_count\": 27}}\n\n```"),
+			},
+		},
 	}
 
-	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields."))
+	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking."))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %v", err)
 	}

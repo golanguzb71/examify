@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS speaking_detail
     coherence_score  FLOAT CHECK (coherence_score >= 0 AND coherence_score <= 9),
     topic_dev_score  FLOAT CHECK (topic_dev_score >= 0 AND topic_dev_score <= 9),
     relevance_score  FLOAT CHECK (relevance_score >= 0 AND relevance_score <= 9),
+    word_count       int                       NOT NULL DEFAULT 0,
     transcription    JSONB,
     voice_url        TEXT[],
     part_band_score  FLOAT                     NOT NULL DEFAULT 0 CHECK (part_band_score >= 0 AND part_band_score <= 9),
@@ -86,3 +87,32 @@ CREATE TABLE IF NOT EXISTS reading_detail
     user_answer JSONB                                                                       NOT NULL,
     created_at  TIMESTAMP                                                                            DEFAULT NOW()
 );
+
+
+CREATE OR REPLACE FUNCTION round_band_score()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.part_band_score := ROUND(NEW.part_band_score * 2) / 2;
+    IF NEW.part_band_score < 1 THEN
+        NEW.part_band_score := 1;
+    ELSIF NEW.part_band_score > 9 THEN
+        NEW.part_band_score := 9;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_part_band_score
+    BEFORE INSERT OR UPDATE ON speaking_detail
+    FOR EACH ROW
+EXECUTE FUNCTION round_band_score();
+
+CREATE OR REPLACE FUNCTION update_pending_exams_status()
+    RETURNS void AS $$
+BEGIN
+    UPDATE exam
+    SET status = 'FINISHED'
+    WHERE status = 'PENDING' AND end_at >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC';
+END;
+$$ LANGUAGE plpgsql;
+
