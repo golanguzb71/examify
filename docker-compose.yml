@@ -72,6 +72,8 @@ services:
       - postgres-ielts
       - integration-service
       - user-service
+    volumes:
+      - voice_answers_data:/app/voice_answers
 
   api-gateway:
     build:
@@ -89,6 +91,7 @@ volumes:
   postgres_ielts_data:
   postgres_user_data:
   redis_data:
+  voice_answers_data:
 
 networks:
   default:

@@ -90,7 +90,8 @@ CREATE TABLE IF NOT EXISTS reading_detail
 
 
 CREATE OR REPLACE FUNCTION round_band_score()
-    RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
     NEW.part_band_score := ROUND(NEW.part_band_score * 2) / 2;
     IF NEW.part_band_score < 1 THEN
@@ -103,16 +104,19 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_part_band_score
-    BEFORE INSERT OR UPDATE ON speaking_detail
+    BEFORE INSERT OR UPDATE
+    ON speaking_detail
     FOR EACH ROW
 EXECUTE FUNCTION round_band_score();
 
 CREATE OR REPLACE FUNCTION update_pending_exams_status()
-    RETURNS void AS $$
+    RETURNS void AS
+$$
 BEGIN
     UPDATE exam
     SET status = 'FINISHED'
-    WHERE status = 'PENDING' AND end_at >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC';
+    WHERE status = 'PENDING'
+      AND end_at >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC';
 END;
 $$ LANGUAGE plpgsql;
 
