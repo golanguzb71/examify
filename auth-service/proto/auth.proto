@@ -26,7 +26,7 @@ message ValidateTokenRequest {
 }
 
 service BonusService {
-  rpc UseBonusAttempt(UseBonusAttemptRequest) returns(UseBonusAttemptResponse);
+    rpc UseBonusAttempt(UseBonusAttemptRequest) returns(UseBonusAttemptResponse);
 }
 
 message UseBonusAttemptRequest{
