@@ -35,7 +35,7 @@ type GrpcConfig struct {
 	} `yaml:"integrationService"`
 	BonusService struct {
 		Address string `yaml:"address"`
-	}
+	} `yaml:"bonusService"`
 }
 
 func LoadConfig() (*Config, error) {
