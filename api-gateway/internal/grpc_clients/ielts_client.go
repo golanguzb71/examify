@@ -23,7 +23,7 @@ func NewIeltsClient(addr string) (*IeltsClient, error) {
 }
 
 func (c *IeltsClient) CreateBook(name string) (*pb.AbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	req := &pb.CreateBookRequest{Name: name}
@@ -35,7 +35,7 @@ func (c *IeltsClient) CreateBook(name string) (*pb.AbsResponse, error) {
 }
 
 func (c *IeltsClient) DeleteBook(bookId string) (*pb.AbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	req := &pb.DeleteBookRequest{BookId: bookId}
@@ -47,7 +47,7 @@ func (c *IeltsClient) DeleteBook(bookId string) (*pb.AbsResponse, error) {
 }
 
 func (c *IeltsClient) GetBook() ([]*models.Book, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	response, err := c.client.GetAllBook(ctx, &pb.Empty{})
@@ -65,7 +65,7 @@ func (c *IeltsClient) GetBook() ([]*models.Book, error) {
 }
 
 func (c *IeltsClient) CreateAnswer(bookId string, answers []string, section string) (*pb.AbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	req := &pb.CreateAnswerRequest{BookId: bookId, Answers: answers, SectionType: section}
@@ -77,7 +77,7 @@ func (c *IeltsClient) CreateAnswer(bookId string, answers []string, section stri
 }
 
 func (c *IeltsClient) DeleteAnswer(bookId string) (*pb.AbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	req := &pb.DeleteBookRequest{BookId: bookId}
 	resp, err := c.client.DeleteAnswer(ctx, req)
@@ -95,7 +95,7 @@ func (c *IeltsClient) DeleteAnswer(bookId string) (*pb.AbsResponse, error) {
 }
 
 func (c *IeltsClient) GetAnswer(bookId string) (*pb.GetAnswerResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	req := &pb.GetAnswerRequest{BookId: bookId}
 	answers, err := c.client.GetAnswer(ctx, req)
@@ -106,7 +106,7 @@ func (c *IeltsClient) GetAnswer(bookId string) (*pb.GetAnswerResponse, error) {
 }
 
 func (c *IeltsClient) CreateExam(userId, bookId int32) (*pb.CreateExamResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	req := &pb.CreateExamRequest{
@@ -129,7 +129,7 @@ func (c *IeltsClient) GetExamByUserId(userId, page, size int32) (*pb.GetExamByUs
 }
 
 func (c *IeltsClient) CreateAttemptInline(CAI *pb.CreateInlineAttemptRequest) (*pb.AbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	resp, err := c.client.CreateAttemptInline(ctx, CAI)
 	if err != nil {
@@ -148,7 +148,7 @@ func (c *IeltsClient) CreateAttemptOutlineWriting(coaw *pb.CreateOutlineAttemptR
 }
 
 func (c *IeltsClient) GetTopExamResult(dataframe string, page, size int) (*pb.GetTopExamResult, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	req := &pb.GetTopExamRequest{
 		Dataframe: dataframe,
@@ -165,7 +165,7 @@ func (c *IeltsClient) GetTopExamResult(dataframe string, page, size int) (*pb.Ge
 }
 
 func (c *IeltsClient) UpdateBookById(id, name string) (*pb.AbsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	req := &pb.UpdateBookRequest{
 		Id:   id,
