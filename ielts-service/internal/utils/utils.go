@@ -187,12 +187,12 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER check_part_band_score
-    BEFORE INSERT OR UPDATE
-    ON speaking_detail
-    FOR EACH ROW
-EXECUTE FUNCTION round_band_score();
+-- 
+-- CREATE TRIGGER check_part_band_score
+--     BEFORE INSERT OR UPDATE
+--     ON speaking_detail
+--     FOR EACH ROW
+-- EXECUTE FUNCTION round_band_score();
 
 CREATE OR REPLACE FUNCTION update_pending_exams_status()
     RETURNS void AS

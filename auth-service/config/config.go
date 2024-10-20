@@ -21,6 +21,11 @@ type Config struct {
 			Address string `yaml:"address"`
 		} `yaml:"userService"`
 	} `yaml:"grpc"`
+	Database struct {
+		Host   string `yaml:"host"`
+		Port   string `yaml:"port"`
+		DbName string `yaml:"dbname"`
+	} `yaml:"database"`
 }
 
 func LoadConfig() (*Config, error) {

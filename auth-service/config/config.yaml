@@ -12,6 +12,10 @@ grpc:
   userService:
     address: "user-service:50054"
 
+database:
+  host: "localhost"
+  port: 27017
+  dbname: "bonus_service_db"
 
 #server:
 #  port: 50051
@@ -21,7 +25,12 @@ grpc:
 #  port: 6379
 #
 #telegram:
-#  bot_token: "7223682774:AAFAabANpwopxAQs3BHo2kvtGMr8x9heJcc"
+#  bot_token: "6522732766:AAFnE2xOvptYZn0jmKYBuSOgG7Kb9Q7KhEs"
+#
+#database:
+#  host: "localhost"
+#  port: 27017
+#  dbname: "bonus_service_db"
 #
 #grpc:
 #  userService:
