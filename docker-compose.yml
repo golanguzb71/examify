@@ -87,11 +87,19 @@ services:
       - integration-service
       - user-service
 
+  bonus-user-db:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    volumes:
+      - bonus_user_data:/data/db
+
 volumes:
   postgres_ielts_data:
   postgres_user_data:
   redis_data:
   voice_answers_data:
+  bonus_user_data:
 
 networks:
   default:

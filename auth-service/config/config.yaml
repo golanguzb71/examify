@@ -13,7 +13,7 @@ grpc:
     address: "user-service:50054"
 
 database:
-  host: "localhost"
+  host: "bonus-user-db"
   port: 27017
   dbname: "bonus_service_db"
 
