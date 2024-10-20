@@ -23,11 +23,14 @@ func RunServer() {
 	// grpc Clients making
 	userClient, err := client.NewUserClient(cfg.Grpc.UserService.Address)
 	integrationClient, err := client.NewIntegrationClient(cfg.Grpc.IntegrationService.Address)
-
 	if err != nil {
 		log.Fatalf("Failed to listen grpc service %v", err)
 	}
-
+	bonusClient, err := client.NewBonusClient(cfg.Grpc.BonusService.Address)
+	if err != nil {
+		log.Fatalf("Failed to listen grpc service %v", err)
+		return
+	}
 	// db connecting
 	db, err := repository.NewPostgresDB(&cfg.Database)
 	if err != nil {
@@ -39,7 +42,7 @@ func RunServer() {
 	utils.MigrateUp(db)
 
 	// repository_making
-	repo := repository.NewPostgresRepository(db, userClient, integrationClient)
+	repo := repository.NewPostgresRepository(db, userClient, integrationClient, bonusClient)
 	// service making
 	ieltsService := service.NewIeltsService(repo)
 

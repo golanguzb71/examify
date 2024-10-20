@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "./proto/pb";
+
+
+service BonusService {
+  rpc UseBonusAttempt(UseBonusAttemptRequest) returns(UseBonusAttemptResponse);
+}
+
+message UseBonusAttemptRequest{
+  string chatId = 1;
+}
+
+message UseBonusAttemptResponse{
+  bool response = 1;
+}

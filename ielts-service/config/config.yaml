@@ -15,7 +15,8 @@ grpc:
     address: "user-service:50054"
   integrationService:
     address: "integration-service:50053"
-
+  bonusService:
+    address: "auth-service:50051"
 
 #server:
 #  port: 50052
