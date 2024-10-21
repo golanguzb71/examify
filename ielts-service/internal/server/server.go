@@ -2,7 +2,6 @@ package server
 
 import (
 	"database/sql"
-	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 	"ielts-service/config"
 	client "ielts-service/internal/grpc_clients"
@@ -46,18 +45,18 @@ func RunServer() {
 	// service making
 	ieltsService := service.NewIeltsService(repo)
 
-	c := cron.New()
-	_, err = c.AddFunc("@every 1m", func() {
-		if err := updatePendingExamsStatus(db); err != nil {
-			log.Printf("Error updating pending exams status: %v", err)
-		}
-	})
-	if err != nil {
-		log.Fatalf("Failed to create cron job: %v", err)
-	}
-
-	c.Start()
-	defer c.Stop()
+	//c := cron.New()
+	//_, err = c.AddFunc("@every 1m", func() {
+	//	if err := updatePendingExamsStatus(db); err != nil {
+	//		log.Printf("Error updating pending exams status: %v", err)
+	//	}
+	//})
+	//if err != nil {
+	//	log.Fatalf("Failed to create cron job: %v", err)
+	//}
+	//
+	//c.Start()
+	//defer c.Stop()
 
 	// grpc server making
 	lis, err := net.Listen("tcp", ":"+cfg.Server.Port)
