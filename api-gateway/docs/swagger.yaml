@@ -328,7 +328,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get Bonus Information for Current User
+      security:
+      - Bearer: []
+      summary: USER
       tags:
       - bonus
   /api/ielts/answer/{id}:
@@ -928,7 +930,7 @@ paths:
             $ref: '#/definitions/utils.AbsResponse'
       security:
       - Bearer: []
-      summary: Get user profile
+      summary: USER
       tags:
       - user
   /api/user/update-information:
@@ -956,7 +958,7 @@ paths:
             $ref: '#/definitions/utils.AbsResponse'
       security:
       - Bearer: []
-      summary: Update user's name and surname
+      summary: USER
       tags:
       - user
 securityDefinitions:

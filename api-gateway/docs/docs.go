@@ -65,6 +65,11 @@ const docTemplate = `{
         },
         "/api/bonus/get-bonus-information-me": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve bonus information by the current user's chat ID.",
                 "produces": [
                     "application/json"
@@ -72,7 +77,7 @@ const docTemplate = `{
                 "tags": [
                     "bonus"
                 ],
-                "summary": "Get Bonus Information for Current User",
+                "summary": "USER",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1013,7 +1018,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Get user profile",
+                "summary": "USER",
                 "responses": {
                     "200": {
                         "description": "User Profile Response",
@@ -1047,7 +1052,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Update user's name and surname",
+                "summary": "USER",
                 "parameters": [
                     {
                         "description": "Name and Surname Update Request",

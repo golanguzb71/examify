@@ -14,6 +14,7 @@ import (
 // @Success 200 {object} pb.GetBonusInformationByChatIdResponse
 // @Failure 400 {object} map[string]string "Bad Request"
 // @Failure 409 {object} map[string]string "Conflict"
+// @Security Bearer
 // @Router /api/bonus/get-bonus-information-me [get]
 func GetBonusInformationMe(ctx *gin.Context) {
 	user, err := utils.GetUserFromContext(ctx)
