@@ -2,6 +2,9 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
+      <functions>
+        <function importPath="apigateway/utils" name="GetUserFromContext" />
+      </functions>
       <methods>
         <method importPath="apigateway/internal/grpc_clients" receiver="*IeltsClient" name="CreateBook" />
         <method importPath="apigateway/internal/grpc_clients" receiver="*AuthClient" name="ValidateCode" />
