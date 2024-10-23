@@ -9,9 +9,9 @@ import (
 )
 
 // GetUserProfile godoc
-// @Summary Get user profile
+// @Summary USER
 // @Description Retrieves the profile information of the currently authenticated user
-// @Tags User
+// @Tags user
 // @Produce  json
 // @Success 200 {object} pb.User "User Profile Response"
 // @Failure 409 {object} utils.AbsResponse "Conflict Error"
@@ -19,6 +19,9 @@ import (
 // @Security Bearer
 func GetUserProfile(ctx *gin.Context) {
 	user, err := utils.GetUserFromContext(ctx)
+	response, _ := authClient.CalculateBonusToday(user.ChatId)
+	remainCount := ieltsClient.CalculateTodayExamCount(user.Id)
+	user.TodayExamCount = response + remainCount
 	if err != nil {
 		utils.RespondError(ctx, http.StatusConflict, err.Error())
 		return
@@ -27,9 +30,9 @@ func GetUserProfile(ctx *gin.Context) {
 }
 
 // ChangeNameSurname godoc
-// @Summary Update user's name and surname
+// @Summary USER
 // @Description Allows a user to update their name and surname
-// @Tags user-default
+// @Tags user
 // @Accept  json
 // @Produce  json
 // @Param data body pb.UpdateUserNameSurnameRequest true "Name and Surname Update Request"

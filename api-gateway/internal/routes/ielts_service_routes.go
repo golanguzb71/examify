@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func IELTSRoutes(r *gin.RouterGroup, authClient *client.AuthClient) {
-	ielts := r.Group("/ielts")
+func IeltsServiceRoutes(api *gin.RouterGroup, authClient *client.AuthClient) {
+	ielts := api.Group("/ielts")
 
 	book := ielts.Group("/book")
 	{
@@ -24,7 +24,6 @@ func IELTSRoutes(r *gin.RouterGroup, authClient *client.AuthClient) {
 		answer.PUT("/update/:id", handlers.UpdateAnswer)
 		answer.GET("/:id", handlers.GetAnswerByBookId)
 	}
-
 	exam := ielts.Group("/exam")
 	{
 		exam.POST("/create", middleware.AuthMiddleware([]string{"USER"}, authClient), handlers.CreateExam)

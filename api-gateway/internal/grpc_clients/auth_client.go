@@ -8,7 +8,8 @@ import (
 )
 
 type AuthClient struct {
-	client pb.AuthServiceClient
+	authClient  pb.AuthServiceClient
+	bonusClient pb.BonusServiceClient
 }
 
 func NewAuthClient(addr string) (*AuthClient, error) {
@@ -16,16 +17,16 @@ func NewAuthClient(addr string) (*AuthClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := pb.NewAuthServiceClient(conn)
-	return &AuthClient{client: client}, nil
+	authClient := pb.NewAuthServiceClient(conn)
+	bonusClient := pb.NewBonusServiceClient(conn)
+	return &AuthClient{authClient: authClient, bonusClient: bonusClient}, nil
 }
 
 func (c *AuthClient) ValidateCode(code string) (*pb.ValidateCodeResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-
 	req := &pb.ValidateCodeRequest{Code: code}
-	resp, err := c.client.ValidateCode(ctx, req)
+	resp, err := c.authClient.ValidateCode(ctx, req)
 	if err != nil {
 		return resp, err
 	}
@@ -33,16 +34,32 @@ func (c *AuthClient) ValidateCode(code string) (*pb.ValidateCodeResponse, error)
 }
 
 func (c *AuthClient) ValidateToken(token string, requiredRoles []string) (*pb.User, error) {
-	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 
 	req := &pb.ValidateTokenRequest{
 		Token:         token,
 		RequiredRoles: requiredRoles,
 	}
-	resp, err := c.client.ValidateToken(ctx, req)
+	resp, err := c.authClient.ValidateToken(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 	return resp, err
+}
+
+func (c *AuthClient) CalculateBonusToday(chatId string) (int32, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancelFunc()
+
+	req := &pb.BonusServiceAbsRequest{ChatId: chatId}
+	response, err := c.bonusClient.CalculateBonusByChatId(ctx, req)
+	if err != nil {
+		return 0, err
+	}
+	return response.Count, nil
+}
+
+func (c *AuthClient) GetBonusInformationByChatId(chatId string) (*pb.GetBonusInformationByChatIdResponse, error) {
+	return c.bonusClient.GetBonusInformationByChatId(context.TODO(), &pb.BonusServiceAbsRequest{ChatId: chatId})
 }

@@ -36,6 +36,7 @@ const (
 	IeltsService_CreateAttemptOutlineWriting_FullMethodName  = "/ielts.IeltsService/CreateAttemptOutlineWriting"
 	IeltsService_CreateAttemptOutlineSpeaking_FullMethodName = "/ielts.IeltsService/CreateAttemptOutlineSpeaking"
 	IeltsService_GetVoiceRecordsSpeaking_FullMethodName      = "/ielts.IeltsService/GetVoiceRecordsSpeaking"
+	IeltsService_CalculateTodayExamCount_FullMethodName      = "/ielts.IeltsService/CalculateTodayExamCount"
 )
 
 // IeltsServiceClient is the client API for IeltsService service.
@@ -59,6 +60,7 @@ type IeltsServiceClient interface {
 	CreateAttemptOutlineWriting(ctx context.Context, in *CreateOutlineAttemptRequestWriting, opts ...grpc.CallOption) (*AbsResponse, error)
 	CreateAttemptOutlineSpeaking(ctx context.Context, in *CreateOutlineAttemptRequestSpeaking, opts ...grpc.CallOption) (*AbsResponse, error)
 	GetVoiceRecordsSpeaking(ctx context.Context, in *GetVoiceRecordsSpeakingRequest, opts ...grpc.CallOption) (*GetVoiceRecordsSpeakingResponse, error)
+	CalculateTodayExamCount(ctx context.Context, in *CalculateTodayExamCountRequest, opts ...grpc.CallOption) (*CalculateTodayExamCountResponse, error)
 }
 
 type ieltsServiceClient struct {
@@ -239,6 +241,16 @@ func (c *ieltsServiceClient) GetVoiceRecordsSpeaking(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *ieltsServiceClient) CalculateTodayExamCount(ctx context.Context, in *CalculateTodayExamCountRequest, opts ...grpc.CallOption) (*CalculateTodayExamCountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CalculateTodayExamCountResponse)
+	err := c.cc.Invoke(ctx, IeltsService_CalculateTodayExamCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IeltsServiceServer is the server API for IeltsService service.
 // All implementations must embed UnimplementedIeltsServiceServer
 // for forward compatibility.
@@ -260,6 +272,7 @@ type IeltsServiceServer interface {
 	CreateAttemptOutlineWriting(context.Context, *CreateOutlineAttemptRequestWriting) (*AbsResponse, error)
 	CreateAttemptOutlineSpeaking(context.Context, *CreateOutlineAttemptRequestSpeaking) (*AbsResponse, error)
 	GetVoiceRecordsSpeaking(context.Context, *GetVoiceRecordsSpeakingRequest) (*GetVoiceRecordsSpeakingResponse, error)
+	CalculateTodayExamCount(context.Context, *CalculateTodayExamCountRequest) (*CalculateTodayExamCountResponse, error)
 	mustEmbedUnimplementedIeltsServiceServer()
 }
 
@@ -320,6 +333,9 @@ func (UnimplementedIeltsServiceServer) CreateAttemptOutlineSpeaking(context.Cont
 }
 func (UnimplementedIeltsServiceServer) GetVoiceRecordsSpeaking(context.Context, *GetVoiceRecordsSpeakingRequest) (*GetVoiceRecordsSpeakingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVoiceRecordsSpeaking not implemented")
+}
+func (UnimplementedIeltsServiceServer) CalculateTodayExamCount(context.Context, *CalculateTodayExamCountRequest) (*CalculateTodayExamCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CalculateTodayExamCount not implemented")
 }
 func (UnimplementedIeltsServiceServer) mustEmbedUnimplementedIeltsServiceServer() {}
 func (UnimplementedIeltsServiceServer) testEmbeddedByValue()                      {}
@@ -648,6 +664,24 @@ func _IeltsService_GetVoiceRecordsSpeaking_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IeltsService_CalculateTodayExamCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CalculateTodayExamCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IeltsServiceServer).CalculateTodayExamCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IeltsService_CalculateTodayExamCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IeltsServiceServer).CalculateTodayExamCount(ctx, req.(*CalculateTodayExamCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IeltsService_ServiceDesc is the grpc.ServiceDesc for IeltsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -722,6 +756,10 @@ var IeltsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVoiceRecordsSpeaking",
 			Handler:    _IeltsService_GetVoiceRecordsSpeaking_Handler,
+		},
+		{
+			MethodName: "CalculateTodayExamCount",
+			Handler:    _IeltsService_CalculateTodayExamCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

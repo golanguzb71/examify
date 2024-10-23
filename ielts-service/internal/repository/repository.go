@@ -742,6 +742,28 @@ func (r *PostgresRepository) GetResultOutlineWriting(req *pb.GetResultOutlineAbs
 	return result, nil
 }
 
+func (r *PostgresRepository) CalculateTodayExamCount(userId int64) (*pb.CalculateTodayExamCountResponse, error) {
+	var count int32
+	err := r.db.QueryRow(`
+		SELECT count(*) 
+		FROM exam 
+		WHERE user_id = $1 
+		AND created_at >= CURRENT_DATE
+	`, userId).Scan(&count)
+	if err != nil {
+		return nil, err
+	}
+	var result int32
+	if count >= 2 {
+		result = 0
+	} else if count == 0 {
+		result = 2
+	} else {
+		result = 1
+	}
+	return &pb.CalculateTodayExamCountResponse{RemainExamCount: result}, nil
+}
+
 func checkIsHaveRemainSection(remainSection *string, db *sql.DB, examId string) {
 	var checkerListening, checkerReading, checkerSpeaking, checkerWriting bool
 	checkerListeningQuery := `SELECT exists(SELECT 1 FROM listening_detail where exam_id=$1)`

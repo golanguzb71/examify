@@ -210,3 +210,7 @@ func (s *IeltsService) GetVoiceRecordsSpeaking(ctx context.Context, req *pb.GetV
 
 	return response, nil
 }
+
+func (s *IeltsService) CalculateTodayExamCount(ctx context.Context, req *pb.CalculateTodayExamCountRequest) (*pb.CalculateTodayExamCountResponse, error) {
+	return s.repo.CalculateTodayExamCount(req.UserId)
+}

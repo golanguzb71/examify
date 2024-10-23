@@ -50,6 +50,23 @@ definitions:
           $ref: '#/definitions/pb.Answer'
         type: array
     type: object
+  pb.GetBonusInformationByChatIdResponse:
+    properties:
+      bonusCount:
+        type: integer
+      more:
+        items:
+          $ref: '#/definitions/pb.GetMoreBonusInformation'
+        type: array
+      name:
+        type: string
+      refLink:
+        type: string
+      registeredAt:
+        type: string
+      welcomeCount:
+        type: integer
+    type: object
   pb.GetExamAbsResult:
     properties:
       bookName:
@@ -83,6 +100,15 @@ definitions:
         type: array
       totalPageCount:
         type: integer
+    type: object
+  pb.GetMoreBonusInformation:
+    properties:
+      guestChatId:
+        type: string
+      guestName:
+        type: string
+      guestRegisteredAt:
+        type: string
     type: object
   pb.GetResultOutlineSpeakingResponse:
     properties:
@@ -225,6 +251,8 @@ definitions:
         type: string
       surname:
         type: string
+      todayExamCount:
+        type: integer
     type: object
   pb.UserAnswer:
     properties:
@@ -278,6 +306,31 @@ paths:
       summary: ALL
       tags:
       - auth
+  /api/bonus/get-bonus-information-me:
+    get:
+      description: Retrieve bonus information by the current user's chat ID.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.GetBonusInformationByChatIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Bonus Information for Current User
+      tags:
+      - bonus
   /api/ielts/answer/{id}:
     get:
       consumes:
@@ -780,7 +833,7 @@ paths:
       - Bearer: []
       summary: Get a voice record
       tags:
-      - voice
+      - results
   /api/ielts/exam/result/top-exam-result/{dataframe}:
     get:
       consumes:
@@ -877,7 +930,7 @@ paths:
       - Bearer: []
       summary: Get user profile
       tags:
-      - User
+      - user
   /api/user/update-information:
     put:
       consumes:
@@ -905,7 +958,7 @@ paths:
       - Bearer: []
       summary: Update user's name and surname
       tags:
-      - user-default
+      - user
 securityDefinitions:
   Bearer:
     in: header

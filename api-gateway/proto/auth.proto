@@ -24,3 +24,37 @@ message ValidateTokenRequest {
   string token = 1;
   repeated string requiredRoles = 2;
 }
+
+service BonusService {
+  rpc UseBonusAttempt(UseBonusAttemptRequest) returns(UseBonusAttemptResponse);
+  rpc CalculateBonusByChatId(BonusServiceAbsRequest) returns(CalculateBonusByChatIdResponse);
+  rpc GetBonusInformationByChatId(BonusServiceAbsRequest) returns(GetBonusInformationByChatIdResponse);
+}
+
+message GetBonusInformationByChatIdResponse{
+  string name = 1;
+  string refLink = 2;
+  int32 welcomeCount = 3;
+  int32 bonusCount = 4;
+  string registeredAt = 5;
+  repeated GetMoreBonusInformation more = 6;
+}
+message GetMoreBonusInformation{
+  string guestName = 1;
+  string guestChatId = 2;
+  string guestRegisteredAt = 3;
+}
+message BonusServiceAbsRequest{
+  string chatId = 1;
+}
+message CalculateBonusByChatIdResponse{
+  int32 count = 1;
+}
+
+message UseBonusAttemptRequest{
+  string chatId = 1;
+}
+
+message UseBonusAttemptResponse{
+  bool response = 1;
+}

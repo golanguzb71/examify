@@ -25,6 +25,13 @@ service IeltsService {
   rpc CreateAttemptOutlineWriting(CreateOutlineAttemptRequestWriting) returns (common.AbsResponse);
   rpc CreateAttemptOutlineSpeaking(CreateOutlineAttemptRequestSpeaking) returns (common.AbsResponse);
   rpc GetVoiceRecordsSpeaking(GetVoiceRecordsSpeakingRequest)returns(GetVoiceRecordsSpeakingResponse);
+  rpc CalculateTodayExamCount(CalculateTodayExamCountRequest) returns(CalculateTodayExamCountResponse);
+}
+message CalculateTodayExamCountRequest{
+  int64 userId = 1;
+}
+message CalculateTodayExamCountResponse{
+  int32 remainExamCount = 2;
 }
 message GetVoiceRecordsSpeakingRequest{
   string nameVoiceUrl = 1;

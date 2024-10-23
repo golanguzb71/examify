@@ -159,7 +159,9 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	BonusService_UseBonusAttempt_FullMethodName = "/auth.BonusService/UseBonusAttempt"
+	BonusService_UseBonusAttempt_FullMethodName             = "/auth.BonusService/UseBonusAttempt"
+	BonusService_CalculateBonusByChatId_FullMethodName      = "/auth.BonusService/CalculateBonusByChatId"
+	BonusService_GetBonusInformationByChatId_FullMethodName = "/auth.BonusService/GetBonusInformationByChatId"
 )
 
 // BonusServiceClient is the client API for BonusService service.
@@ -167,6 +169,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BonusServiceClient interface {
 	UseBonusAttempt(ctx context.Context, in *UseBonusAttemptRequest, opts ...grpc.CallOption) (*UseBonusAttemptResponse, error)
+	CalculateBonusByChatId(ctx context.Context, in *BonusServiceAbsRequest, opts ...grpc.CallOption) (*CalculateBonusByChatIdResponse, error)
+	GetBonusInformationByChatId(ctx context.Context, in *BonusServiceAbsRequest, opts ...grpc.CallOption) (*GetBonusInformationByChatIdResponse, error)
 }
 
 type bonusServiceClient struct {
@@ -187,11 +191,33 @@ func (c *bonusServiceClient) UseBonusAttempt(ctx context.Context, in *UseBonusAt
 	return out, nil
 }
 
+func (c *bonusServiceClient) CalculateBonusByChatId(ctx context.Context, in *BonusServiceAbsRequest, opts ...grpc.CallOption) (*CalculateBonusByChatIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CalculateBonusByChatIdResponse)
+	err := c.cc.Invoke(ctx, BonusService_CalculateBonusByChatId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bonusServiceClient) GetBonusInformationByChatId(ctx context.Context, in *BonusServiceAbsRequest, opts ...grpc.CallOption) (*GetBonusInformationByChatIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBonusInformationByChatIdResponse)
+	err := c.cc.Invoke(ctx, BonusService_GetBonusInformationByChatId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BonusServiceServer is the server API for BonusService service.
 // All implementations must embed UnimplementedBonusServiceServer
 // for forward compatibility.
 type BonusServiceServer interface {
 	UseBonusAttempt(context.Context, *UseBonusAttemptRequest) (*UseBonusAttemptResponse, error)
+	CalculateBonusByChatId(context.Context, *BonusServiceAbsRequest) (*CalculateBonusByChatIdResponse, error)
+	GetBonusInformationByChatId(context.Context, *BonusServiceAbsRequest) (*GetBonusInformationByChatIdResponse, error)
 	mustEmbedUnimplementedBonusServiceServer()
 }
 
@@ -204,6 +230,12 @@ type UnimplementedBonusServiceServer struct{}
 
 func (UnimplementedBonusServiceServer) UseBonusAttempt(context.Context, *UseBonusAttemptRequest) (*UseBonusAttemptResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UseBonusAttempt not implemented")
+}
+func (UnimplementedBonusServiceServer) CalculateBonusByChatId(context.Context, *BonusServiceAbsRequest) (*CalculateBonusByChatIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CalculateBonusByChatId not implemented")
+}
+func (UnimplementedBonusServiceServer) GetBonusInformationByChatId(context.Context, *BonusServiceAbsRequest) (*GetBonusInformationByChatIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBonusInformationByChatId not implemented")
 }
 func (UnimplementedBonusServiceServer) mustEmbedUnimplementedBonusServiceServer() {}
 func (UnimplementedBonusServiceServer) testEmbeddedByValue()                      {}
@@ -244,6 +276,42 @@ func _BonusService_UseBonusAttempt_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BonusService_CalculateBonusByChatId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BonusServiceAbsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BonusServiceServer).CalculateBonusByChatId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BonusService_CalculateBonusByChatId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BonusServiceServer).CalculateBonusByChatId(ctx, req.(*BonusServiceAbsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BonusService_GetBonusInformationByChatId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BonusServiceAbsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BonusServiceServer).GetBonusInformationByChatId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BonusService_GetBonusInformationByChatId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BonusServiceServer).GetBonusInformationByChatId(ctx, req.(*BonusServiceAbsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BonusService_ServiceDesc is the grpc.ServiceDesc for BonusService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -254,6 +322,14 @@ var BonusService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UseBonusAttempt",
 			Handler:    _BonusService_UseBonusAttempt_Handler,
+		},
+		{
+			MethodName: "CalculateBonusByChatId",
+			Handler:    _BonusService_CalculateBonusByChatId_Handler,
+		},
+		{
+			MethodName: "GetBonusInformationByChatId",
+			Handler:    _BonusService_GetBonusInformationByChatId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

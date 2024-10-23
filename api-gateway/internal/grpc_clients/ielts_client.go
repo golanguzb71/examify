@@ -213,3 +213,11 @@ func (c *IeltsClient) GetResultsOutlineSpeaking(examId string, partNumber int64)
 func (c *IeltsClient) GetVoiceRecord(name string) (*pb.GetVoiceRecordsSpeakingResponse, error) {
 	return c.client.GetVoiceRecordsSpeaking(context.TODO(), &pb.GetVoiceRecordsSpeakingRequest{NameVoiceUrl: name})
 }
+
+func (c *IeltsClient) CalculateTodayExamCount(userId int64) int32 {
+	count, err := c.client.CalculateTodayExamCount(context.TODO(), &pb.CalculateTodayExamCountRequest{UserId: userId})
+	if err != nil {
+		return 0
+	}
+	return count.RemainExamCount
+}

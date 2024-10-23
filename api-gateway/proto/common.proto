@@ -20,4 +20,5 @@ message User {
   string phoneNumber = 4;
   string role = 5;
   string chatId = 6;
+  int32 todayExamCount = 7;
 }

@@ -1,21 +1,21 @@
-server:
-  port: 50054
-
-database:
-  host: "postgres-user"
-  port: 5432
-  user: "postgres"
-  password: "postgres"
-  dbname: "user_database"
-  sslmode: "disable"
-
 #server:
 #  port: 50054
-#
+
 #database:
-#  host: "localhost"
+#  host: "postgres-user"
 #  port: 5432
 #  user: "postgres"
 #  password: "postgres"
 #  dbname: "user_database"
 #  sslmode: "disable"
+
+server:
+  port: 50054
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  dbname: "user_database"
+  sslmode: "disable"

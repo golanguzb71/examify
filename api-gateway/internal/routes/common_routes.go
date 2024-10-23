@@ -14,7 +14,8 @@ func SetUpRoutes(r *gin.Engine, authClient *client.AuthClient) {
 	api := r.Group("/api")
 	{
 		api.POST("/auth/login/:code", handlers.Login)
-		UserRoutes(api, authClient)
-		IELTSRoutes(api, authClient)
+		UserServiceRoutes(api, authClient)
+		IeltsServiceRoutes(api, authClient)
+		BonusServiceRoutes(api, authClient)
 	}
 }

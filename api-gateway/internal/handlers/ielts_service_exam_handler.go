@@ -296,7 +296,7 @@ func GetResultsOutlineSpeaking(ctx *gin.Context) {
 // GetVoiceRecord godoc
 // @Summary Get a voice record
 // @Description Retrieves the voice record for a given name from the IELTS speaking test
-// @Tags voice
+// @Tags results
 // @Accept json
 // @Produce audio/wav
 // @Param voiceName path string true "Voice Record Name"

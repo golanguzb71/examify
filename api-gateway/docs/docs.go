@@ -63,6 +63,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/bonus/get-bonus-information-me": {
+            "get": {
+                "description": "Retrieve bonus information by the current user's chat ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bonus"
+                ],
+                "summary": "Get Bonus Information for Current User",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetBonusInformationByChatIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/ielts/answer/create/{bookId}": {
             "post": {
                 "security": [
@@ -819,7 +857,7 @@ const docTemplate = `{
                     "audio/wav"
                 ],
                 "tags": [
-                    "voice"
+                    "results"
                 ],
                 "summary": "Get a voice record",
                 "parameters": [
@@ -973,7 +1011,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "user"
                 ],
                 "summary": "Get user profile",
                 "responses": {
@@ -1007,7 +1045,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user-default"
+                    "user"
                 ],
                 "summary": "Update user's name and surname",
                 "parameters": [
@@ -1118,6 +1156,32 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetBonusInformationByChatIdResponse": {
+            "type": "object",
+            "properties": {
+                "bonusCount": {
+                    "type": "integer"
+                },
+                "more": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.GetMoreBonusInformation"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "refLink": {
+                    "type": "string"
+                },
+                "registeredAt": {
+                    "type": "string"
+                },
+                "welcomeCount": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.GetExamAbsResult": {
             "type": "object",
             "properties": {
@@ -1167,6 +1231,20 @@ const docTemplate = `{
                 },
                 "totalPageCount": {
                     "type": "integer"
+                }
+            }
+        },
+        "pb.GetMoreBonusInformation": {
+            "type": "object",
+            "properties": {
+                "guestChatId": {
+                    "type": "string"
+                },
+                "guestName": {
+                    "type": "string"
+                },
+                "guestRegisteredAt": {
+                    "type": "string"
                 }
             }
         },
@@ -1385,6 +1463,9 @@ const docTemplate = `{
                 },
                 "surname": {
                     "type": "string"
+                },
+                "todayExamCount": {
+                    "type": "integer"
                 }
             }
         },
