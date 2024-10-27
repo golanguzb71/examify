@@ -62,7 +62,7 @@ func handleContact(message *tgbotapi.Message) {
 	}
 	user, err := userClient.GetUserByChatIdOrPhone(nil, &phoneNumber, nil)
 
-	if err != nil || user == nil {
+	if err != nil && user == nil {
 		if lastName == "" {
 			lastName = "********"
 		}
