@@ -197,8 +197,11 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 	query := `
         WITH exam_data AS (
             SELECT 
-                e.id AS exam_id, b.title AS book_name, e.created_at, 
-                e.over_all_band_score, e.status,
+                e.id AS exam_id, 
+                b.title AS book_name, 
+                e.created_at, 
+                e.over_all_band_score, 
+                e.status,
                 COALESCE(AVG(sd.part_band_score), 0) AS speaking_score,
                 COALESCE(AVG(wd.task_band_score), 0) AS writing_score,
                 COALESCE(ld.band_score, 0) AS listening_score,
@@ -210,14 +213,14 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
             LEFT JOIN listening_detail ld ON e.id = ld.exam_id
             LEFT JOIN reading_detail rd ON e.id = rd.exam_id
             WHERE e.user_id = $1
-            GROUP BY e.id, b.title, e.created_at, e.over_all_band_score, e.status , ld.band_score , rd.band_score
+            GROUP BY e.id, b.title, e.created_at, e.over_all_band_score, e.status, ld.band_score, rd.band_score
         )
         SELECT exam_id, book_name, created_at, over_all_band_score, status,
                speaking_score, writing_score, listening_score, reading_score,
                COUNT(*) OVER() AS total_count
         FROM exam_data
-        ORDER BY created_at DESC
-        LIMIT $2 OFFSET $3
+        ORDER BY created_at DESC  
+        LIMIT $2 OFFSET $3; 
     `
 
 	rows, err := r.db.Query(query, userID, size, offset)
@@ -240,6 +243,12 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 		if err != nil {
 			return nil, err
 		}
+
+		overallScore = utils.RoundIeltsScore(overallScore)
+		speakingScore = utils.RoundIeltsScore(speakingScore)
+		writingScore = utils.RoundIeltsScore(writingScore)
+		listeningScore = utils.RoundIeltsScore(listeningScore)
+		readingScore = utils.RoundIeltsScore(readingScore)
 
 		remainTime := int32(0)
 		var remainSection string
@@ -276,7 +285,6 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 		TotalPageCount: totalPages,
 	}, nil
 }
-
 func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int32) (*pb.GetTopExamResult, error) {
 	baseQuery := `
 		SELECT e.id, e.user_id, b.title, e.over_all_band_score, b.created_at
@@ -642,38 +650,64 @@ func (r *PostgresRepository) GetResultsInlineBySection(section string, examId st
 
 func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSpeakingRequest) (*pb.GetResultOutlineSpeakingResponse, error) {
 	rows, err := r.db.Query(`
-		SELECT part_number, fluency_score, grammar_score, vocabulary_score, coherence_score, 
-		       topic_dev_score, relevance_score, transcription, voice_url, part_band_score 
-		FROM speaking_detail 
-		WHERE exam_id=$1 AND part_number=$2`, req.ExamId, req.PartNumber)
+        SELECT part_number, fluency_score, grammar_score, vocabulary_score, coherence_score, 
+               topic_dev_score, relevance_score, transcription, voice_url, part_band_score 
+        FROM speaking_detail 
+        WHERE exam_id=$1 AND part_number=$2`, req.ExamId, req.PartNumber)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query speaking detail: %w", err)
 	}
 	defer rows.Close()
+
 	result := &pb.GetResultOutlineSpeakingResponse{}
 
+	hasRows := false
 	for rows.Next() {
+		hasRows = true
 		var transcription []byte
 		var voiceUrls []string
 
 		err = rows.Scan(
-			&result.PartNumber, &result.FluencyScore, &result.GrammarScore, &result.VocabularyScore,
-			&result.CoherenceScore, &result.TopicDevScore, &result.RelevanceScore, &transcription,
-			pq.Array(&voiceUrls), &result.PartBandScore)
+			&result.PartNumber,
+			&result.FluencyScore,
+			&result.GrammarScore,
+			&result.VocabularyScore,
+			&result.CoherenceScore,
+			&result.TopicDevScore,
+			&result.RelevanceScore,
+			&transcription,
+			pq.Array(&voiceUrls),
+			&result.PartBandScore,
+		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
-		var transcriptionData []struct {
+		// First try to unmarshal as a single object
+		type TranscriptionData struct {
 			Question      string `json:"question"`
 			Feedback      string `json:"feedback"`
 			Transcription string `json:"transcription"`
 		}
 
-		if err = json.Unmarshal(transcription, &transcriptionData); err != nil {
-			return nil, err
+		var singleTranscription TranscriptionData
+		err = json.Unmarshal(transcription, &singleTranscription)
+
+		var transcriptionData []TranscriptionData
+		if err == nil {
+			// If single object unmarshal succeeded, convert to slice
+			transcriptionData = []TranscriptionData{singleTranscription}
+		} else {
+			// If single object failed, try as array
+			if err = json.Unmarshal(transcription, &transcriptionData); err != nil {
+				// For debugging, log the actual JSON content
+				return nil, fmt.Errorf("failed to unmarshal transcription JSON (content: %s): %w",
+					string(transcription), err)
+			}
 		}
 
+		// Process transcription data
+		result.Transcription = make([]*pb.Transcription, len(transcriptionData))
 		for i, tData := range transcriptionData {
 			transcriptionEntry := &pb.Transcription{
 				Question:      tData.Question,
@@ -685,17 +719,21 @@ func (r *PostgresRepository) GetResultOutlineSpeaking(req *pb.GetResultOutlineSp
 				transcriptionEntry.VoiceUrl = voiceUrls[i]
 			}
 
-			result.Transcription = append(result.Transcription, transcriptionEntry)
+			result.Transcription[i] = transcriptionEntry
 		}
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error iterating over rows: %w", err)
+	}
+
+	if !hasRows {
+		return nil, fmt.Errorf("no speaking detail found for exam_id=%v and part_number=%v",
+			req.ExamId, req.PartNumber)
 	}
 
 	return result, nil
 }
-
 func (r *PostgresRepository) GetResultOutlineWriting(req *pb.GetResultOutlineAbsRequest) (*pb.GetResultOutlineWritingResponse, error) {
 	rows, err := r.db.Query(`
 		SELECT task_number, response, feedback, coherence_score, grammar_score, 

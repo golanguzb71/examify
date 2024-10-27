@@ -16,9 +16,15 @@ func OffSetGenerator(page, size *int32) int {
 		s := int32(10)
 		size = &s
 	}
-	
 
 	return int(*size * (*page - 1))
+}
+
+func RoundIeltsScore(score float64) float64 {
+	if score < 0 {
+		return 0.0
+	}
+	return math.Round(score*2) / 2
 }
 
 func CalculateBandScore(correctCount int) float64 {

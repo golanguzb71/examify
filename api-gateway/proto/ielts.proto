@@ -82,7 +82,7 @@ message GetResultOutlineAbsRequest{
 }
 message GetResultOutlineWritingResponse{
   repeated OutlineWritingResponseAbs answers = 1;
-  int32 sectionBandScore = 2;
+  string sectionBandScore = 2;
 }
 
 message OutlineWritingResponseAbs{
@@ -90,11 +90,11 @@ message OutlineWritingResponseAbs{
   string userAnswer = 2;
   string question = 3;
   string feedback = 4;
-  int32 coherenceScore = 5;
-  int32 grammarScore = 6;
-  int32 lexicalResourceScore = 7;
-  int32 taskAchievementScore = 8;
-  int32 taskBandScore = 9;
+  string coherenceScore = 5;
+  string grammarScore = 6;
+  string lexicalResourceScore = 7;
+  string taskAchievementScore = 8;
+  string taskBandScore = 9;
   string createdAt = 10;
 }
 

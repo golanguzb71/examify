@@ -1301,7 +1301,7 @@ const docTemplate = `{
                     }
                 },
                 "sectionBandScore": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -1343,7 +1343,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "coherenceScore": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "createdAt": {
                     "type": "string"
@@ -1352,19 +1352,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "grammarScore": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "lexicalResourceScore": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "question": {
                     "type": "string"
                 },
                 "taskAchievementScore": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "taskBandScore": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "taskNumber": {
                     "type": "integer"

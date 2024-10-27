@@ -142,7 +142,7 @@ definitions:
           $ref: '#/definitions/pb.OutlineWritingResponseAbs'
         type: array
       sectionBandScore:
-        type: integer
+        type: string
     type: object
   pb.GetResultResponse:
     properties:
@@ -169,21 +169,21 @@ definitions:
   pb.OutlineWritingResponseAbs:
     properties:
       coherenceScore:
-        type: integer
+        type: string
       createdAt:
         type: string
       feedback:
         type: string
       grammarScore:
-        type: integer
+        type: string
       lexicalResourceScore:
-        type: integer
+        type: string
       question:
         type: string
       taskAchievementScore:
-        type: integer
+        type: string
       taskBandScore:
-        type: integer
+        type: string
       taskNumber:
         type: integer
       userAnswer:
