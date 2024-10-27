@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres-ielts:
     image: postgres:latest
@@ -9,6 +11,11 @@ services:
       - "5434:5432"
     volumes:
       - postgres_ielts_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres-user:
     image: postgres:latest
@@ -20,6 +27,11 @@ services:
       - "5435:5432"
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: "redis:alpine"
@@ -27,6 +39,23 @@ services:
       - "6369:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bonus-user-db:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    volumes:
+      - bonus_user_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   integration-service:
     build:
@@ -34,6 +63,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "50053:50053"
+    restart: unless-stopped
 
   user-service:
     build:
@@ -41,8 +71,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "50054:50054"
+    environment:
+      - DB_HOST=postgres-user
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=user_database
     depends_on:
-      - postgres-user
+      postgres-user:
+        condition: service_healthy
+    restart: unless-stopped
 
   auth-service:
     build:
@@ -50,9 +88,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - "50051:50051"
+    environment:
+      - DB_HOST=postgres-user
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=user_database
+      - MONGO_URI=mongodb://bonus-user-db:27017
     depends_on:
-      - postgres-user
-      - user-service
+      postgres-user:
+        condition: service_healthy
+      bonus-user-db:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+    restart: unless-stopped
 
   ielts-service:
     build:
@@ -60,12 +110,22 @@ services:
       dockerfile: Dockerfile
     ports:
       - "50052:50052"
+    environment:
+      - DB_HOST=postgres-ielts
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=ielts_database
     depends_on:
-      - postgres-ielts
-      - integration-service
-      - user-service
+      postgres-ielts:
+        condition: service_healthy
+      integration-service:
+        condition: service_started
+      user-service:
+        condition: service_started
     volumes:
       - voice_answers_data:/app/voice_answers
+    restart: unless-stopped
 
   api-gateway:
     build:
@@ -78,13 +138,7 @@ services:
       - ielts-service
       - integration-service
       - user-service
-
-  bonus-user-db:
-    image: "mongo:latest"
-    ports:
-      - "27017:27017"
-    volumes:
-      - bonus_user_data:/data/db
+    restart: unless-stopped
 
 volumes:
   postgres_ielts_data:
