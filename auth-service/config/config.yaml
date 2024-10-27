@@ -1,37 +1,37 @@
-server:
-  port: 50051
-
-redis:
-  host: redis
-  port: 6379
-
-telegram:
-  bot_token: "7223682774:AAFAabANpwopxAQs3BHo2kvtGMr8x9heJcc"
-
-grpc:
-  userService:
-    address: "user-service:50054"
-
-database:
-  host: "bonus-user-db"
-  port: 27017
-  dbname: "bonus_service_db"
-
 #server:
 #  port: 50051
 #
 #redis:
-#  host: localhost
+#  host: redis
 #  port: 6379
 #
 #telegram:
-#  bot_token: "6522732766:AAFnE2xOvptYZn0jmKYBuSOgG7Kb9Q7KhEs"
-#
-#database:
-#  host: "localhost"
-#  port: 27017
-#  dbname: "bonus_service_db"
+#  bot_token: "7223682774:AAFAabANpwopxAQs3BHo2kvtGMr8x9heJcc"
 #
 #grpc:
 #  userService:
-#    address: "localhost:50054"
+#    address: "user-service:50054"
+#
+#database:
+#  host: "bonus-user-db"
+#  port: 27017
+#  dbname: "bonus_service_db"
+
+server:
+  port: 50051
+
+redis:
+  host: localhost
+  port: 6379
+
+telegram:
+  bot_token: "6522732766:AAFnE2xOvptYZn0jmKYBuSOgG7Kb9Q7KhEs"
+
+database:
+  host: "localhost"
+  port: 27017
+  dbname: "bonus_service_db"
+
+grpc:
+  userService:
+    address: "localhost:50054"

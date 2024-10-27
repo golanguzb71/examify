@@ -133,7 +133,7 @@ func (b *BonusService) GetBonusInformationByChatId(ctx context.Context, req *pb.
 		Name:         coupon.Name,
 		RefLink:      coupon.ReferralCode,
 		WelcomeCount: coupon.WelcomeCount,
-		BonusCount:   10,
+		BonusCount:   coupon.UsedCount,
 		RegisteredAt: coupon.CreatedAt,
 		More:         moreBonusInfo,
 	}

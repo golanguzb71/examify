@@ -1,28 +1,8 @@
-server:
-  port: 50052
-
-database:
-  host: "postgres-ielts"
-  port: 5432
-  user: "postgres"
-  password: "postgres"
-  dbname: "ielts_database"
-  sslmode: "disable"
-
-
-grpc:
-  userService:
-    address: "user-service:50054"
-  integrationService:
-    address: "integration-service:50053"
-  bonusService:
-    address: "auth-service:50051"
-
 #server:
 #  port: 50052
 #
 #database:
-#  host: "localhost"
+#  host: "postgres-ielts"
 #  port: 5432
 #  user: "postgres"
 #  password: "postgres"
@@ -32,8 +12,28 @@ grpc:
 #
 #grpc:
 #  userService:
-#    address: "localhost:50054"
+#    address: "user-service:50054"
 #  integrationService:
-#    address: "localhost:50053"
+#    address: "integration-service:50053"
 #  bonusService:
-#    address: "localhost:50051"
+#    address: "auth-service:50051"
+
+server:
+  port: 50052
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  dbname: "ielts_database"
+  sslmode: "disable"
+
+
+grpc:
+  userService:
+    address: "localhost:50054"
+  integrationService:
+    address: "localhost:50053"
+  bonusService:
+    address: "localhost:50051"

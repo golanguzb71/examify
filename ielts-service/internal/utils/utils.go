@@ -16,6 +16,7 @@ func OffSetGenerator(page, size *int32) int {
 		s := int32(10)
 		size = &s
 	}
+	
 
 	return int(*size * (*page - 1))
 }
@@ -51,7 +52,7 @@ func CalculateBandScore(correctCount int) float64 {
 	case correctCount >= 1:
 		return 2.5
 	default:
-		return 2.0
+		return 0
 	}
 }
 

@@ -309,7 +309,7 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 	}
 
 	finalQuery := baseQuery + timeframeCondition + `
-		ORDER BY e.over_all_band_score
+		ORDER BY e.over_all_band_score DESC
 		LIMIT $1 OFFSET $2`
 
 	totalPageCount := int32(math.Ceil(float64(totalCount) / float64(size)))
@@ -721,7 +721,7 @@ func (r *PostgresRepository) GetResultOutlineWriting(req *pb.GetResultOutlineAbs
 
 		var userResponse struct {
 			Question   string `json:"question"`
-			UserAnswer string `json:"user_answer"`
+			UserAnswer string `json:"userAnswer"`
 		}
 
 		if err = json.Unmarshal(response, &userResponse); err != nil {
