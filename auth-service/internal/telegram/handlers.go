@@ -36,7 +36,7 @@ func sendWelcome(message *tgbotapi.Message) {
 🇺🇿
 Salom %s 👋
 CodeVan servicega xush kelibsiz
-examify.uz ro'yxatdan o'tish uchun ⬇️kontaktingizni yuboring va 1 daqiqalik kalitingizni oling!
+examify.uz ro'yxatdan o'tish uchun ⬇️ kontaktingizni yuboring va 1 daqiqalik kalitingizni oling!
 
 🇺🇸
 Hi %s 👋

@@ -171,23 +171,23 @@ func (r *PostgresRepository) GetAnswerByBookId(bookId string) ([]models.Answer, 
 
 func (r *PostgresRepository) CreateExam(userID, bookID int32) (*string, error) {
 	var count int
-	//var chatId string
-	_ = r.db.QueryRow(`SELECT count(*) 
+	var chatId string
+	err := r.db.QueryRow(`SELECT count(*) 
                       FROM exam 
                       WHERE user_id = $1 
                       AND DATE(created_at) = CURRENT_DATE`, userID).Scan(&count)
 
-	//if err != nil || count >= 2 {
-	//	err = r.db.QueryRow(`SELECT chat_id FROM users where id=$1`, userID).Scan(&chatId)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//	response := r.bonusClient.CreateAttemptBonus(chatId)
-	//	if response {
-	//		return createExam(r.db, userID, bookID)
-	//	}
-	//	return nil, errors.New("you can create exam 2 times in a day")
-	//}
+	if err != nil || count >= 2 {
+		err = r.db.QueryRow(`SELECT chat_id FROM users where id=$1`, userID).Scan(&chatId)
+		if err != nil {
+			return nil, err
+		}
+		response := r.bonusClient.CreateAttemptBonus(chatId)
+		if response {
+			return createExam(r.db, userID, bookID)
+		}
+		return nil, errors.New("you can create exam 2 times in a day")
+	}
 	return createExam(r.db, userID, bookID)
 
 }
