@@ -68,7 +68,26 @@ func handleContact(message *tgbotapi.Message) {
 		}
 		_, err = userClient.CreateUser(firstName, lastName, fmt.Sprintf("%v", chatID), phoneNumber)
 		if err != nil {
-			log.Printf("Error creating user: %v", err)
+			existingCode := GetStoredCode(fmt.Sprintf("%v", chatID))
+			if existingCode != nil {
+				msg := tgbotapi.NewMessage(chatID, fmt.Sprintf("Eski kodingiz hali ham kuchda ☝️ <code>%s</code>", *existingCode))
+				msg.ParseMode = "HTML"
+				bot.Send(msg)
+				return
+			}
+			code := generateCode()
+			storeCode(code, chatID)
+
+			keyboard := tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("🔄 Yangilash / Renew", fmt.Sprintf("renew_%s_%d", code, chatID)),
+				),
+			)
+
+			msg := tgbotapi.NewMessage(chatID, fmt.Sprintf("🔒 Code: <code>%s</code>", code))
+			msg.ParseMode = "HTML"
+			msg.ReplyMarkup = keyboard
+			bot.Send(msg)
 			return
 		}
 	}
