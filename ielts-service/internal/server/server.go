@@ -2,12 +2,12 @@ package server
 
 import (
 	"database/sql"
+	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 	"ielts-service/config"
 	client "ielts-service/internal/grpc_clients"
 	"ielts-service/internal/repository"
 	"ielts-service/internal/service"
-	"ielts-service/internal/utils"
 	"ielts-service/proto/pb"
 	"log"
 	"net"
@@ -38,25 +38,25 @@ func RunServer() {
 	defer db.Close()
 
 	// database migration
-	utils.MigrateUp(db)
+	//utils.MigrateUp(db)
 
 	// repository_making
 	repo := repository.NewPostgresRepository(db, userClient, integrationClient, bonusClient)
 	// service making
 	ieltsService := service.NewIeltsService(repo)
 
-	//c := cron.New()
-	//_, err = c.AddFunc("@every 1m", func() {
-	//	if err := updatePendingExamsStatus(db); err != nil {
-	//		log.Printf("Error updating pending exams status: %v", err)
-	//	}
-	//})
-	//if err != nil {
-	//	log.Fatalf("Failed to create cron job: %v", err)
-	//}
-	//
-	//c.Start()
-	//defer c.Stop()
+	c := cron.New()
+	_, err = c.AddFunc("@every 1m", func() {
+		if err := updatePendingExamsStatus(db); err != nil {
+			log.Printf("Error updating pending exams status: %v", err)
+		}
+	})
+	if err != nil {
+		log.Fatalf("Failed to create cron job: %v", err)
+	}
+
+	c.Start()
+	defer c.Stop()
 
 	// grpc server making
 	lis, err := net.Listen("tcp", ":"+cfg.Server.Port)
