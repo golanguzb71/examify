@@ -197,11 +197,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_part_band_score
-    BEFORE INSERT OR UPDATE
-    ON speaking_detail
-    FOR EACH ROW
-EXECUTE FUNCTION round_band_score();
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'check_part_band_score'
+    ) THEN
+        CREATE TRIGGER check_part_band_score
+            BEFORE INSERT OR UPDATE
+            ON speaking_detail
+            FOR EACH ROW
+        EXECUTE FUNCTION round_band_score();
+    END IF;
+END;
+$$;
 
 CREATE OR REPLACE FUNCTION update_pending_exams_status()
     RETURNS void AS
@@ -210,7 +220,7 @@ BEGIN
     UPDATE exam
     SET status = 'FINISHED'
     WHERE status = 'PENDING'
-      AND end_at >= CURRENT_TIMESTAMP AT TIME ZONE 'UTC';
+      AND end_at < CURRENT_TIMESTAMP AT TIME ZONE 'UTC';
 END;
 $$ LANGUAGE plpgsql;
 `
