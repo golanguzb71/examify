@@ -19,7 +19,7 @@ database:
 
 #server:
 #  port: 50051
-#
+
 #redis:
 #  host: localhost
 #  port: 6379

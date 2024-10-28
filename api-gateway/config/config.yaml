@@ -9,7 +9,7 @@ grpc:
   authService:
     address: "auth-service:50051"
 
-
+#
 #server:
 #  port: 8080
 #

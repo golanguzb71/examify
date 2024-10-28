@@ -60,6 +60,9 @@ func handleContact(message *tgbotapi.Message) {
 		log.Println("Error: userClient is nil")
 		return
 	}
+	if phoneNumber[0] != '+' {
+		phoneNumber = "+" + phoneNumber
+	}
 	user, err := userClient.GetUserByChatIdOrPhone(nil, &phoneNumber, nil)
 
 	if err != nil && user == nil {
