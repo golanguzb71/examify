@@ -295,7 +295,7 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 	var timeframeCondition string
 	switch dataframe {
 	case "MONTHLY":
-		timeframeCondition = `e.created_at >= date_trunc('month', CURRENT_DATE)`
+		timeframeCondition = `e.created_at >= date_trunc('quarter', CURRENT_DATE)`
 	case "DAILY":
 		timeframeCondition = `e.created_at >= CURRENT_DATE`
 	case "WEEKLY":
