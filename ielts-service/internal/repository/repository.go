@@ -287,7 +287,7 @@ func (r *PostgresRepository) GetExamsByUserId(userID, page, size int32) (*pb.Get
 }
 func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int32) (*pb.GetTopExamResult, error) {
 	baseQuery := `
-		SELECT e.id, e.user_id, b.title, e.over_all_band_score, b.created_at
+		SELECT e.id, e.user_id, b.title, e.over_all_band_score, e.created_at
 		FROM exam e
 		JOIN book b ON e.book_id = b.id 
 		WHERE e.status='FINISHED' and `
@@ -340,10 +340,8 @@ func (r *PostgresRepository) GetTopExamResults(dataframe string, page, size int3
 		if err != nil {
 			return nil, err
 		}
-
 		user := r.userClient.GetUserByPhoneNumberOrChatIdOrId(nil, nil, &userId)
 		result.User = user
-
 		setExtraFieldResult(&result, r.db)
 		results = append(results, &result)
 	}
