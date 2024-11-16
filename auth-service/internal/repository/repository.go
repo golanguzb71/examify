@@ -34,20 +34,33 @@ func ConnectMongo(databasePort, databaseHost, databaseName, databasePassword, da
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	// Build the MongoDB URI with authentication credentials
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", databaseUsername, databasePassword, databaseHost, databasePort, databaseName)
 
 	clientOptions := options.Client().ApplyURI(uri)
 
+	// Connect to the MongoDB client
 	mongodbClient, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
+
+	// Ping MongoDB to verify the connection
 	err = mongodbClient.Ping(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to ping MongoDB: %v", err)
 	}
 
+	// Check if the database client is nil before using it
+	if mongodbClient == nil {
+		return nil, fmt.Errorf("MongoDB client is nil")
+	}
+
+	// Access the specified database
 	database := mongodbClient.Database(databaseName)
+	if database == nil {
+		return nil, fmt.Errorf("MongoDB database is nil")
+	}
 
 	log.Printf("Connected to MongoDB database '%s' successfully", databaseName)
 	return database, nil
