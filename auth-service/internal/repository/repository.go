@@ -30,18 +30,18 @@ func ConnectRedis(cfg *config.Config) {
 	fmt.Println("Redis connection established successfully")
 }
 
-func ConnectMongo(databasePort, databaseHost, databaseName string) (*mongo.Database, error) {
+func ConnectMongo(databasePort, databaseHost, databaseName, databasePassword, databaseUsername string) (*mongo.Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	uri := fmt.Sprintf("mongodb://%s:%s/%s", databaseHost, databasePort, databaseName)
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", databaseUsername, databasePassword, databaseHost, databasePort, databaseName)
+
 	clientOptions := options.Client().ApplyURI(uri)
 
 	mongodbClient, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
-
 	err = mongodbClient.Ping(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to ping MongoDB: %v", err)
