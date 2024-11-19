@@ -77,12 +77,12 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			Role: "user",
 			Parts: []genai.Part{
 				genai.FileData{URI: fileURI},
-				genai.Text(fmt.Sprintf("Analyze the audio for the following question as ielts speaking : %s.", question)),
+				genai.Text(fmt.Sprintf("Analyze the audio for the following question as ielts speaking rate 1 to 7 as ielts pls give exactly score as ielts don't increase : %s.", question)),
 			},
 		},
 	}
 
-	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking."))
+	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking. rate 1 to 7 as ielts pls give exactly score as ielts don't increase"))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %v", err)
 	}
