@@ -25,20 +25,7 @@ func processEssay(essayText string) (*pb.WritingTaskAbsResponse, error) {
 	configureModel(model)
 
 	session := model.StartChat()
-	session.History = []*genai.Content{
-		{
-			Role: "user",
-			Parts: []genai.Part{
-				genai.Text("Some people think that parents should teach their children how to be good members of society. Others, however, believe that school is the best place to learn this. Discuss both views and give your own opinion.\n\n[Sample essay content...]"),
-			},
-		},
-		{
-			Role: "model",
-			Parts: []genai.Part{
-				genai.Text(`{"coherence_score": 6, "feedback": "The essay has a clear structure and a well-defined thesis statement. The examples used to support the arguments are relevant and well-chosen. However, the essay could be improved by providing more specific examples and further developing the arguments. ", "grammar_score": 6, "lexical_resource_score": 6.5, "task_achievement_score": 6.5, "task_band_score": 6.5}`),
-			},
-		},
-	}
+	session.History = []*genai.Content{}
 
 	resp, err := session.SendMessage(ctx, genai.Text(essayText))
 	if err != nil {
