@@ -12,6 +12,16 @@ import (
 	"os"
 )
 
+// Define the clamp function to ensure the score stays within the desired range (0 to 7)
+func clamp(value float32, min, max float32) float32 {
+	if value < min {
+		return min
+	} else if value > max {
+		return max
+	}
+	return value
+}
+
 func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbsResponse, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(ApiKey))
@@ -77,12 +87,12 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			Role: "user",
 			Parts: []genai.Part{
 				genai.FileData{URI: fileURI},
-				genai.Text(fmt.Sprintf("Analyze the audio for the following question as ielts speaking rate 1 to 7 as ielts pls give exactly score as ielts don't increase : %s.", question)),
+				genai.Text(fmt.Sprintf("Analyze the audio for the following question as IELTS speaking score 0 to 7, give exactly score as IELTS: %s.", question)),
 			},
 		},
 	}
 
-	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking. rate 1 to 7 as ielts pls give exactly score as ielts don't increase"))
+	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking. Rate 0 to 7, don't increase beyond this"))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %v", err)
 	}
@@ -115,15 +125,16 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			}
 
 			if err := json.Unmarshal([]byte(jsonStr), &parsedResult); err == nil {
+				// Apply clamp to ensure scores are between 0 and 7
 				result = pb.SpeakingPartAbsResponse{
-					FluencyScore:    parsedResult.Response.FluencyScore,
-					GrammarScore:    parsedResult.Response.GrammarScore,
-					VocabularyScore: parsedResult.Response.VocabularyScore,
-					CoherenceScore:  parsedResult.Response.CoherenceScore,
-					TopicDevScore:   parsedResult.Response.TopicDevScore,
-					RelevanceScore:  parsedResult.Response.RelevanceScore,
+					FluencyScore:    clamp(parsedResult.Response.FluencyScore, 0, 7),
+					GrammarScore:    clamp(parsedResult.Response.GrammarScore, 0, 7),
+					VocabularyScore: clamp(parsedResult.Response.VocabularyScore, 0, 7),
+					CoherenceScore:  clamp(parsedResult.Response.CoherenceScore, 0, 7),
+					TopicDevScore:   clamp(parsedResult.Response.TopicDevScore, 0, 7),
+					RelevanceScore:  clamp(parsedResult.Response.RelevanceScore, 0, 7),
 					WordCount:       parsedResult.Response.WordCount,
-					PartBandScore:   parsedResult.Response.PartBandScore,
+					PartBandScore:   clamp(parsedResult.Response.PartBandScore, 0, 7),
 					Transcription: &pb.Transcription{
 						Question:      question,
 						Feedback:      parsedResult.Response.Transcription.Feedback,
