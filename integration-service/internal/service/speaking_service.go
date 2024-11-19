@@ -12,16 +12,6 @@ import (
 	"os"
 )
 
-// Define the clamp function to ensure the score stays within the desired range (0 to 7)
-func clamp(value float32, min, max float32) float32 {
-	if value < min {
-		return min
-	} else if value > max {
-		return max
-	}
-	return value
-}
-
 func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbsResponse, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(ApiKey))
@@ -31,10 +21,10 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 	defer client.Close()
 
 	model := client.GenerativeModel("gemini-1.5-pro")
-	model.SetTemperature(10)
-	model.SetTopK(1000)
-	model.SetTopP(10)
-	model.SetMaxOutputTokens(100000)
+	model.SetTemperature(1)
+	model.SetTopK(64)
+	model.SetTopP(0.95)
+	model.SetMaxOutputTokens(8192)
 	model.ResponseMIMEType = "application/json"
 	model.ResponseSchema = &genai.Schema{
 		Type:     genai.TypeObject,
@@ -87,12 +77,18 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			Role: "user",
 			Parts: []genai.Part{
 				genai.FileData{URI: fileURI},
-				genai.Text(fmt.Sprintf("Analyze the audio for the following question as IELTS speaking score 0 to 7, give exactly score as IELTS: %s.", question)),
+				genai.Text(fmt.Sprintf("Analyze the audio for the following question: %s.", question)),
+			},
+		},
+		{
+			Role: "model",
+			Parts: []genai.Part{
+				genai.Text("```json\n{\"response\": {\"coherence_score\": 6.0, \"fluency_score\": 6.5, \"grammar_score\": 6.0, \"part_band_score\": 6.0, \"relevance_score\": 7.0, \"topic_dev_score\": 6.5, \"transcription\": {\"feedback\": \"The speaker's response is coherent and relevant. The speaker uses a variety of grammatical structures and vocabulary to express their ideas.\", \"transcription\": \"Yes, both. I'm studying and working at my university. It is a great chance to improve my future career. After graduation, I'm going to study abroad.\"}, \"vocabulary_score\": 6.5, \"word_count\": 27}}\n\n```"),
 			},
 		},
 	}
 
-	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking. Rate 0 to 7, don't increase beyond this"))
+	resp, err := session.SendMessage(ctx, genai.Text("Please provide valid JSON format with all required schema fields as IELTS band scores for speaking."))
 	if err != nil {
 		return nil, fmt.Errorf("error sending message: %v", err)
 	}
@@ -125,16 +121,15 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			}
 
 			if err := json.Unmarshal([]byte(jsonStr), &parsedResult); err == nil {
-				// Apply clamp to ensure scores are between 0 and 7
 				result = pb.SpeakingPartAbsResponse{
-					FluencyScore:    clamp(parsedResult.Response.FluencyScore, 0, 7),
-					GrammarScore:    clamp(parsedResult.Response.GrammarScore, 0, 7),
-					VocabularyScore: clamp(parsedResult.Response.VocabularyScore, 0, 7),
-					CoherenceScore:  clamp(parsedResult.Response.CoherenceScore, 0, 7),
-					TopicDevScore:   clamp(parsedResult.Response.TopicDevScore, 0, 7),
-					RelevanceScore:  clamp(parsedResult.Response.RelevanceScore, 0, 7),
+					FluencyScore:    parsedResult.Response.FluencyScore,
+					GrammarScore:    parsedResult.Response.GrammarScore,
+					VocabularyScore: parsedResult.Response.VocabularyScore,
+					CoherenceScore:  parsedResult.Response.CoherenceScore,
+					TopicDevScore:   parsedResult.Response.TopicDevScore,
+					RelevanceScore:  parsedResult.Response.RelevanceScore,
 					WordCount:       parsedResult.Response.WordCount,
-					PartBandScore:   clamp(parsedResult.Response.PartBandScore, 0, 7),
+					PartBandScore:   parsedResult.Response.PartBandScore,
 					Transcription: &pb.Transcription{
 						Question:      question,
 						Feedback:      parsedResult.Response.Transcription.Feedback,
