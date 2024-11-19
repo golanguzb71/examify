@@ -27,7 +27,11 @@
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="bonus_service_db@158.220.111.34" uuid="71b5463c-2a87-4061-9ab5-3794a840a990">
+<<<<<<< HEAD
       <driver-ref>mongo.4</driver-ref>
+=======
+      <driver-ref>mongo</driver-ref>
+>>>>>>> 9204149 (gemini_prompt_updated)
       <synchronize>true</synchronize>
       <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
       <jdbc-url>mongodb://158.220.111.34:27017/bonus_service_db</jdbc-url>
