@@ -16,8 +16,6 @@ database:
   host: "bonus-user-db"
   port: 27017
   dbname: "bonus_service_db"
-  password: "rootpassword"
-  username: "root"
 
 #server:
 #  port: 50051

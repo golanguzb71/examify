@@ -30,12 +30,12 @@ func ConnectRedis(cfg *config.Config) {
 	fmt.Println("Redis connection established successfully")
 }
 
-func ConnectMongo(databasePort, databaseHost, databaseName, databasePassword, databaseUsername string) (*mongo.Database, error) {
+func ConnectMongo(databasePort, databaseHost, databaseName string) (*mongo.Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Build the MongoDB URI with authentication credentials
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", databaseUsername, databasePassword, databaseHost, databasePort, databaseName)
+	// Build the MongoDB URI without authentication credentials
+	uri := fmt.Sprintf("mongodb://%s:%s", databaseHost, databasePort)
 
 	clientOptions := options.Client().ApplyURI(uri)
 
