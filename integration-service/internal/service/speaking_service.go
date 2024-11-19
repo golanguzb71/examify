@@ -77,13 +77,7 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 			Role: "user",
 			Parts: []genai.Part{
 				genai.FileData{URI: fileURI},
-				genai.Text(fmt.Sprintf("Analyze the audio for the following question: %s.", question)),
-			},
-		},
-		{
-			Role: "model",
-			Parts: []genai.Part{
-				genai.Text("```json\n{\"response\": {\"coherence_score\": 6.0, \"fluency_score\": 6.5, \"grammar_score\": 6.0, \"part_band_score\": 6.0, \"relevance_score\": 7.0, \"topic_dev_score\": 6.5, \"transcription\": {\"feedback\": \"The speaker's response is coherent and relevant. The speaker uses a variety of grammatical structures and vocabulary to express their ideas.\", \"transcription\": \"Yes, both. I'm studying and working at my university. It is a great chance to improve my future career. After graduation, I'm going to study abroad.\"}, \"vocabulary_score\": 6.5, \"word_count\": 27}}\n\n```"),
+				genai.Text(fmt.Sprintf("Analyze the audio for the following question as ielts speaking : %s.", question)),
 			},
 		},
 	}

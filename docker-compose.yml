@@ -44,7 +44,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   bonus-user-db:
     image: "mongo:latest"
     ports:
@@ -60,6 +59,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
 
   integration-service:
     build:
