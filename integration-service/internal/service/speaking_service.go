@@ -31,10 +31,10 @@ func processPartOfSpeaking(question string, message []byte) (*pb.SpeakingPartAbs
 	defer client.Close()
 
 	model := client.GenerativeModel("gemini-1.5-pro")
-	model.SetTemperature(1)
-	model.SetTopK(64)
-	model.SetTopP(0.95)
-	model.SetMaxOutputTokens(8192)
+	model.SetTemperature(10)
+	model.SetTopK(1000)
+	model.SetTopP(10)
+	model.SetMaxOutputTokens(100000)
 	model.ResponseMIMEType = "application/json"
 	model.ResponseSchema = &genai.Schema{
 		Type:     genai.TypeObject,
