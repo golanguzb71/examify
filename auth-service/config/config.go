@@ -22,11 +22,9 @@ type Config struct {
 		} `yaml:"userService"`
 	} `yaml:"grpc"`
 	Database struct {
-		Host     string `yaml:"host"`
-		Port     string `yaml:"port"`
-		DbName   string `yaml:"dbname"`
-		Password string `yaml:"password"`
-		Username string `yaml:"username"`
+		Host   string `yaml:"host"`
+		Port   string `yaml:"port"`
+		DbName string `yaml:"dbname"`
 	} `yaml:"database"`
 }
 

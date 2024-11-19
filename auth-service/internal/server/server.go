@@ -15,7 +15,7 @@ import (
 
 func Run(cfg *config.Config) error {
 	database.ConnectRedis(cfg)
-	db, err := database.ConnectMongo(cfg.Database.Port, cfg.Database.Host, cfg.Database.DbName, cfg.Database.Username, cfg.Database.Password)
+	db, err := database.ConnectMongo(cfg.Database.Port, cfg.Database.Host, cfg.Database.DbName)
 	if err != nil {
 		return err
 	}
